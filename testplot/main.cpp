@@ -1,8 +1,10 @@
 //
 // Created by x on 2025/9/24.
 //
-#include "plottree.h"
-#include "plotmodel.h"
+#include <QDateTime>
+
+#include "plotview.h"
+
 int main(int argc, char *argv[])
 {
     // qInstallMessageHandler(customMessageHandler);
@@ -27,11 +29,11 @@ int main(int argc, char *argv[])
     "%{if-fatal}\033[41;1m%{endif}"
 #endif
     // 日志类型标签（带条件颜色）
-    "%{if-debug}[DBUG] %{endif}"
-    "%{if-info}[INFO] %{endif}"
-    "%{if-warning}[WARN] %{endif}"
-    "%{if-critical}[ERR ] %{endif}"
-    "%{if-fatal}[FATAL]%{endif}"
+    "%{if-debug}D %{endif}"
+    "%{if-info}I %{endif}"
+    "%{if-warning}W %{endif}"
+    "%{if-critical}E %{endif}"
+    "%{if-fatal}F %{endif}"
 
     // 可选：应用模块分类
     "%{if-category}%{category}:%{endif}"
@@ -48,13 +50,24 @@ int main(int argc, char *argv[])
     // 致命错误追加调用栈（需启用 QT_MESSAGE_PATTERN 环境变量）
     //"%{if-fatal}\nBacktrace: %{backtrace depth=20 separator=\"\n\"}%{endif}"
     );
+    //qputenv("QT_LOGGING_RULES", "plot.debug=false");
+    qInfo()<<QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")<<"plot 测试程序运行";
     QApplication a(argc, argv);
-    //testPlot w;
-    PlotTree w(nullptr);
-    PlotModel*model=new PlotModel();
-    w.setModel(model);
+    // PlotTree w(nullptr);
+    // PlotModel*model=new PlotModel();
+
+    // w.setModel(model);
+
+
+    PlotView w(nullptr);
     w.resize(800, 600);
 
+    QSharedPointer<QCPGraphDataContainer> data(new QCPGraphDataContainer());
+    w.add_plotData(data,"test");
+    for (int j = 0; j < 100; j++)
+    {
+        data->add(QCPGraphData(j, 20 * 10 * cos((10 * 5 + j) / 30.0 * 3.14)));
+    }
 
     w.show();
 

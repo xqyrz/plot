@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.0)
+cmake_minimum_required(VERSION 3.16)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(PLOT_LIB plotd)
@@ -13,14 +13,7 @@ file(GLOB_RECURSE SRC_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/*.ui"
 )
 
-add_library(${PLOT_LIB} ${SRC_FILES}
-        plotdata.cpp
-        plotdata.h
-        plotmodel.cpp
-        plotmodel.h
-        plottree.cpp
-        plottree.h
-        ../testplot/main.cpp)
+add_library(${PLOT_LIB} ${SRC_FILES})
 
 target_include_directories(${PLOT_LIB}
         PUBLIC

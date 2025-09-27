@@ -10,12 +10,13 @@
 class PlotData: public QObject {
     Q_OBJECT
 public:
-    explicit PlotData(QSharedPointer<QCPGraphDataContainer> data,const QString &name, const QString &units, QObject *parent = nullptr);
+    explicit PlotData(QSharedPointer<QCPGraphDataContainer> data,QColor color, const QString &name, const QString &units, QObject *parent = nullptr);
     ~PlotData() override = default;
 
     QString getName() const{return name;};
     QString getUnits() const{return units;};
     QString getShowData()const;
+    QColor getColor() const{return color;};
     QSharedPointer<QCPGraphDataContainer> getData() const{return _data;};
     bool isVisible() const {return visible;}
 
@@ -28,6 +29,7 @@ private:
     QSharedPointer<QCPGraphDataContainer> _data;
     QString name;//名字
     QString units;//单位
+    QColor color;//颜色
     bool  visible=true;
 };
 

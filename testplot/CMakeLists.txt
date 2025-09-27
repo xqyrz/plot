@@ -1,5 +1,6 @@
-cmake_minimum_required(VERSION 4.0)
+cmake_minimum_required(VERSION 3.16)
 set(APP_NAME testplot)
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(PLOT_LIB plotd)
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
@@ -20,4 +21,9 @@ target_link_libraries(${APP_NAME}
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::PrintSupport
         ${PLOT_LIB}
+)
+
+target_compile_definitions(${APP_NAME}
+        PRIVATE
+        PROJECT_NAME="${APP_NAME}"
 )
