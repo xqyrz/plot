@@ -3,7 +3,7 @@
 //
 
  #include "plotview.h"
-
+#include <Qsettings>
 #include <QSplitter>
 #include <QVBoxLayout>
 #include <QComboBox>
@@ -20,8 +20,14 @@ PlotView::PlotView(QWidget*parent)
 	,_modleComboBox(new QComboBox(this))
 	,_model(new PlotModel(this))
 {
+	QSettings settings(PLOT::PLOT_COMPANY,PLOT::PLOT_PRODUCT);
+	plotType =(PLOT::PlotType)settings.value("plotType",PLOT::TYPE_oneXoneY).toInt();
 	initUI();
 	initConnect();
+}
+
+void PlotView::expandAll() const {
+	_treeView->expandAll();
 }
 
 
@@ -55,11 +61,14 @@ void PlotView::initUI()
 
 
 	_treeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+	_modleComboBox->setCurrentIndex(plotType);
+
 }
 
 void PlotView::initConnect()
 {
-
+	connect(_modleComboBox,QOverload<int>::of(&QComboBox::currentIndexChanged),this, &PlotView::setPlotType);
+	connect(this, &PlotView::plotTypeChanged, _graphView, &PlotCustom::setPlotType);
 }
 
 void PlotView::add_plotData(const QSharedPointer<QCPGraphDataContainer> &data, QString plot_name) {
@@ -67,6 +76,13 @@ void PlotView::add_plotData(const QSharedPointer<QCPGraphDataContainer> &data, Q
 	_model->add_plotData(data,plot_name);
 	_treeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	_graphView->resetUI(_model);
+}
+
+void PlotView::setPlotType(int type) {
+	if (type != plotType) {
+		plotType = type;
+		emit plotTypeChanged(plotType);
+	}
 }
 
 

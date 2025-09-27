@@ -62,13 +62,16 @@ int main(int argc, char *argv[])
     PlotView w(nullptr);
     w.resize(800, 600);
 
-    QSharedPointer<QCPGraphDataContainer> data(new QCPGraphDataContainer());
-    w.add_plotData(data,"test");
-    for (int j = 0; j < 100; j++)
-    {
-        data->add(QCPGraphData(j, 20 * 10 * cos((10 * 5 + j) / 30.0 * 3.14)));
-    }
 
+    for (int i = 1; i < 5; i++) {
+        QSharedPointer<QCPGraphDataContainer> data(new QCPGraphDataContainer());
+        w.add_plotData(data,"test_"+QString::number(i));
+        for (int j = 0; j < 100; j++)
+        {
+            data->add(QCPGraphData(j, 20 * i * cos((i * 5 + j) / 30.0 * 3.14)));
+        }
+    }
+    w.expandAll();
     w.show();
 
     return QApplication::exec();
