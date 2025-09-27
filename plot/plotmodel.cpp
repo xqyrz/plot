@@ -14,11 +14,7 @@ PlotModel::PlotModel(QObject* parent)
     m_rootNode->append(new TreeNode(TreeNode::GroupNode, "组1"));
 }
 
-/// <summary>
-/// 显示曲线数据
-/// </summary>
-/// <param name="data">数据</param>
-/// <param name="plot_name">label</param>
+
 void PlotModel::add_plotData(const QSharedPointer<QCPGraphDataContainer>& data, QString plot_name ) {
     for (auto const& var : *m_rootNode) {
         for(auto const& var2 : *var) {
@@ -145,7 +141,10 @@ QVariant PlotModel::data(const QModelIndex& index, int role) const
             return QIcon(pixmap);
         }
         case Qt::DecorationPropertyRole:return Qt::AlignCenter;
-        case Qt::TextAlignmentRole:return Qt::AlignCenter;
+        case Qt::TextAlignmentRole: {
+            Qt::Alignment align = Qt::AlignLeft | Qt::AlignVCenter;
+            return QVariant(align);
+        }
             default:return QVariant();
     }
 
