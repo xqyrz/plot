@@ -5,11 +5,16 @@
 #include "plotcustom.h"
 #include "plotcommon.h"
 #include <QTimer>
+#include "plotcommon.h"
+#include <QTimer>
 PlotCustom::PlotCustom(QWidget *parent)
 :QCustomPlot(parent)
 ,_updateTimer(new QTimer(this))
 ,_resetUITimer(new QTimer(this)) {
+,_updateTimer(new QTimer(this))
+,_resetUITimer(new QTimer(this)) {
     _initUI();
+    _resetUITimer->setSingleShot(true);
     _resetUITimer->setSingleShot(true);
     connect(_updateTimer, &QTimer::timeout, this, [&]() {
         _updateTimerEn = true;
@@ -17,6 +22,7 @@ PlotCustom::PlotCustom(QWidget *parent)
             this->replot(QCustomPlot::rpQueuedReplot);
         }
     });
+     connect(_resetUITimer, &QTimer::timeout, this, &PlotCustom::_resetUI);
      connect(_resetUITimer, &QTimer::timeout, this, &PlotCustom::_resetUI);
     _updateTimer->start(20);
 }
@@ -31,19 +37,43 @@ void PlotCustom::setPlotType(int type) {
     _resetUI();
 }
 
-void PlotCustom::contextMenuEvent(QContextMenuEvent *event) {
-    // 创建一个菜单
-    QMenu menu(this);
-    // 添加菜单项
-    QAction* autoAction = menu.addAction(QString("自适应"));
-    QAction* saveAction = menu.addAction("Save");
-    QAction* exitAction = menu.addAction("Exit");
+void PlotCustom::_oneXmoreY() {
+    _initUI();
+    if (_model == nullptr) {
+        return;
+    }
+    auto root = _model->root();
+    auto marginGroup = new QCPMarginGroup(this);
+    auto axisRect = new QCPAxisRect(this,false);
+    this->plotLayout()->addElement(0,0, axisRect);
+    auto _xAxis = axisRect->addAxis(QCPAxis::atBottom);
 
-    // 显示菜单，并获取用户选择的菜单项
-    QAction* selectedAction = menu.exec(event->globalPos());
+    for (auto const& group: *root) {
 
-    // 根据用户选择的菜单项执行相应的操作
-    if (selectedAction == autoAction) {
+        for (auto const& plot:*group) {
+            auto _yAxis = axisRect->addAxis(QCPAxis::atLeft);
+            axisRect->setMarginGroup(QCP::msLeft, marginGroup);
+            axisRect->setAutoMargins(QCP::MarginSide::msLeft | QCP::MarginSide::msRight);
+            axisRect->setRangeDrag(Qt::Horizontal | Qt::Vertical); //水平方向拖动
+            axisRect->setRangeZoom(Qt::Horizontal | Qt::Vertical); //水平方向缩放
+            axisRect->setMargins(QMargins(0, 0, 0, 20));
+            axisRect->setRangeZoomFactor(0.85); // 设置缩放因子，小于1表示缩小，大于1表示放大
+            axisRect->setRangeZoomAxes(_xAxis , _yAxis);//设置缩放的绑定轴
+            axisRect->setRangeDragAxes(_xAxis, _yAxis);//设置拖拽的绑定轴
+            axisRect->setAutoMargins(QCP::msAll);
+
+            _yAxis->grid()->setZeroLinePen(Qt::NoPen);
+            // 创建曲线
+            auto graph = this->addGraph(_xAxis,_yAxis);
+
+            graph->setData(plot->plotData->getData());
+            // 设置曲线样式
+            graph->setPen(QPen(plot->plotData->getColor()));    // 线颜色
+            graph->setLineStyle(QCPGraph::lsLine); // 折线
+            //  graph->rescaleAxes();
+        }
+    }
+    QTimer::singleShot(100, this, [=]() {
         for (auto i = 0; i < this->graphCount(); i++) {
             this->graph(i)->rescaleAxes();
         }
