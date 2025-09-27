@@ -20,14 +20,15 @@ void PlotModel::add_plotData(const QSharedPointer<QCPGraphDataContainer>& data, 
         for(auto const& var2 : *var) {
             if(var2->plotData->getData() == data) {
                 qWarning() << "has data:"<<var2->name<<var2->plotData->getData();
+                return;
             }
         }
     }
     int newRow = m_rootNode->at(0)->childCount();
 
     beginInsertRows(QModelIndex(), newRow, newRow);
-
-    m_rootNode->at(0)->append(new TreeNode(new PlotData(data,QColor(PLOT::color[size()%16]),plot_name,"",this),plot_name));
+    auto plotData = new PlotData(data,QColor(PLOT::color[size()%16]),plot_name,"",this);
+    m_rootNode->at(0)->append(new TreeNode(plotData,plot_name));
     endInsertRows(); // 通知视图：插入结束
 }
 
@@ -122,10 +123,22 @@ QVariant PlotModel::data(const QModelIndex& index, int role) const
             case 2:return  item->plotData->getShowData();
             default:QVariant();
            }
-        case Qt::CheckStateRole:
-            if (index.column())return QVariant();
+        case Qt::CheckStateRole: {
+                if (index.column())return QVariant();
+                if (item->type == TreeNode::PlotNode) {
+                    return item->plotData->isVisible() ? Qt::Checked : Qt::Unchecked;
+                }
+                else if (item->type == TreeNode::GroupNode) {
+                    for (auto const& var : *item) {
+                        if (var->plotData->isVisible()) {
+                            return Qt::Checked;
+                        }
+                    }
+                    return Qt::Unchecked;
+                }
+            }
             return Qt::Checked;
-        case   Qt::DecorationRole:      //TODO:X_这里一定要优化
+        case   Qt::DecorationRole:      //NONE:X_这里可以优化
         {
             if (!index.parent().isValid()) return QVariant();
             if (index.column())return QVariant();
@@ -159,16 +172,36 @@ QVariant PlotModel::headerData(int section, Qt::Orientation orientation, int rol
     return QAbstractItemModel::headerData(section, orientation, role);
 }
 
-bool PlotModel::setData(const QModelIndex& index, const QVariant& value, int role)
+
+bool PlotModel::setData(const QModelIndex& _index, const QVariant& value, int role)
 {
-    if (role == Qt::CheckStateRole) {
-        // 更新项的选中状态
-   //      if (_rootItems->data().at(index.row())->getcheckStatus() != value.toBool()) {
-			// _rootItems->data()[index.row()]->setcheckStatus(value.toBool());
-   //     }
+    switch (role) {
+        case Qt::CheckStateRole: {
+            if (_index.column() == 0) {
+               auto item = static_cast<TreeNode*>(_index.internalPointer());
+                switch (item->type) {
+                case TreeNode::PlotNode:
+                        item->plotData->setVisible(static_cast<Qt::CheckState>(value.toInt()) == Qt::Checked);
+                        emit dataChanged(_index, _index, {Qt::CheckStateRole});
+                    break;
+                case TreeNode::GroupNode: {
+                    int row = 0;
+                    for (auto const& var : *item) {
+                        var->plotData->setVisible(static_cast<Qt::CheckState>(value.toInt()) == Qt::Checked);
+                        emit dataChanged(index(row,0,_index), index(row,0,_index), {Qt::CheckStateRole});
+                        row++;
+                    }
+                    emit dataChanged(_index, _index, {Qt::CheckStateRole});
+                    }
+                    break;
+                        default:break;
+                }
+
+            }
+        }
         return true;
+        default: return QAbstractItemModel::setData(_index, value, role);
     }
-    return QAbstractItemModel::setData(index, value, role);
 }
 
 Qt::ItemFlags PlotModel::flags(const QModelIndex& index) const

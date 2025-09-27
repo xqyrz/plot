@@ -20,7 +20,7 @@ public:
     const QString name;
 
 
-    const PlotData* plotData = nullptr;  // 只有PlotNode类型才有数据
+     PlotData* const plotData = nullptr;  // 只有PlotNode类型才有数据
 
     TreeNode(NodeType t, const QString& n = "") : type(t), name(n) {}
     TreeNode(PlotData* p, const QString& n) :type(PlotNode), name(n), plotData(p) {}
@@ -59,7 +59,7 @@ public:
 
     QModelIndex parent(const QModelIndex&) const override;
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
-
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
      TreeNode*  root() const { return m_rootNode; }
 private:
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -67,8 +67,6 @@ private:
 
     QVariant data(const QModelIndex& index, int role) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
-
-    bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) override;
 
     Qt::ItemFlags flags(const QModelIndex& index) const override;
     int size();

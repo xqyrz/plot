@@ -12,7 +12,7 @@ class PlotCustom:public QCustomPlot{
     Q_OBJECT
 public:
     explicit PlotCustom(QWidget *parent = nullptr);
-    void resetUI( PlotModel* model);
+    void resetUI( PlotModel* model=nullptr);
     int getPlotType()const{ return plotType; }
 public slots:
     void setPlotType(int type);

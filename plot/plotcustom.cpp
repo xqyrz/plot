@@ -22,7 +22,9 @@ PlotCustom::PlotCustom(QWidget *parent)
 }
 
 void PlotCustom::resetUI( PlotModel *model) {
-    _model = model;
+    if (model) {
+        _model = model;
+    }
     _resetUITimer->start(1);
 }
 
@@ -106,7 +108,7 @@ void PlotCustom::_oneXoneY() {
 
     auto _xAxis = axisRect->addAxis(QCPAxis::atBottom);
     auto _yAxis = axisRect->addAxis(QCPAxis::atLeft);
-
+    _yAxis->setLabel("value");
 
     axisRect->setMarginGroup(QCP::msLeft, marginGroup);
     _initAxis(axisRect, _xAxis, _yAxis);
@@ -114,6 +116,7 @@ void PlotCustom::_oneXoneY() {
 
     for (auto const& group: *root) {
         for (auto const& plot:*group) {
+            if (!plot->plotData->isVisible()){continue;}
             // 创建曲线
             auto graph = this->addGraph(_xAxis, _yAxis);
 
@@ -124,7 +127,7 @@ void PlotCustom::_oneXoneY() {
             //  graph->rescaleAxes();
         }
     }
-    QTimer::singleShot(100, this, [=]() {
+    QTimer::singleShot(1, this, [=]() {
         for (auto i = 0; i < this->graphCount(); i++) {
             this->graph(i)->rescaleAxes();
         }
@@ -145,7 +148,9 @@ void PlotCustom::_oneXmoreY() {
     for (auto const& group: *root) {
 
         for (auto const& plot:*group) {
+           if (!plot->plotData->isVisible()){continue;}
             auto _yAxis = axisRect->addAxis(QCPAxis::atLeft);
+            _yAxis->setLabel((plot->plotData->getName()));
             axisRect->setMarginGroup(QCP::msLeft, marginGroup);
             _initAxis(axisRect, _xAxis, _yAxis);
             // 创建曲线
@@ -177,10 +182,12 @@ void PlotCustom::_moreXmoreY() {
     for (auto const& group: *root) {
 
         for (auto const& plot:*group) {
+            if (!plot->plotData->isVisible()){continue;}
             auto axisRect = new QCPAxisRect(this,false);
             this->plotLayout()->addElement(i,0, axisRect);
             auto _xAxis = axisRect->addAxis(QCPAxis::atBottom);
             auto _yAxis = axisRect->addAxis(QCPAxis::atLeft);
+            _yAxis->setLabel((plot->plotData->getName()));
             axisRect->setMarginGroup(QCP::msLeft, marginGroup);
             _initAxis(axisRect, _xAxis, _yAxis);
             // 创建曲线
@@ -192,6 +199,12 @@ void PlotCustom::_moreXmoreY() {
             graph->setLineStyle(QCPGraph::lsLine); // 折线
 
             i++;
+        }
+    }
+    for (auto i = 0; i < this->graphCount(); i++) {
+        for (auto j = 0; j < this->graphCount(); j++) {
+            if (i==j){continue;}
+            connect(this->graph(i)->keyAxis(),QOverload<const QCPRange &>::of( &QCPAxis::rangeChanged), this->graph(j)->keyAxis(), QOverload<const QCPRange &>::of(&QCPAxis::setRange));
         }
     }
     QTimer::singleShot(100, this, [=]() {

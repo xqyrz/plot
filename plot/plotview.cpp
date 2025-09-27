@@ -69,6 +69,9 @@ void PlotView::initConnect()
 {
 	connect(_modleComboBox,QOverload<int>::of(&QComboBox::currentIndexChanged),this, &PlotView::setPlotType);
 	connect(this, &PlotView::plotTypeChanged, _graphView, &PlotCustom::setPlotType);
+	connect(_model, &QAbstractItemModel::dataChanged, this,[=]() {
+		_graphView->resetUI();
+	});
 }
 
 void PlotView::add_plotData(const QSharedPointer<QCPGraphDataContainer> &data, QString plot_name) {

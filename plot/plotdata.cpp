@@ -20,9 +20,9 @@ QString PlotData::getShowData() const {
     }
 }
 
-void PlotData::setVisible(bool visible) {
-    if (visible != isVisible()) {
-        visible = true;
+void PlotData::setVisible(bool flag) {
+    if (flag != visible) {
+        visible = flag;
         emit visibaleChanged(visible);
     }
 }
