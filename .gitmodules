@@ -1,0 +1,4 @@
+[submodule "plug/io/asio/asio"]
+	path = plug/io/asio/asio
+	url = https://github.com/chriskohlhoff/asio.git
+	branch = asio-1-36-0
