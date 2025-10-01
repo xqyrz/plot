@@ -60,7 +60,8 @@ int main(int argc, char *argv[])
 
 
     QDir path = QDir( QCoreApplication::applicationDirPath());
-   path.cd("../lib");
+    path.cd("../lib");
+    IOInterface* app;
     foreach(QFileInfo info, path.entryInfoList(QDir::Files | QDir::NoDotAndDotDot))
     {
         qDebug() << info;
@@ -78,11 +79,12 @@ int main(int argc, char *argv[])
             qDebug() << json.value("version").toVariant();
             //qDebug() << json.value("dependencies").toArray().toVariantList();
             //访问感兴趣的接口
-           auto app = qobject_cast<IOInterface*>(plugin);
+           app = qobject_cast<IOInterface*>(plugin);
+            app->setConfig(IO::Config{"0.0.0.0","1234"});
             app->open();
             qDebug()<<app->getName();
         }
     }
-
+   // qDebug()<<app->getName();
     return QCoreApplication::exec();
 }
