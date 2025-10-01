@@ -61,6 +61,7 @@ public:
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
      TreeNode*  root() const { return m_rootNode; }
+    const TreeNode* getPlot(  QSharedPointer<QCPGraphDataContainer>);
 private:
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;

@@ -5,7 +5,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     set(PLOT_LIB plot)
 endif()
-
+add_definitions(-DQCUSTOMPLOT_USE_OPENGL)
 
 file(GLOB_RECURSE SRC_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
@@ -25,4 +25,10 @@ target_link_libraries(${PLOT_LIB}
         Qt${QT_VERSION_MAJOR}::Gui
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::PrintSupport
+        Qt${QT_VERSION_MAJOR}::OpenGL
+        OpenGL::GL      # ✅ CMake 3.16 支持
+        OpenGL::GLU     # 如果你项目里有 gluLookAt 之类的函数
 )
+if(WIN32)
+    target_link_libraries(${PLOT_LIB} opengl32 glu32)
+endif()

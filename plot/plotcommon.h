@@ -13,32 +13,41 @@
 // #define warningPlot qCWarning(plot)
 // #define criticalPlot qCCritical(plot)
 
-//TODO:从CANOE中获得颜色
-namespace PLOT {
-    static const  char* const PLOT_COMPANY = "XQYR";
-    static const  char* const PLOT_PRODUCT = "plot";
-    static const  char* const color[16] = {
+
+namespace PLOT
+{
+    static const char* const PLOT_COMPANY = "XQYR";
+    static const char* const PLOT_PRODUCT = "plot";
+    static const char* const color[16] = {
+        "#800808",
         "#008000",
-        "#33cccc",
-        "#ff6600",
-        "#000080",
-        "#99ccff",
-        "#FF0000",
-        "#108b96",
         "#800000",
-        "#800008",
-        "#800080",
-        "#808800",
+        "#008080",
         "#808000",
+        "#800080",
+        "#808080",
+        "#000088",
+        "#088808",
         "#880000",
-        "#880080",
-        "#880800",
-        "#888000",
+        "#008888",
+        "#888800",
+        "#880088",
+        "#888888",
+        "#088088",
+        "#000080",
     };
-    typedef enum  {
-       TYPE_oneXoneY,
+
+    typedef enum
+    {
+        TYPE_oneXoneY,
         TYPE_oneXmoreY,
         TYPE_moreXmoreY
-    }PlotType;
+    } PlotType;
+
+    typedef enum
+    {
+        ITEM_GRAPH,
+        ITEM_AXIS,
+    } ItemType;
 }
 #endif //PLOTCOMMON_H

@@ -217,9 +217,21 @@ Qt::ItemFlags PlotModel::flags(const QModelIndex& index) const
 int PlotModel::size() {
     int cnt =0;
     for (auto const& group : *m_rootNode) {
-       for(auto const& child : *group) {
-           cnt++;
-       }
+        cnt += group->childCount();
     }
     return cnt;
+}
+
+const TreeNode* PlotModel::getPlot(  QSharedPointer<QCPGraphDataContainer> ptr)
+{
+    TreeNode* plot=nullptr;
+    for (auto const& group : *m_rootNode) {
+        for (auto const& p : *group) {
+           if (p->plotData->getData().data() == ptr.data())
+           {
+               return p;
+           }
+        }
+    }
+    return plot;
 }

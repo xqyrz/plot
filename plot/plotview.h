@@ -29,6 +29,7 @@ private:
     void initConnect();
 public slots:
     void add_plotData(const QSharedPointer<QCPGraphDataContainer>& data, QString plot_name = "plot");
+    void setCurrentPlot(int type,const QCPLayerable * item);
 private slots:
     void setPlotType(int type);
 signals:

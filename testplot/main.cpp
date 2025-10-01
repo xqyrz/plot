@@ -63,16 +63,19 @@ int main(int argc, char *argv[])
     w.resize(800, 600);
 
 
-    for (int i = 1; i < 5; i++) {
+    for (int i = 1; i < 3; i++) {
         QSharedPointer<QCPGraphDataContainer> data(new QCPGraphDataContainer());
         w.add_plotData(data,"test_"+QString::number(i));
-        for (int j = 0; j < 100; j++)
+        for (int j = 0; j < 50000; j++)
         {
-            data->add(QCPGraphData(j, 20 * i * cos((i * 5 + j) / 30.0 * 3.14)));
+            data->add(QCPGraphData(j, 50 * i * cos((i * 1000 + j) / 5000.0 * 3.14)));
         }
     }
     w.expandAll();
     w.show();
-
+    QTimer::singleShot(300,[&]()
+    {
+      //  w.setmodel(PLOT)
+    });
     return QApplication::exec();
 }

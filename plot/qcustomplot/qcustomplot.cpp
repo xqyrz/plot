@@ -15715,7 +15715,7 @@ void QCustomPlot::wheelEvent(QWheelEvent *event)
 #else
   const QPointF pos = event->position();
 #endif
-  auto s = layerableListAt(pos, false);
+  
   // forward event to layerable under cursor:
   foreach (QCPLayerable *candidate, layerableListAt(pos, false))
   {
@@ -15748,16 +15748,16 @@ void QCustomPlot::draw(QCPPainter *painter)
   foreach (QCPLayer *layer, mLayers)
     layer->draw(painter);
   
-  // Debug code to draw all layout element rects
-  //foreach (QCPLayoutElement *el, findChildren<QCPLayoutElement*>())
-  //{
-  //  painter->setBrush(Qt::NoBrush);
-  //  painter->setPen(QPen(QColor(0, 0, 0, 100), 0, Qt::DashLine));
-  //  painter->drawRect(el->rect());
-  //  painter->setPen(QPen(QColor(255, 0, 0, 100), 0, Qt::DashLine));
-  //  painter->drawRect(el->outerRect());
-  //}
-  
+  /* Debug code to draw all layout element rects
+  foreach (QCPLayoutElement *el, findChildren<QCPLayoutElement*>())
+  {
+    painter->setBrush(Qt::NoBrush);
+    painter->setPen(QPen(QColor(0, 0, 0, 100), 0, Qt::DashLine));
+    painter->drawRect(el->rect());
+    painter->setPen(QPen(QColor(255, 0, 0, 100), 0, Qt::DashLine));
+    painter->drawRect(el->outerRect());
+  }
+  */
 }
 
 /*! \internal
@@ -30735,8 +30735,8 @@ void QCPItemTracer::updatePosition()
       {
         QCPGraphDataContainer::const_iterator it = mGraph->data()->constBegin();
         position->setCoords(it->key, it->value);
-      } else
-        qDebug() << Q_FUNC_INFO << "graph has no data";
+      }
+      // else qDebug() << Q_FUNC_INFO << "graph has no data";
     } else
       qDebug() << Q_FUNC_INFO << "graph not contained in QCustomPlot instance (anymore)";
   }

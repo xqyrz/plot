@@ -3,7 +3,7 @@
 //
 
  #include "plotview.h"
-#include <Qsettings>
+#include <QSettings>
 #include <QSplitter>
 #include <QVBoxLayout>
 #include <QComboBox>
@@ -43,7 +43,7 @@ void PlotView::initUI()
 
 	splitter->addWidget(_treeView);
 	splitter->addWidget(_graphView);
-	splitter->setSizes(QList<int>() << 280 << 800);
+	splitter->setSizes(QList<int>() << 200 << 1800);
 
 	layout->addWidget(_toolBar);
 	layout->addWidget(splitter);
@@ -59,7 +59,6 @@ void PlotView::initUI()
 			background - color:  #fbfbfb;\
 		}");
 
-
 	_treeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	_modleComboBox->setCurrentIndex(plotType);
 
@@ -69,6 +68,7 @@ void PlotView::initConnect()
 {
 	connect(_modleComboBox,QOverload<int>::of(&QComboBox::currentIndexChanged),this, &PlotView::setPlotType);
 	connect(this, &PlotView::plotTypeChanged, _graphView, &PlotCustom::setPlotType);
+	//connect(_graphView,&PlotCustom::pressedPlot,_treeView,&PlotTree::set)
 	connect(_model, &QAbstractItemModel::dataChanged, this,[=]() {
 		_graphView->resetUI();
 	});
@@ -79,6 +79,17 @@ void PlotView::add_plotData(const QSharedPointer<QCPGraphDataContainer> &data, Q
 	_model->add_plotData(data,plot_name);
 	_treeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	_graphView->resetUI(_model);
+}
+
+void PlotView::setCurrentPlot(int type, const QCPLayerable *item) {
+	switch (type) {
+		case PLOT::ITEM_AXIS:
+			break;
+		case PLOT::ITEM_GRAPH:
+			break;
+		default:qWarning("PlotView::setCurrentPlot: unknown type");
+			break;
+	}
 }
 
 void PlotView::setPlotType(int type) {
