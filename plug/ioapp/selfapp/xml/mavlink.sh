@@ -1,0 +1,2 @@
+#!/bin/bash
+python3 /home/hw/mavlink/pymavlink/tools/mavgen.py     --lang=C++11     --wire-protocol=2.0     --output=/mnt/f/plot/plug/ioapp/selfapp/mavlink/     /mnt/f/plot/plug/ioapp/selfapp/xml/all.xml

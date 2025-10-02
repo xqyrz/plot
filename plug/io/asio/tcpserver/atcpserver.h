@@ -10,7 +10,7 @@
 class Session;
 
 using asio::ip::tcp;
-class ATCPServer:public QObject,public IOInterface,public std::enable_shared_from_this<ATCPServer>{
+class ATCPServer:public QObject,public IOInterface{
     Q_OBJECT
     //    Q_PLUGIN_METADATA(IID IOInterface_Id)
     Q_PLUGIN_METADATA(IID IOInterface_Id FILE "atcpserver.json")
@@ -21,7 +21,6 @@ public:
     void run() override;
     bool open() override;
     bool close() override;
-    QList<IO::Frame> readALL() override;
     int write(const QList<IO::Frame>&) override;
     auto & getSessions(){return sessions;}
     auto & getAccept(){return acceptor_;}

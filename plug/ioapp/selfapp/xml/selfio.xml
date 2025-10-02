@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<mavlink>
+    <version>3</version>
+    <messages>
+        <message id="56000" name="sensor">
+            <description>Test all field types</description>
+            <field type="double" name="sensor1">sensor1 value</field>
+        </message>
+    </messages>
+</mavlink>

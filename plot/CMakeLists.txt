@@ -14,7 +14,6 @@ file(GLOB_RECURSE SRC_FILES
 )
 
 add_library(${PLOT_LIB} ${SRC_FILES}
-        ../plug/io/iointerface.cpp
         ../plug/io/iointerface.h
         ../plug/io/iocommon.h
         ../plug/testplug/main.cpp)

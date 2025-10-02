@@ -4,11 +4,17 @@
 project(Plug)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(ATCPSERVER_LIB atcpserverd)
+    set(LIB_SUFF d)
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(ATCPSERVER_LIB atcpserver)
-endif()
 
+endif()
 set(IO_PATH ${CMAKE_CURRENT_SOURCE_DIR}/io)
+set(ATCPSERVER_LIB atcpserver${LIB_SUFF})
+
+set(IOAPP_PATH ${CMAKE_CURRENT_SOURCE_DIR}/ioapp)
+set(SELFIOAPP_LIB selfioapp${LIB_SUFF})
+
+
 add_subdirectory(io/asio/tcpserver)
+add_subdirectory(ioapp/selfapp)
 add_subdirectory(testplug)

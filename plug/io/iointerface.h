@@ -15,7 +15,7 @@ public:
 
     virtual bool open() = 0;
     virtual bool close() = 0;
-    virtual QList<IO::Frame> readALL() = 0;
+
     virtual int write(const QList<IO::Frame>&) = 0;
     int getReadCount() const { return rCount; }
     int getWriteCount() const { return wCount; }
@@ -28,17 +28,32 @@ public:
     IO::Config getConfig()const{ return config;}
     void setConfig(const IO::Config& config){ this->config=config;}
     QString getName()const{ return name;}
+
+    QList<IO::Frame> readALL(){ return std::exchange(rBuffer, {});};
+    void setReadReadyCallback(std::function<void(int)> ptr){_readReadyCallback=std::move(ptr);};
 protected:
     virtual void run() =0;
+    void _readReady(const QList<IO::Frame>& frames)
+    {
+        rCount += frames.size();
+        rBuffer.append(frames);
+        if (_readReadyCallback)
+        {
+            _readReadyCallback(rBuffer.size());
+        }
+    };
 protected:
+    IO::Config config;
+private:
     QList<IO::Frame> rBuffer;
     QList<IO::Frame> wBuffer;
     int rCount=0;
     int wCount=0;
     int errorCount=0;
 
-    IO::Config config;
+
     const QString name;
+    std::function<void(int)> _readReadyCallback=nullptr;
 };
 
 QT_BEGIN_NAMESPACE

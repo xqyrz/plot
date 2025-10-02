@@ -8,29 +8,43 @@ class Session : public std::enable_shared_from_this<Session> {
 public:
     using Ptr = std::shared_ptr<Session>;
     using CloseCallback = std::function<void(Ptr)>;
-
+    using ReadCallback = std::function<void(const Ptr&, const char*,size_t)>;
     explicit Session(tcp::socket socket)
         : socket_(std::move(socket)) {}
 
     void start() { do_read(); }
 
     void set_close_callback(CloseCallback cb) { on_close_ = std::move(cb); }
-
+    void set_read_callback(ReadCallback cb) { on_read_ = std::move(cb); }
+    auto getRemoteEndpoint() { return this->socket_.remote_endpoint(); }
 private:
     tcp::socket socket_;
     enum { max_length = 1024 };
     char data_[max_length]{};
     CloseCallback on_close_;
-
+    ReadCallback on_read_;
     void do_read() {
-        auto self = shared_from_this();
+       auto self = shared_from_this();
         socket_.async_read_some(
             asio::buffer(data_, max_length),
             [self](std::error_code ec, std::size_t length) {
                 if (!ec) {
-                    qDebug() << "Received:" << QByteArray(self->data_, length).toHex(' ');
-                    self->do_write(length);
-                } else
+                    if (self->data_[length-1] == 0)
+                    {
+                        qDebug() << "Received:"<<self->data_;
+                    }
+                    else
+                    {
+                        qDebug() << "Received:" << QByteArray(self->data_, length).toHex(' ');
+                    }
+                  //  self->do_write(length);
+                    if (self->on_read_)
+                    {
+                        self->on_read_(self,self->data_,length);
+                    }
+                    self->do_read();
+                }
+                else
                 {
                     if (ec == asio::error::eof){
                         auto remote_ep = self->socket_.remote_endpoint();
@@ -75,7 +89,9 @@ ATCPServer::ATCPServer(IO::Config con,QObject* parent)
 
 ATCPServer::~ATCPServer()
 {
+    qDebug()<<"~ATCPServer";
     io_context.stop();
+    io_thread_.join();
 }
 
 void ATCPServer::run() {
@@ -142,10 +158,7 @@ bool ATCPServer::close() {
 
     return true;
 }
-QList<IO::Frame> ATCPServer::readALL() {
 
-    return std::exchange(rBuffer, {});
-}
 int ATCPServer::write(const QList<IO::Frame>&) {
     return 0;
 }
@@ -165,7 +178,20 @@ void ATCPServer::do_accept() {
                                 vec.erase(std::remove(vec.begin(), vec.end(), s), vec.end());
                                // qInfo() << "Session removed, remaining:" << vec.size();
                             });
-
+                    session->set_read_callback([self](Session::Ptr s, const char* data, size_t length)
+                    {
+                        QList<IO::Frame> frames;
+                        auto  remote_ep = s->getRemoteEndpoint();
+                        frames.append(IO::Frame{
+                            {
+                                QString::fromStdString(remote_ep.address().to_string()),
+                                QString::number(remote_ep.port())
+                            },
+                            QDateTime::currentDateTime(),
+                            QByteArray(data,length)
+                        });
+                        self->_readReady(frames);
+                    });
                     self->getSessions().push_back(std::move(session));
                      self->getSessions().back()->start();
                 } catch (const std::exception& e) {

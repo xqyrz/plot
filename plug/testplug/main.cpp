@@ -2,6 +2,7 @@
 // Created by 25137 on 25-10-1.
 //
 #include "../io/iointerface.h"
+#include "../ioapp/ioappinterface.h"
 #include <QDateTime>
 #include <QDir>
 #include <QDebug>
@@ -61,7 +62,8 @@ int main(int argc, char *argv[])
 
     QDir path = QDir( QCoreApplication::applicationDirPath());
     path.cd("../lib");
-    IOInterface* app;
+    IOInterface* tcpServer;
+    IOAPPInterface* selfio;
     foreach(QFileInfo info, path.entryInfoList(QDir::Files | QDir::NoDotAndDotDot))
     {
         qDebug() << info;
@@ -71,20 +73,41 @@ int main(int argc, char *argv[])
         {
             // 获取元数据（名称、版本、依赖）
 
-            QJsonObject json = pluginLoader.metaData().value("MetaData").toObject();
-            qDebug() << "********** MetaData **********";
-            qDebug() << json.value("author").toVariant();
-            qDebug() << json.value("date").toVariant();
-            qDebug() << json.value("name").toVariant();
-            qDebug() << json.value("version").toVariant();
+            QJsonObject meta = pluginLoader.metaData();
+            //qDebug()<<meta;
+            auto json = meta.value("MetaData").toObject();
+            auto iid = meta.value("IID").toString();
+            auto className = meta.value("className").toString();
+            qDebug() << QString("********** %1:%2 **********").arg(iid,className);
+
+;            qDebug() << json.value("author").toString();
+            qDebug() << json.value("date").toString();
+            qDebug() << json.value("version").toString();
             //qDebug() << json.value("dependencies").toArray().toVariantList();
             //访问感兴趣的接口
-           app = qobject_cast<IOInterface*>(plugin);
-            app->setConfig(IO::Config{"0.0.0.0","1234"});
-            app->open();
-            qDebug()<<app->getName();
+            if (iid == IOInterface_Id)
+            {
+                if (className == "ATCPServer")
+                {
+                    tcpServer = qobject_cast<IOInterface*>(plugin);
+                    tcpServer->setConfig(IO::Config{"0.0.0.0","1234"});
+                    tcpServer->open();
+                }
+            }
+            else if (iid == IOAPPInterface_Id)
+            {
+                if (className == "ATCPServer")
+                {
+                    selfio = qobject_cast<IOAPPInterface*>(plugin);
+                }
+            }
         }
     }
+    tcpServer->setReadReadyCallback([=](int)
+    {
+        auto frams = tcpServer->readALL();
+        qDebug()<<frams.size();
+    });
    // qDebug()<<app->getName();
     return QCoreApplication::exec();
 }

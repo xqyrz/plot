@@ -10,13 +10,14 @@
 //using TimePoint = std::chrono::system_clock::time_point;
 namespace IO{
     typedef struct {
+        QString dev;//设备 ip
+        QString ch;//通道 port
+    }Config;
+    typedef struct {
+        Config  info;//发送设备的信息
         QDateTime time;
         QByteArray data;
     }Frame;
-    typedef struct {
-      QString dev;//设备 ip
-      QString ch;//通道 port
 
-    }Config;
 }
 #endif //IOCOMMON_H
