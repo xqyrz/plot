@@ -8,6 +8,9 @@
 #include <QDebug>
 #include <QCoreApplication>
 #include <QPluginLoader>
+#include <QTimer>
+
+
 int main(int argc, char *argv[])
 {
     // qInstallMessageHandler(customMessageHandler);
@@ -63,6 +66,7 @@ int main(int argc, char *argv[])
     QDir path = QDir( QCoreApplication::applicationDirPath());
     path.cd("../lib");
     IOInterface* tcpServer;
+    IOInterface* tcpClient;
     IOAPPInterface* selfio;
     foreach(QFileInfo info, path.entryInfoList(QDir::Files | QDir::NoDotAndDotDot))
     {
@@ -93,10 +97,14 @@ int main(int argc, char *argv[])
                     tcpServer->setConfig(IO::Config{"0.0.0.0","1234"});
                     tcpServer->open();
                 }
+                else if (className == "ATCPClient") {
+                    tcpClient= qobject_cast<IOInterface*>(plugin);
+                    tcpClient->setConfig(IO::Config{"0.0.0.0","1234"});
+                }
             }
             else if (iid == IOAPPInterface_Id)
             {
-                if (className == "ATCPServer")
+                if (className == "SelfIOAPP")
                 {
                     selfio = qobject_cast<IOAPPInterface*>(plugin);
                 }
@@ -106,8 +114,21 @@ int main(int argc, char *argv[])
     tcpServer->setReadReadyCallback([=](int)
     {
         auto frams = tcpServer->readALL();
-        qDebug()<<frams.size();
+        foreach(auto const & var,frams)
+        {
+            selfio->decode(var);
+        }
+
+       // qDebug()<<frams.size();
     });
+    tcpClient->open();
+    QTimer timer;
+    QObject::connect(&timer,&QTimer::timeout,[=]()
+    {
+        auto frame = selfio->encode();
+        tcpClient->write(frame);
+    });
+    timer.start(1000);
    // qDebug()<<app->getName();
     return QCoreApplication::exec();
 }

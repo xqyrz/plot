@@ -11,11 +11,12 @@ class IOInterface
 {
 public:
     explicit IOInterface(const QString &name,IO::Config con):config(std::move(con)),name(name){};
-    virtual ~IOInterface()=default;
+    virtual ~IOInterface()=0;
 
     virtual bool open() = 0;
     virtual bool close() = 0;
 
+    virtual int write(const IO::Frame&) = 0;
     virtual int write(const QList<IO::Frame>&) = 0;
     int getReadCount() const { return rCount; }
     int getWriteCount() const { return wCount; }

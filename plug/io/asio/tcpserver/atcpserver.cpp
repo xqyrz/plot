@@ -35,7 +35,7 @@ private:
                     }
                     else
                     {
-                        qDebug() << "Received:" << QByteArray(self->data_, length).toHex(' ');
+                        qDebug() << "r:" << QByteArray(self->data_, length).toHex(' ');
                     }
                   //  self->do_write(length);
                     if (self->on_read_)
@@ -158,7 +158,10 @@ bool ATCPServer::close() {
 
     return true;
 }
-
+int ATCPServer::write(const IO::Frame&)
+{
+    return 0;
+}
 int ATCPServer::write(const QList<IO::Frame>&) {
     return 0;
 }

@@ -5,13 +5,14 @@
 #ifndef PLOT_IOAPPINTERFACE_H
 #define PLOT_IOAPPINTERFACE_H
 #include "ioappcommon.h"
+#include "iointerface.h"
 #include <QObject>
 class IOAPPInterface
 {
 public:
 
-    virtual int decode(QByteArray& data) = 0;
-    virtual int encode(QByteArray& data) = 0;
+    virtual int decode(const IO::Frame& data) = 0;
+    virtual IO::Frame encode()  = 0;
 protected:
     QList<QByteArray> m_data;
 };

@@ -7,17 +7,20 @@
 
 #include "ioappinterface.h"
 #include "mavlink/selfio/mavlink.h"
+
 class SelfIOAPP:public QObject,public IOAPPInterface{
     Q_OBJECT
     Q_PLUGIN_METADATA(IID IOAPPInterface_Id FILE "selfioapp.json")
     Q_INTERFACES(IOAPPInterface)
 public:
     explicit SelfIOAPP( QObject* parent = nullptr);
-    int decode(QByteArray& data) override ;
-    int encode(QByteArray& data) override;
+    int decode(const IO::Frame& data) override ;
+    IO::Frame encode() override;
 private:
     mavlink_message_t rcv_msg;
     mavlink_status_t status;
+    const uint8_t sys_id = 1;
+    const uint8_t comp_id = 1;
 };
 
 

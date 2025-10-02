@@ -10,27 +10,25 @@
 class Session;
 
 using asio::ip::tcp;
-class ATCPServer:public QObject,public IOInterface{
+class ATCPClient:public QObject,public IOInterface{
     Q_OBJECT
     //    Q_PLUGIN_METADATA(IID IOInterface_Id)
-    Q_PLUGIN_METADATA(IID IOInterface_Id FILE "atcpserver.json")
+    Q_PLUGIN_METADATA(IID IOInterface_Id FILE "atcpclient.json")
     Q_INTERFACES(IOInterface)
 public:
-    explicit ATCPServer(IO::Config config=IO::Config(), QObject* parent = nullptr);
-    ~ATCPServer();
+    explicit ATCPClient(IO::Config config=IO::Config(), QObject* parent = nullptr);
+    ~ATCPClient() override;
     void run() override;
     bool open() override;
     bool close() override;
-    int write(const IO::Frame&)override;
+    int write(const IO::Frame&) override;
     int write(const QList<IO::Frame>&) override;
-    auto & getSessions(){return sessions;}
-    auto & getAccept(){return acceptor_;}
+
 private:
-    void do_accept();
+
 private:
     asio::io_context io_context;
-    std::unique_ptr<tcp::acceptor> acceptor_;
-    std::list< std::shared_ptr<Session>> sessions;
+    std::unique_ptr<tcp::socket> _socket;
     std::thread io_thread_;
 };
 
