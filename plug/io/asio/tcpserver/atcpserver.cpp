@@ -31,11 +31,12 @@ private:
                 if (!ec) {
                     if (self->data_[length-1] == 0)
                     {
-                        qDebug() << "Received:"<<self->data_;
+                       // qDebug() << "r:" << QByteArray(self->data_, length).toHex(' ');
+                     //   qDebug() << "Received:"<<self->data_;
                     }
                     else
                     {
-                        qDebug() << "r:" << QByteArray(self->data_, length).toHex(' ');
+//                        qDebug() << "r:" << QByteArray(self->data_, length).toHex(' ');
                     }
                   //  self->do_write(length);
                     if (self->on_read_)

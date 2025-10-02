@@ -6,10 +6,10 @@
 #include <QDateTime>
 #include <QDir>
 #include <QDebug>
-#include <QCoreApplication>
+#include <QApplication>
 #include <QPluginLoader>
 #include <QTimer>
-
+#include "plotview.h"
 
 int main(int argc, char *argv[])
 {
@@ -58,13 +58,13 @@ int main(int argc, char *argv[])
     );
     //qputenv("QT_LOGGING_RULES", "plot.debug=false");
     qInfo()<<QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")<<"plug 测试程序运行";
-    QCoreApplication a(argc, argv);
+    QApplication a(argc, argv);
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() +"/lib");
 
 
 
     QDir path = QDir( QCoreApplication::applicationDirPath());
-    path.cd("../lib");
+    path.cd("../bin");
     IOInterface* tcpServer;
     IOInterface* tcpClient;
     IOAPPInterface* selfio;
@@ -111,16 +111,7 @@ int main(int argc, char *argv[])
             }
         }
     }
-    tcpServer->setReadReadyCallback([=](int)
-    {
-        auto frams = tcpServer->readALL();
-        foreach(auto const & var,frams)
-        {
-            selfio->decode(var);
-        }
 
-       // qDebug()<<frams.size();
-    });
     tcpClient->open();
     QTimer timer;
     QObject::connect(&timer,&QTimer::timeout,[=]()
@@ -128,7 +119,48 @@ int main(int argc, char *argv[])
         auto frame = selfio->encode();
         tcpClient->write(frame);
     });
-    timer.start(1000);
+   // timer.start(1000);
    // qDebug()<<app->getName();
-    return QCoreApplication::exec();
+
+    qInfo()<<QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")<<"plot 测试程序运行";
+
+    // PlotTree w(nullptr);
+    // PlotModel*model=new PlotModel();
+
+    // w.setModel(model);
+
+
+    PlotView w(nullptr);
+    w.resize(800, 600);
+    auto time = QDateTime::currentDateTime();
+    QSharedPointer<QCPGraphDataContainer> d[3];
+    for (int i = 0; i < 3; i++) {
+        QSharedPointer<QCPGraphDataContainer> data(new QCPGraphDataContainer());
+        d[i] = data;
+        w.add_plotData(data,"test_"+QString::number(i));
+        // for (int j = 0; j < 50000; j++)
+        // {
+          //  data->add(QCPGraphData(0, 0));
+        // }
+    }
+    w.expandAll();
+    w.show();
+    tcpServer->setReadReadyCallback([=](int)
+{
+    auto frams = tcpServer->readALL();
+    foreach(auto const & var,frams)
+    {
+      auto sigs =  selfio->decode(var);
+        for (int i=0;i<sigs.size();i++) {
+            d[sigs.at(i).id]->add(QCPGraphData(time.msecsTo( sigs.at(i).time)/1000.0,sigs.at(i).value));
+        }
+    }
+
+   // qDebug()<<frams.size();
+});
+    QTimer::singleShot(300,[&]()
+    {
+      //  w.setmodel(PLOT)
+    });
+    return QApplication::exec();
 }

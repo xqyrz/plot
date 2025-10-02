@@ -6,5 +6,53 @@
             <description>Test all field types</description>
             <field type="double" name="sensor1">sensor1 value</field>
         </message>
+        <message id="56101" name="gyroscope">
+            <description>陀螺仪</description>
+            <field type="double" name="GYRO_X">GYRO_X</field>
+            <field type="double" name="GYRO_Y">GYRO_Y</field>
+            <field type="double" name="GYRO_Z">GYRO_Z</field>
+        </message>
+        <message id="56102" name="accelerometer">
+            <description>加速度</description>
+            <field type="double" name="ACC_X">ACC_X</field>
+            <field type="double" name="ACC_Y">ACC_Y</field>
+            <field type="double" name="ACC_Z">ACC_Z</field>
+        </message>
+        <message id="56103" name="compass">
+            <description>罗盘方向</description>
+            <field type="double" name="Compass">Compass</field>
+        </message>
+        <message id="56104" name="magnetometer">
+            <description>磁力计</description>
+            <field type="double" name="MAG_X">MAG_X</field>
+            <field type="double" name="MAG_Y">MAG_Y</field>
+            <field type="double" name="MAG_Z">MAG_Z</field>
+        </message>
+        <message id="56105" name="lightSensor">
+            <description>光线</description>
+            <field type="double" name="light">light</field>
+        </message>
+        <message id="56106" name="ambientLight">
+            <description>环境光</description>
+            <field type="double" name="ambientLight">ambientLight</field>
+        </message>
+        <message id="56107" name="ProximitySensor">
+            <description>距离</description>
+            <field type="double" name="Proximity">ProximitySensor</field>
+        </message>
+        <message id="56108" name="OrientationSensor">
+            <description>方向</description>
+            <field type="double" name="Orientation">OrientationSensor</field>
+        </message>
+        <message id="56109" name="TiltSensor">
+            <description>倾斜传感器</description>
+            <field type="double" name="Tilt_X">TiltSensor_X</field>
+            <field type="double" name="Tilt_Y">TiltSensor_Y</field>
+        </message>
+        <message id="56110" name="GPS">
+            <description>GPS</description>
+            <field type="double" name="lat">lat</field>
+            <field type="double" name="lon">lon</field>
+        </message>
     </messages>
 </mavlink>

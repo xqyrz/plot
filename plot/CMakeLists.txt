@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(PLOT_LIB plotd)
-elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(PLOT_LIB plot)
-endif()
+
 add_definitions(-DQCUSTOMPLOT_USE_OPENGL)
 
 file(GLOB_RECURSE SRC_FILES

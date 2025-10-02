@@ -10,7 +10,7 @@
     #error Wrong include order: MAVLINK_ALL.H MUST NOT BE DIRECTLY USED. Include mavlink.h from the same directory instead or set ALL AND EVERY defines from MAVLINK.H manually accordingly, including the #define MAVLINK_H call.
 #endif
 
-#define MAVLINK_ALL_XML_HASH -759200316631544531
+#define MAVLINK_ALL_XML_HASH -6218410724269548345
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,7 +23,7 @@ extern "C" {
 #endif
 
 #ifndef MAVLINK_MESSAGE_CRCS
-#define MAVLINK_MESSAGE_CRCS {{56000, 25, 8, 8, 0, 0, 0}}
+#define MAVLINK_MESSAGE_CRCS {{56000, 25, 8, 8, 0, 0, 0}, {56101, 193, 24, 24, 0, 0, 0}, {56102, 185, 24, 24, 0, 0, 0}, {56103, 38, 8, 8, 0, 0, 0}, {56104, 144, 24, 24, 0, 0, 0}, {56105, 53, 8, 8, 0, 0, 0}, {56106, 232, 8, 8, 0, 0, 0}, {56107, 250, 8, 8, 0, 0, 0}, {56108, 165, 8, 8, 0, 0, 0}, {56109, 98, 16, 16, 0, 0, 0}, {56110, 186, 16, 16, 0, 0, 0}}
 #endif
 
 #include "../protocol.h"
@@ -63,8 +63,8 @@ typedef enum MAV_CMD
 
 
 #if MAVLINK_ALL_XML_HASH == MAVLINK_PRIMARY_XML_HASH
-# define MAVLINK_MESSAGE_INFO {MAVLINK_MESSAGE_INFO_sensor}
-# define MAVLINK_MESSAGE_NAMES {{ "sensor", 56000 }}
+# define MAVLINK_MESSAGE_INFO {MAVLINK_MESSAGE_INFO_sensor, MAVLINK_MESSAGE_INFO_gyroscope, MAVLINK_MESSAGE_INFO_accelerometer, MAVLINK_MESSAGE_INFO_compass, MAVLINK_MESSAGE_INFO_magnetometer, MAVLINK_MESSAGE_INFO_lightSensor, MAVLINK_MESSAGE_INFO_ambientLight, MAVLINK_MESSAGE_INFO_ProximitySensor, MAVLINK_MESSAGE_INFO_OrientationSensor, MAVLINK_MESSAGE_INFO_TiltSensor, MAVLINK_MESSAGE_INFO_GPS}
+# define MAVLINK_MESSAGE_NAMES {{ "GPS", 56110 }, { "OrientationSensor", 56108 }, { "ProximitySensor", 56107 }, { "TiltSensor", 56109 }, { "accelerometer", 56102 }, { "ambientLight", 56106 }, { "compass", 56103 }, { "gyroscope", 56101 }, { "lightSensor", 56105 }, { "magnetometer", 56104 }, { "sensor", 56000 }}
 # if MAVLINK_COMMAND_24BIT
 #  include "../mavlink_get_info.h"
 # endif

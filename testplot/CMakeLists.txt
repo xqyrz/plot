@@ -1,11 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 set(APP_NAME testplot)
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(PLOT_LIB plotd)
-elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(PLOT_LIB plot)
-endif()
+
 file(GLOB_RECURSE SRC_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/*.h"

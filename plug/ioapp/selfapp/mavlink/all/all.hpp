@@ -21,7 +21,7 @@ namespace all {
 /**
  * Array of msg_entry needed for @p mavlink_parse_char() (through @p mavlink_get_msg_entry())
  */
-constexpr std::array<mavlink_msg_entry_t, 1> MESSAGE_ENTRIES {{ {56000, 25, 8, 8, 0, 0, 0} }};
+constexpr std::array<mavlink_msg_entry_t, 11> MESSAGE_ENTRIES {{ {56000, 25, 8, 8, 0, 0, 0}, {56101, 193, 24, 24, 0, 0, 0}, {56102, 185, 24, 24, 0, 0, 0}, {56103, 38, 8, 8, 0, 0, 0}, {56104, 144, 24, 24, 0, 0, 0}, {56105, 53, 8, 8, 0, 0, 0}, {56106, 232, 8, 8, 0, 0, 0}, {56107, 250, 8, 8, 0, 0, 0}, {56108, 165, 8, 8, 0, 0, 0}, {56109, 98, 16, 16, 0, 0, 0}, {56110, 186, 16, 16, 0, 0, 0} }};
 
 //! MAVLINK VERSION
 constexpr auto MAVLINK_VERSION = 2;

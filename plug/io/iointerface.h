@@ -11,7 +11,6 @@ class IOInterface
 {
 public:
     explicit IOInterface(const QString &name,IO::Config con):config(std::move(con)),name(name){};
-    virtual ~IOInterface()=0;
 
     virtual bool open() = 0;
     virtual bool close() = 0;

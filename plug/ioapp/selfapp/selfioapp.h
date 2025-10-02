@@ -14,7 +14,7 @@ class SelfIOAPP:public QObject,public IOAPPInterface{
     Q_INTERFACES(IOAPPInterface)
 public:
     explicit SelfIOAPP( QObject* parent = nullptr);
-    int decode(const IO::Frame& data) override ;
+    QList<IOAPP::SIGNALS>  decode(const IO::Frame& data) override ;
     IO::Frame encode() override;
 private:
     mavlink_message_t rcv_msg;

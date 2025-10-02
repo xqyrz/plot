@@ -5,8 +5,10 @@
 #include "plotcustom.h"
 #include "plotcommon.h"
 #include <QTimer>
-#include <QOpenGLWidget>
 
+#ifndef Q_OS_ANDROID
+#include <QOpenGLWidget>
+#endif
 PlotCustom::PlotCustom(QWidget* parent)
     : QCustomPlot(parent)
       , _updateTimer(new QTimer(this))
