@@ -18,6 +18,8 @@ PlotView::PlotView(QWidget*parent)
 	,_treeView(new PlotTree(this))
 	,_toolBar(new QToolBar(this))
 	,_modleComboBox(new QComboBox(this))
+	,_xSpinBox(new QSpinBox(this))
+    ,_xCheckBox(new QCheckBox(this))
 	,_model(new PlotModel(this))
 {
 	QSettings settings(PLOT::PLOT_COMPANY,PLOT::PLOT_PRODUCT);
@@ -39,7 +41,16 @@ void PlotView::initUI()
 	_treeView->setModel(_model);
 
 	_modleComboBox->addItems(QStringList()<<"单y轴" << "多y轴" << "多图表");
+
+	_xCheckBox->setText("采样区间");
+	_xCheckBox->setChecked(true);
+
+	_xSpinBox->setRange(1,99999999);
+	_xSpinBox->setValue(100);
+
 	_toolBar->addWidget(_modleComboBox);
+	_toolBar->addWidget(_xCheckBox);
+	_toolBar->addWidget(_xSpinBox);
 
 	splitter->addWidget(_treeView);
 	splitter->addWidget(_graphView);
@@ -61,22 +72,28 @@ void PlotView::initUI()
 
 	_treeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	_modleComboBox->setCurrentIndex(plotType);
-
+	_graphView->setXInterval(_xSpinBox->value());
+	_graphView->setXCheckBox(_xCheckBox->isChecked());
 }
 
 void PlotView::initConnect()
 {
 	connect(_modleComboBox,QOverload<int>::of(&QComboBox::currentIndexChanged),this, &PlotView::setPlotType);
+
+	connect(_xSpinBox,QOverload<int>::of(&QSpinBox::valueChanged),_graphView, &PlotCustom::setXInterval);
+	connect(_xCheckBox,QOverload<int>::of(&QCheckBox::stateChanged),_graphView, &PlotCustom::setXCheckBox);
+
 	connect(this, &PlotView::plotTypeChanged, _graphView, &PlotCustom::setPlotType);
 	//connect(_graphView,&PlotCustom::pressedPlot,_treeView,&PlotTree::set)
-	connect(_model, &QAbstractItemModel::dataChanged, this,[=]() {
+	connect(_model, &QAbstractItemModel::dataChanged, this,[this]() {
 		_graphView->resetUI();
 	});
+
 }
 
-void PlotView::add_plotData(const QSharedPointer<QCPGraphDataContainer> &data, QString plot_name) {
+void PlotView::add_plotData( uint64_t id, QSharedPointer<QCPGraphDataContainer> &data, QString plot_name) {
 
-	_model->add_plotData(data,plot_name);
+	_model->add_plotData(id,data,plot_name);
 	_treeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	_graphView->resetUI(_model);
 }
@@ -90,6 +107,10 @@ void PlotView::setCurrentPlot(int type, const QCPLayerable *item) {
 		default:qWarning("PlotView::setCurrentPlot: unknown type");
 			break;
 	}
+}
+
+void PlotView::enupRang() {
+	_graphView->enupRang();
 }
 
 void PlotView::setPlotType(int type) {

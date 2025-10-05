@@ -12,6 +12,7 @@
 class QHBoxLayout;
 class QCheckBox;
 class QComboBox;
+class QSpinBox;
 class QToolBar;
 class PlotTree;
 class PlotCustom;
@@ -28,10 +29,12 @@ private:
     void initUI();
     void initConnect();
 public slots:
-    void add_plotData(const QSharedPointer<QCPGraphDataContainer>& data, QString plot_name = "plot");
+    void add_plotData( uint64_t id, QSharedPointer<QCPGraphDataContainer>& data, QString plot_name = "plot");
     void setCurrentPlot(int type,const QCPLayerable * item);
+    void enupRang();
 private slots:
     void setPlotType(int type);
+
 signals:
     void plotTypeChanged(int type);
 private:
@@ -39,6 +42,8 @@ private:
     QPointer<PlotTree> _treeView;
     QPointer<QToolBar> _toolBar;
     QPointer<QComboBox> _modleComboBox;
+    QPointer<QCheckBox> _xCheckBox;
+    QPointer<QSpinBox> _xSpinBox;
 
     QPointer<PlotModel> _model;
     int plotType;

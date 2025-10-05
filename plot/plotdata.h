@@ -10,7 +10,7 @@
 class PlotData: public QObject {
     Q_OBJECT
 public:
-    explicit PlotData(QSharedPointer<QCPGraphDataContainer> data,QColor color, const QString &name, const QString &units, QObject *parent = nullptr);
+    explicit PlotData(uint64_t,QSharedPointer<QCPGraphDataContainer> data,QColor color, const QString &name, const QString &units, QObject *parent = nullptr);
     ~PlotData() override = default;
 
     QString getName() const{return name;};
@@ -30,6 +30,7 @@ private:
     QString name;//名字
     QString units;//单位
     QColor color;//颜色
+    const uint64_t id = 0;
     bool  visible=true;
 };
 

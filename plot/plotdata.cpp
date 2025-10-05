@@ -4,8 +4,14 @@
 
 #include "plotdata.h"
 
-PlotData::PlotData(QSharedPointer<QCPGraphDataContainer> data,QColor color,const QString &name, const QString &units,QObject *parent)
-    :QObject(parent),_data(data),color(color),name(name),units(units){
+PlotData::PlotData(const uint64_t id,QSharedPointer<QCPGraphDataContainer> data,QColor color,const QString &name, const QString &units,QObject *parent)
+    :QObject(parent)
+    ,id(id)
+    ,_data(data)
+    ,color(color)
+    ,name(name)
+    ,units(units)
+{
 }
 
 QString PlotData::getShowData() const {

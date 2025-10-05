@@ -15,7 +15,7 @@ PlotModel::PlotModel(QObject* parent)
 }
 
 
-void PlotModel::add_plotData(const QSharedPointer<QCPGraphDataContainer>& data, QString plot_name ) {
+void PlotModel::add_plotData(const uint64_t id,QSharedPointer<QCPGraphDataContainer>& data, QString plot_name ) {
     for (auto const& var : *m_rootNode) {
         for(auto const& var2 : *var) {
             if(var2->plotData->getData() == data) {
@@ -27,7 +27,7 @@ void PlotModel::add_plotData(const QSharedPointer<QCPGraphDataContainer>& data, 
     int newRow = m_rootNode->at(0)->childCount();
 
     beginInsertRows(QModelIndex(), newRow, newRow);
-    auto plotData = new PlotData(data,QColor(PLOT::color[size()%16]),plot_name,"",this);
+    auto plotData = new PlotData(id,data,QColor(PLOT::color[size()%16]),plot_name,"",this);
     m_rootNode->at(0)->append(new TreeNode(plotData,plot_name));
     endInsertRows(); // 通知视图：插入结束
 }

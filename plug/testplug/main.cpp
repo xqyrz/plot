@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
     for (int i = 0; i < 3; i++) {
         QSharedPointer<QCPGraphDataContainer> data(new QCPGraphDataContainer());
         d[i] = data;
-        w.add_plotData(data,"test_"+QString::number(i));
+        w.add_plotData(i+1,data,"test_"+QString::number(i));
         // for (int j = 0; j < 50000; j++)
         // {
           //  data->add(QCPGraphData(0, 0));
@@ -145,13 +145,15 @@ int main(int argc, char *argv[])
     }
     w.expandAll();
     w.show();
-    tcpServer->setReadReadyCallback([=](int)
+    tcpServer->setReadReadyCallback([&](int)
 {
     auto frams = tcpServer->readALL();
     foreach(auto const & var,frams)
     {
       auto sigs =  selfio->decode(var);
+
         for (int i=0;i<sigs.size();i++) {
+            w.enupRang();
             d[sigs.at(i).id]->add(QCPGraphData(time.msecsTo( sigs.at(i).time)/1000.0,sigs.at(i).value));
         }
     }

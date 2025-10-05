@@ -49,7 +49,7 @@ private:
                 {
                     if (ec == asio::error::eof){
                         auto remote_ep = self->socket_.remote_endpoint();
-                        qInfo() << QString("Client disconnected %1:%2")
+                        qInfo() << QString(" disconnected %1:%2")
                       .arg(QString::fromStdString(remote_ep.address().to_string()))
                       .arg(remote_ep.port());
                 }
@@ -172,7 +172,7 @@ void ATCPServer::do_accept() {
             if (!ec) {
                 try {
                     auto remote_ep = socket.remote_endpoint();
-                    qInfo() << QString("Accepted connection from %1:%2")
+                    qInfo() << QString(" connection from %1:%2")
                       .arg(QString::fromStdString(remote_ep.address().to_string()))
                       .arg(remote_ep.port());
 

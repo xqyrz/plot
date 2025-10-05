@@ -17,11 +17,19 @@ public:
 signals:
     void pressedPlot( int type,const QCPLayerable * item);
 public slots:
+    void enupRang(){upRang = true;};
     void setPlotType(int type);
     void setCurrentPlot(int type, const QCPLayerable *item);
+    void setXInterval(int interval){
+        xInterval = interval;
+    }
+    void setXCheckBox(bool flag){
+        _xCheckBox = flag;
+    }
 private slots:
     void setTicks();
     void _resizeEvent();
+    void _replot();
 protected:
     void resizeEvent(QResizeEvent* event) override;
     void contextMenuEvent(QContextMenuEvent* event) override;//右键菜单
@@ -47,6 +55,9 @@ private:
     int plotType{0};
     bool _line_flag{false};
     QMap<QCPItemTracer*,QCPItemText*> _tracerMap;
+    int xInterval{100};
+    bool upRang = false;
+    bool _xCheckBox{true};
 private:
     // Q_PROPERTY(int getPlotType READ plotType WRITE setPlotType)
 };

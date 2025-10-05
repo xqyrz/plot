@@ -75,7 +75,7 @@ private:
 signals:
         void chekStatusChanged(QSharedPointer<PlotData>& data);
 public slots:
-    void add_plotData(const QSharedPointer<QCPGraphDataContainer>& data, QString plot_name = "plot");
+    void add_plotData(const uint64_t id, QSharedPointer<QCPGraphDataContainer>& data, QString plot_name = "plot");
 
 private:
     const QStringList _header = {"","名称","数据"};

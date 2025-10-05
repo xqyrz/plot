@@ -16,14 +16,7 @@ PlotCustom::PlotCustom(QWidget* parent)
 {
     _initUI();
     _resetUITimer->setSingleShot(true);
-    connect(_updateTimer, &QTimer::timeout, this, [&]()
-    {
-        _updateTimerEn = true;
-        if (this->isVisible())
-        {
-            this->replot(QCustomPlot::rpQueuedReplot);
-        }
-    });
+    connect(_updateTimer, &QTimer::timeout, this, &PlotCustom::_replot);
     connect(_resetUITimer, &QTimer::timeout, this, &PlotCustom::_resetUI);
 
     _updateTimer->start(40);
@@ -132,6 +125,47 @@ void PlotCustom::_resizeEvent()
     }
 }
 
+void PlotCustom::_replot() {
+
+    _updateTimerEn = true;
+    auto rects = this->axisRects();
+
+
+    if (this->isVisible())
+    {
+        if (upRang&&_xCheckBox) {
+            foreach(auto rect, rects)
+            {
+                auto graphs = rect->graphs();
+                double xend = -0.1,xbegin =-0.1;
+                if (graphs.size()) {
+                    foreach(auto graph, graphs)
+                    {
+                        auto data = graph->data();
+                        if (data->size()) {
+                             xend = data->at(data->size() - 1)->key;
+                             xbegin = data->at(0)->key;
+                        }
+
+
+                    }
+                    if (qFuzzyCompare(xend-xbegin,0)) {
+                        graphs.at(0)->keyAxis()->setRange(0,xInterval);
+                    }
+                    else if (abs(xend-xbegin)<xInterval) {
+                        graphs.at(0)->keyAxis()->setRange(xbegin,xInterval);
+                    }
+                    else {
+                        graphs.at(0)->keyAxis()->setRange(xend - xInterval,xend);
+                    }
+                }
+            }
+        }
+        this->replot(QCustomPlot::rpQueuedReplot);
+    }
+    upRang = false;
+}
+
 void PlotCustom::resizeEvent(QResizeEvent* event)
 {
     QCustomPlot::resizeEvent(event);
@@ -188,7 +222,7 @@ void PlotCustom::mousePressEvent(QMouseEvent* event)
     }
     else if ((info.canConvert<QCPDataSelection>())) // 找到了一个曲线，可以进行进一步处理
     {
-        auto graph = qobject_cast<QCPGraph*>(obj);
+       // auto graph = qobject_cast<QCPGraph*>(obj);
         //qDebug()<<"graph:"<<graph;
         setCursor(Qt::SizeAllCursor);
         setCurrentPlot(PLOT::ITEM_GRAPH, obj);
@@ -324,8 +358,8 @@ void PlotCustom::_initQCPGraph(QCPAxisRect* axisRect,QCPGraph * graph,QColor col
     // 设置曲线样式
     graph->setPen(QPen(color)); // 线颜色
     graph->setLineStyle(QCPGraph::lsLine); // 折线
-    graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, color,
-                                          color, 2));
+    graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssPlusSquare, color,4));
+
 }
 void PlotCustom::_initAxis(QCPAxisRect* axisRect, QCPAxis* _xAxis, QCPAxis* _yAxis)
 {
@@ -398,7 +432,7 @@ QCPGraph* PlotCustom::_oneXoneY()
             //  graph->rescaleAxes();
         }
     }
-    QTimer::singleShot(1, this, [=]()
+    QTimer::singleShot(1, this, [this]()
     {
         for (auto i = 0; i < this->graphCount(); i++)
         {
@@ -442,7 +476,7 @@ QCPGraph* PlotCustom::_oneXmoreY()
             //  graph->rescaleAxes();
         }
     }
-    QTimer::singleShot(1, this, [=]()
+    QTimer::singleShot(1, this, [this]()
     {
         for (auto i = 0; i < this->graphCount(); i++)
         {
@@ -498,7 +532,7 @@ QCPGraph* PlotCustom::_moreXmoreY()
                     this->graph(j)->keyAxis(), QOverload<const QCPRange&>::of(&QCPAxis::setRange));
         }
     }
-    QTimer::singleShot(1, this, [=]()
+    QTimer::singleShot(1, this, [this]()
     {
         for (auto i = 0; i < this->graphCount(); i++)
         {
@@ -539,7 +573,7 @@ void PlotCustom::_resetUI()
             _line->point2->setCoords(graph->data()->at(0)->key, 1);   // 方向：水平线
         }
     }
-    QTimer::singleShot(100, this, [=]()
+    QTimer::singleShot(100, this, [this]()
     {
         _resizeEvent();
     });
