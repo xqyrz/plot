@@ -29,16 +29,6 @@ private:
             asio::buffer(data_, max_length),
             [self](std::error_code ec, std::size_t length) {
                 if (!ec) {
-                    if (self->data_[length-1] == 0)
-                    {
-                       // qDebug() << "r:" << QByteArray(self->data_, length).toHex(' ');
-                     //   qDebug() << "Received:"<<self->data_;
-                    }
-                    else
-                    {
-//                        qDebug() << "r:" << QByteArray(self->data_, length).toHex(' ');
-                    }
-                  //  self->do_write(length);
                     if (self->on_read_)
                     {
                         self->on_read_(self,self->data_,length);

@@ -105,7 +105,7 @@ void PlotCustom::setTicks()
 void PlotCustom::_resizeEvent()
 {
     //qInfo()<<"resizeEvent"<<event->size();
-    int interval = plotType == PLOT::TYPE_moreXmoreY ? 60 : 60;
+    int interval = plotType == PLOT::TYPE_moreXmoreY ? 80 : 80;
     auto rects = this->axisRects();
     for (QCPAxisRect* rect : rects)
     {
@@ -347,8 +347,6 @@ void PlotCustom::_initQCPGraph(QCPAxisRect* axisRect,QCPGraph * graph,QColor col
     _label->setText(QString("y:%1").arg(_tracer->position->value()));
 
 
-
-
     _tracerMap.insert(_tracer,_label);
 
 
@@ -358,7 +356,7 @@ void PlotCustom::_initQCPGraph(QCPAxisRect* axisRect,QCPGraph * graph,QColor col
     // 设置曲线样式
     graph->setPen(QPen(color)); // 线颜色
     graph->setLineStyle(QCPGraph::lsLine); // 折线
-    graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssPlusSquare, color,4));
+    graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssPlusSquare, color,2));
 
 }
 void PlotCustom::_initAxis(QCPAxisRect* axisRect, QCPAxis* _xAxis, QCPAxis* _yAxis)

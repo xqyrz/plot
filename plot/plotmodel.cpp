@@ -15,21 +15,24 @@ PlotModel::PlotModel(QObject* parent)
 }
 
 
-void PlotModel::add_plotData(const uint64_t id,QSharedPointer<QCPGraphDataContainer>& data, QString plot_name ) {
+TreeNode* PlotModel::add_plotData(const uint64_t id,QSharedPointer<QCPGraphDataContainer>& data, QString plot_name ) {
     for (auto const& var : *m_rootNode) {
         for(auto const& var2 : *var) {
             if(var2->plotData->getData() == data) {
                 qWarning() << "has data:"<<var2->name<<var2->plotData->getData();
-                return;
+                return nullptr;
             }
         }
     }
     int newRow = m_rootNode->at(0)->childCount();
-
+    //TODO:第一次  warn:Invalid index ( 1 , 0 ) in model PlotModel(0x19d0fc8d6c0)
     beginInsertRows(QModelIndex(), newRow, newRow);
     auto plotData = new PlotData(id,data,QColor(PLOT::color[size()%16]),plot_name,"",this);
-    m_rootNode->at(0)->append(new TreeNode(plotData,plot_name));
+    auto node = new TreeNode(plotData,plot_name);
+    m_rootNode->at(0)->append(node);
     endInsertRows(); // 通知视图：插入结束
+    qDebug() << "PlotModel add "<<QString::number(id, 16) <<plot_name;
+    return node;
 }
 
 
@@ -235,3 +238,18 @@ const TreeNode* PlotModel::getPlot(  QSharedPointer<QCPGraphDataContainer> ptr)
     }
     return plot;
 }
+
+ TreeNode * PlotModel::getNode(uint64_t id) const {
+    TreeNode* plot=nullptr;
+    for (auto const& group : *m_rootNode) {
+        for (auto const& p : *group) {
+            if (p->plotData->getId() == id)
+            {
+                return p;
+            }
+        }
+    }
+    return plot;
+}
+
+

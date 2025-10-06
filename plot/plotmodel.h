@@ -6,6 +6,7 @@
 #define PLOT_PLOTMODEL_H
 #include <QAbstractItemModel>
 #include <QPointer>
+#include "plotcommon.h"
 #include "qcustomplot/qcustomplot.h"
 #include "plotdata.h"
 class TreeNode {
@@ -62,6 +63,7 @@ public:
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
      TreeNode*  root() const { return m_rootNode; }
     const TreeNode* getPlot(  QSharedPointer<QCPGraphDataContainer>);
+     TreeNode* getNode(uint64_t id) const;
 private:
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -75,7 +77,7 @@ private:
 signals:
         void chekStatusChanged(QSharedPointer<PlotData>& data);
 public slots:
-    void add_plotData(const uint64_t id, QSharedPointer<QCPGraphDataContainer>& data, QString plot_name = "plot");
+    TreeNode* add_plotData(const uint64_t id, QSharedPointer<QCPGraphDataContainer>& data, QString plot_name = "plot");
 
 private:
     const QStringList _header = {"","名称","数据"};

@@ -7,8 +7,6 @@
 
 #include "iointerface.h"
 #include "asio.hpp"
-class Session;
-
 using asio::ip::tcp;
 class ATCPClient:public QObject,public IOInterface{
     Q_OBJECT

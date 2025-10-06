@@ -9,10 +9,9 @@ file(GLOB_RECURSE SRC_FILES
 
 )
 add_library(${ATCPSERVER_LIB} SHARED
-        "${IO_PATH}/asio/asio/asio/include/asio.hpp"
         ${SRC_FILES}
 )
-MESSAGE("IO_PATH ${IO_PATH}")
+MESSAGE("ATCPSERVER_LIB ${ATCPSERVER_LIB}")
 target_include_directories(${ATCPSERVER_LIB}
         PUBLIC
         ${IO_PATH}

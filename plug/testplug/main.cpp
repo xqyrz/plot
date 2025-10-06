@@ -10,6 +10,9 @@
 #include <QPluginLoader>
 #include <QTimer>
 #include "plotview.h"
+#include <QMutexLocker>
+
+#include <QMutex>
 
 int main(int argc, char *argv[])
 {
@@ -57,20 +60,21 @@ int main(int argc, char *argv[])
     //"%{if-fatal}\nBacktrace: %{backtrace depth=20 separator=\"\n\"}%{endif}"
     );
     //qputenv("QT_LOGGING_RULES", "plot.debug=false");
-    qInfo()<<QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")<<"plug 测试程序运行";
+    qInfo()<<QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")<<"plug run";
     QApplication a(argc, argv);
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() +"/lib");
 
 
 
     QDir path = QDir( QCoreApplication::applicationDirPath());
-    path.cd("../bin");
+    path.cd("../install/plug");
     IOInterface* tcpServer;
     IOInterface* tcpClient;
+    IOInterface* udp;
     IOAPPInterface* selfio;
     foreach(QFileInfo info, path.entryInfoList(QDir::Files | QDir::NoDotAndDotDot))
     {
-        qDebug() << info;
+
         QPluginLoader pluginLoader(info.absoluteFilePath());
         QObject* plugin = pluginLoader.instance();
         if (plugin)
@@ -82,11 +86,11 @@ int main(int argc, char *argv[])
             auto json = meta.value("MetaData").toObject();
             auto iid = meta.value("IID").toString();
             auto className = meta.value("className").toString();
-            qDebug() << QString("********** %1:%2 **********").arg(iid,className);
+            qInfo() << QString("**********  %1 %2:%3   **********").arg(info.baseName(),iid,className);
 
-;            qDebug() << json.value("author").toString();
-            qDebug() << json.value("date").toString();
-            qDebug() << json.value("version").toString();
+// ;            qDebug() << json.value("author").toString();
+//             qDebug() << json.value("date").toString();
+//             qDebug() << json.value("version").toString();
             //qDebug() << json.value("dependencies").toArray().toVariantList();
             //访问感兴趣的接口
             if (iid == IOInterface_Id)
@@ -94,12 +98,20 @@ int main(int argc, char *argv[])
                 if (className == "ATCPServer")
                 {
                     tcpServer = qobject_cast<IOInterface*>(plugin);
-                    tcpServer->setConfig(IO::Config{"0.0.0.0","1234"});
-                    tcpServer->open();
+                    tcpServer->setConfig(IO::Config{"127.0.0.1","1234"});
+                  //  tcpServer->open();
                 }
                 else if (className == "ATCPClient") {
                     tcpClient= qobject_cast<IOInterface*>(plugin);
-                    tcpClient->setConfig(IO::Config{"0.0.0.0","1234"});
+                    tcpClient->setConfig(IO::Config{"127.0.0.1","1234"});
+                }
+                else if (className == "AUdp") {
+                    udp =  qobject_cast<IOInterface*>(plugin);
+                    udp->setConfig(IO::Config{"127.0.0.1"
+                        ,"1234"
+                        ,""
+                        ,"123"
+                    });
                 }
             }
             else if (iid == IOAPPInterface_Id)
@@ -111,50 +123,35 @@ int main(int argc, char *argv[])
             }
         }
     }
-
-    tcpClient->open();
+    udp->open();
+    //tcpClient->open();
     QTimer timer;
     QObject::connect(&timer,&QTimer::timeout,[=]()
     {
         auto frame = selfio->encode();
         tcpClient->write(frame);
     });
-   // timer.start(1000);
-   // qDebug()<<app->getName();
 
-    qInfo()<<QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")<<"plot 测试程序运行";
 
-    // PlotTree w(nullptr);
-    // PlotModel*model=new PlotModel();
-
-    // w.setModel(model);
 
 
     PlotView w(nullptr);
     w.resize(800, 600);
-    auto time = QDateTime::currentDateTime();
-    QSharedPointer<QCPGraphDataContainer> d[3];
-    for (int i = 0; i < 3; i++) {
-        QSharedPointer<QCPGraphDataContainer> data(new QCPGraphDataContainer());
-        d[i] = data;
-        w.add_plotData(i+1,data,"test_"+QString::number(i));
-        // for (int j = 0; j < 50000; j++)
-        // {
-          //  data->add(QCPGraphData(0, 0));
-        // }
-    }
+
     w.expandAll();
     w.show();
-    tcpServer->setReadReadyCallback([&](int)
+    QMutex mutex;
+    udp->setReadReadyCallback([&](int)
 {
-    auto frams = tcpServer->readALL();
+      //  QMutexLocker locker(&mutex);
+    auto frams = udp->readALL();
+
     foreach(auto const & var,frams)
     {
       auto sigs =  selfio->decode(var);
-
-        for (int i=0;i<sigs.size();i++) {
+        if (sigs.size() ) {
             w.enupRang();
-            d[sigs.at(i).id]->add(QCPGraphData(time.msecsTo( sigs.at(i).time)/1000.0,sigs.at(i).value));
+            w.addSignalData(sigs);
         }
     }
 

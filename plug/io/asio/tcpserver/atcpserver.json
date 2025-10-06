@@ -1,7 +1,6 @@
 {
   "author" : "xqyr",
   "date" : "2025/10/01",
-  "name" : "atcpserver",
   "version" : "0.0.1",
   "des" : "this is a tcp server",
   "dependencies" : []

@@ -12,6 +12,8 @@ namespace IO{
     typedef struct {
         QString dev;//设备 ip
         QString ch;//通道 port
+        QString own_dev; //自己
+        QString own_ch;
     }Config;
     typedef struct {
         Config  info;//发送设备的信息

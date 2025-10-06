@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 
     for (int i = 1; i < 3; i++) {
         QSharedPointer<QCPGraphDataContainer> data(new QCPGraphDataContainer());
-        w.add_plotData(data,"test_"+QString::number(i));
+       // w.add_plotData(data,"test_"+QString::number(i));
         for (int j = 0; j < 50000; j++)
         {
             data->add(QCPGraphData(j, 50 * i * cos((i * 1000 + j) / 5000.0 * 3.14)));

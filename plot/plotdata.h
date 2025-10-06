@@ -17,6 +17,8 @@ public:
     QString getUnits() const{return units;};
     QString getShowData()const;
     QColor getColor() const{return color;};
+
+    uint64_t getId() const{return id;};
     QSharedPointer<QCPGraphDataContainer> getData() const{return _data;};
     bool isVisible() const {return visible;}
 

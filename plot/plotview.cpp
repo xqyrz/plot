@@ -9,11 +9,12 @@
 #include <QComboBox>
 #include <QToolBar>
 
-#include "plotmodel.h"
+
 #include "plottree.h"
 #include "plotcustom.h"
 PlotView::PlotView(QWidget*parent)
 	: QWidget(parent)
+	,zero(QDateTime::currentDateTime().toMSecsSinceEpoch())
 	,_graphView(new PlotCustom(this))
 	,_treeView(new PlotTree(this))
 	,_toolBar(new QToolBar(this))
@@ -31,6 +32,8 @@ PlotView::PlotView(QWidget*parent)
 void PlotView::expandAll() const {
 	_treeView->expandAll();
 }
+
+//TODO:严重性能问题，但是这个实现动态信号显示，静态可以优化
 
 
 void PlotView::initUI()
@@ -91,11 +94,37 @@ void PlotView::initConnect()
 
 }
 
-void PlotView::add_plotData( uint64_t id, QSharedPointer<QCPGraphDataContainer> &data, QString plot_name) {
+void PlotView::addSignalData(const QList<IOAPP::SIGNALS> &_signals) {
+	{
+		for (const auto &s : _signals) {
+			auto node = _model->getNode(s.id);
+			if (!node) {
+				auto d = QSharedPointer<QCPGraphDataContainer>::create();
+				QMetaObject::invokeMethod(
+						this,
+						"add_plotData", // 必须是 QObject slots 函数
+						Qt::BlockingQueuedConnection, // 阻塞等待执行完成
+						Q_ARG(uint64_t, s.id),
+						Q_ARG(QSharedPointer<QCPGraphDataContainer>&, d),
+						Q_ARG(QString, QString::fromStdString(s.name))
+					);
+				node = _model->getNode(s.id);
+				if (!node) {
+					qCritical() << "add_plotData failed:" << QString::fromStdString(s.name);
+					continue;
+				}
+			}
+			node->plotData->getData()->add(QCPGraphData((s.time-zero)/1000.0, s.value));
+		}
+	}
+}
 
-	_model->add_plotData(id,data,plot_name);
+TreeNode* PlotView::add_plotData( uint64_t id, QSharedPointer<QCPGraphDataContainer> &data, QString plot_name) {
+
+	auto node =_model->add_plotData(id,data,plot_name);
 	_treeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	_graphView->resetUI(_model);
+	return node;
 }
 
 void PlotView::setCurrentPlot(int type, const QCPLayerable *item) {

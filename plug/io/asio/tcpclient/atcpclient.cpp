@@ -48,7 +48,7 @@ bool ATCPClient::open() {
     // 尝试连接
     _socket->connect(endpoint, ec);
     if (ec) {
-        qWarning() << "Failed to connect:" << QString::fromStdString(ec.message());
+        qWarning() << "Failed to connect:" << QString::fromLocal8Bit(ec.message().c_str());
         return false;
     }
 

@@ -4,8 +4,8 @@
 
 #ifndef PLOTVIEW_H
 #define PLOTVIEW_H
-
 #include <QWidget>
+#include "plotmodel.h"
 #include <QPointer>
 #include "qcustomplot/qcustomplot.h"
 #include "plotcommon.h"
@@ -17,7 +17,7 @@ class QToolBar;
 class PlotTree;
 class PlotCustom;
 class PlotModel;
-
+class TreeNode;
 class  PlotView  : public QWidget
 {
     Q_OBJECT
@@ -25,11 +25,13 @@ public:
     PlotView(QWidget *parent=nullptr);
     void expandAll()const;
     int getPlotType() const{return plotType;}
+     void addSignalData(const QList<IOAPP::SIGNALS>& _signals);
 private:
+
     void initUI();
     void initConnect();
 public slots:
-    void add_plotData( uint64_t id, QSharedPointer<QCPGraphDataContainer>& data, QString plot_name = "plot");
+    TreeNode* add_plotData( uint64_t id, QSharedPointer<QCPGraphDataContainer>& data, QString plot_name = "plot");
     void setCurrentPlot(int type,const QCPLayerable * item);
     void enupRang();
 private slots:
@@ -47,6 +49,7 @@ private:
 
     QPointer<PlotModel> _model;
     int plotType;
+    uint64_t zero;
 private:
     Q_PROPERTY(int plotType READ getPlotType WRITE setPlotType)
 };

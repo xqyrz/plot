@@ -10,9 +10,15 @@
 class IOAPPInterface
 {
 public:
-
     virtual QList<IOAPP::SIGNALS> decode(const IO::Frame& data) = 0;
     virtual IO::Frame encode()  = 0;
+    inline IOAPP::SIGNALS  getSignal(uint32_t id) {
+        IOAPP::SIGNALS signal;
+        signal.time = QDateTime::currentDateTime().toMSecsSinceEpoch();
+        signal.ID.res =1;
+        signal.ID.type = id;
+        return signal;
+    }
 protected:
     QList<QByteArray> m_data;
 };

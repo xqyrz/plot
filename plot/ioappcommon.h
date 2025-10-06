@@ -15,9 +15,9 @@ namespace IOAPP
     struct SIGNALS {
         union {
             struct {  // 给匿名 struct 一个名字 s
-                uint32_t id:32;
-                uint16_t type:16;
-                uint16_t res:16;
+                uint16_t res;
+                uint16_t type;
+                uint32_t id;
             } ID;
             uint64_t id;
         };

@@ -1,0 +1,36 @@
+//
+// Created by 25137 on 25-10-5.
+//
+
+#ifndef AUDP_H
+#define AUDP_H
+
+#include "iointerface.h"
+#include "asio.hpp"
+using asio::ip::udp;
+
+class AUdp:public QObject,public IOInterface{
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID IOInterface_Id FILE "audp.json")
+    Q_INTERFACES(IOInterface)
+public:
+    explicit AUdp(IO::Config config=IO::Config(), QObject* parent = nullptr);
+    ~AUdp() override;
+    void run() override;
+    bool open() override;
+    bool close() override;
+    int write(const IO::Frame&) override;
+    int write(const QList<IO::Frame>&) override;
+
+private:
+    void do_read();
+private:
+    asio::io_context io_context;
+    std::unique_ptr<udp::socket> _socket;
+    std::thread io_thread_;
+    udp::endpoint endpoint;
+    std::array<char, 1024> recv_buffer_;
+};
+
+
+#endif //AUDP_H
