@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by hw on 2025/10/2.
 //
 
@@ -27,7 +27,7 @@ namespace IOAPP
         double value{};
 
         // 构造函数初始化
-        SIGNALS() : ID{0,0,0} {}
+        SIGNALS() : ID{0,0,0},time(0) {}
     };
 
 }

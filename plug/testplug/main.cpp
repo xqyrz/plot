@@ -68,10 +68,10 @@ int main(int argc, char *argv[])
 
     QDir path = QDir( QCoreApplication::applicationDirPath());
     path.cd("../install/plug");
-    IOInterface* tcpServer;
-    IOInterface* tcpClient;
-    IOInterface* udp;
-    IOAPPInterface* selfio;
+    IOInterface* tcpServer{nullptr};
+    IOInterface* tcpClient{nullptr};
+    IOInterface* udp{nullptr};
+    IOAPPInterface* selfio{nullptr};
     foreach(QFileInfo info, path.entryInfoList(QDir::Files | QDir::NoDotAndDotDot))
     {
 
@@ -107,11 +107,10 @@ int main(int argc, char *argv[])
                 }
                 else if (className == "AUdp") {
                     udp =  qobject_cast<IOInterface*>(plugin);
-                    udp->setConfig(IO::Config{"127.0.0.1"
-                        ,"1234"
-                        ,""
-                        ,"123"
+                    udp->setConfig(IO::Config{""
+                        ,"6123"
                     });
+                    udp->open();
                 }
             }
             else if (iid == IOAPPInterface_Id)
@@ -123,7 +122,7 @@ int main(int argc, char *argv[])
             }
         }
     }
-    udp->open();
+    
     //tcpClient->open();
     QTimer timer;
     QObject::connect(&timer,&QTimer::timeout,[=]()
@@ -132,9 +131,6 @@ int main(int argc, char *argv[])
         tcpClient->write(frame);
     });
 
-
-
-
     PlotView w(nullptr);
     w.resize(800, 600);
 
@@ -142,7 +138,7 @@ int main(int argc, char *argv[])
     w.show();
     QMutex mutex;
     udp->setReadReadyCallback([&](int)
-{
+    {
       //  QMutexLocker locker(&mutex);
     auto frams = udp->readALL();
 

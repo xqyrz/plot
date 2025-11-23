@@ -106,6 +106,14 @@ QList<IOAPP::SIGNALS>  SelfIOAPP::decode(const IO::Frame& frame)
                     list.append(sig);
                 }
                     break;
+                case MAVLINK_MSG_ID_lightSensor: {
+                    mavlink_lightsensor_t sb;
+                    mavlink_msg_lightsensor_decode(&rcv_msg, &sb);
+                    // qDebug()  << QString("x:%1 y:%2 z:%3").arg(sb.MAG_X).arg(sb.MAG_Y).arg(sb.MAG_Z);
+                    auto sig=getSignal(IOAPP::SELFIO_ID);
+                    fun(sig,msgId<<16|1,"light", sb.light);
+                    list.append(sig);
+                }
             default:break;
             }
         }

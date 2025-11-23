@@ -287,7 +287,7 @@ void PlotCustom::_initUI()
 {
     setBackground(QColor(234, 234, 234));
 
-    setOpenGl(true, 2000);
+    //setOpenGl(true, 2000);
     setNotAntialiasedElements(QCP::aeAll);
     setNoAntialiasingOnDrag(true);
 

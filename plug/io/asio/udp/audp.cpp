@@ -31,41 +31,33 @@ void AUdp::run() {
 bool AUdp::open() {
 
 try {
-    std::error_code ec;
-    _socket.reset(new udp::socket(io_context,udp::endpoint(
-    config.own_dev.size()?udp::v6():udp::v4()
-    , config.own_ch.toInt())));
+        std::error_code ec;
+    auto ep = udp::endpoint(
+       // asio::ip::make_address("127.0.0.1"),
+        config.dev.size()?udp::v6():udp::v4(),
+                        config.ch.toInt());
+        _socket->open(ep.protocol());
+        _socket->set_option(asio::socket_base::reuse_address(true));
+        _socket->bind(ep);
 
-    do_read();
-    // 服务器地址和端口
-    // endpoint=asio::ip::udp::endpoint(
-    //     asio::ip::make_address(config.dev.toStdString(), ec),
-    //        config.ch.toInt());
-    //
-    // if (ec) {
-    //     qWarning() << "Invalid IP address:" << QString::fromStdString(ec.message());
-    //     return false;
-    // }
+        do_read();
+        // 尝试连接
+        //_socket->connect(endpoint, ec);
+        if (ec) {
+            qWarning() << "Failed to connect:" << QString::fromStdString(ec.message());
+            return false;
+        }
 
-    // 尝试连接
-    //_socket->connect(endpoint, ec);
-    if (ec) {
-        qWarning() << "Failed to connect:" << QString::fromStdString(ec.message());
-        return false;
+        qDebug() << QString("Connected to local: %1:%2")// <==> remote: %3:%4")
+        .arg(QString::fromStdString(_socket->local_endpoint().address().to_string()))
+        .arg(_socket->local_endpoint().port());
+        run();
     }
-
-    qDebug() << QString("Connected to local: %1:%2")// <==> remote: %3:%4")
-    .arg(QString::fromStdString(_socket->local_endpoint().address().to_string()))
-    .arg(_socket->local_endpoint().port())
-    // .arg(QString::fromStdString(endpoint.address().to_string()))
-    // .arg(endpoint.port())
-    ;
-    run();
-}catch (const std::exception& e) {
-    qWarning() << "Exception in io_thread thread:" << QString::fromLocal8Bit(e.what());
-}catch (...) {
-    qWarning() << "Unknown exception in io_context thread";
-}
+    catch (const std::exception& e) {
+        qWarning() << "Exception in io_thread thread:" << QString::fromLocal8Bit(e.what())<<config.own_ch.toInt();
+    }catch (...) {
+        qWarning() << "Unknown exception in io_context thread";
+    }
     return true;
 }
 

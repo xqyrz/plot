@@ -26,11 +26,11 @@ TreeNode* PlotModel::add_plotData(const uint64_t id,QSharedPointer<QCPGraphDataC
     }
     int newRow = m_rootNode->at(0)->childCount();
     //TODO:第一次  warn:Invalid index ( 1 , 0 ) in model PlotModel(0x19d0fc8d6c0)
-    beginInsertRows(QModelIndex(), newRow, newRow);
+   // if (newRow)beginInsertRows(QModelIndex(), newRow, newRow);
     auto plotData = new PlotData(id,data,QColor(PLOT::color[size()%16]),plot_name,"",this);
     auto node = new TreeNode(plotData,plot_name);
     m_rootNode->at(0)->append(node);
-    endInsertRows(); // 通知视图：插入结束
+   // if (newRow)endInsertRows(); // 通知视图：插入结束
     qDebug() << "PlotModel add "<<QString::number(id, 16) <<plot_name;
     return node;
 }
