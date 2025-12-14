@@ -47,16 +47,9 @@ int main(int argc, char *argv[])
     // 重置颜色（所有带颜色的日志都需要）
     "\033[0m"
 #endif
-    // 致命错误追加调用栈（需启用 QT_MESSAGE_PATTERN 环境变量）
-    //"%{if-fatal}\nBacktrace: %{backtrace depth=20 separator=\"\n\"}%{endif}"
     );
-    //qputenv("QT_LOGGING_RULES", "plot.debug=false");
     qInfo()<<QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")<<"plot 测试程序运行";
     QApplication a(argc, argv);
-    // PlotTree w(nullptr);
-    // PlotModel*model=new PlotModel();
-
-    // w.setModel(model);
 
 
     PlotView w(nullptr);
@@ -65,7 +58,6 @@ int main(int argc, char *argv[])
 
     for (int i = 1; i < 3; i++) {
         QSharedPointer<QCPGraphDataContainer> data(new QCPGraphDataContainer());
-       // w.add_plotData(data,"test_"+QString::number(i));
         for (int j = 0; j < 50000; j++)
         {
             data->add(QCPGraphData(j, 50 * i * cos((i * 1000 + j) / 5000.0 * 3.14)));
@@ -73,9 +65,5 @@ int main(int argc, char *argv[])
     }
     w.expandAll();
     w.show();
-    QTimer::singleShot(300,[&]()
-    {
-      //  w.setmodel(PLOT)
-    });
     return QApplication::exec();
 }

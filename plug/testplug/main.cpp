@@ -57,9 +57,7 @@ int main(int argc, char *argv[])
     "\033[0m"
 #endif
     // 致命错误追加调用栈（需启用 QT_MESSAGE_PATTERN 环境变量）
-    //"%{if-fatal}\nBacktrace: %{backtrace depth=20 separator=\"\n\"}%{endif}"
     );
-    //qputenv("QT_LOGGING_RULES", "plot.debug=false");
     qInfo()<<QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")<<"plug run";
     QApplication a(argc, argv);
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() +"/lib");
@@ -150,12 +148,6 @@ int main(int argc, char *argv[])
             w.addSignalData(sigs);
         }
     }
-
-   // qDebug()<<frams.size();
 });
-    QTimer::singleShot(300,[&]()
-    {
-      //  w.setmodel(PLOT)
-    });
     return QApplication::exec();
 }

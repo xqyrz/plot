@@ -31,6 +31,7 @@ add_dependencies(${APP_NAME} ${SELFIOAPP_LIB})
 add_dependencies(${APP_NAME} ${ATCLIENT_LIB})
 add_dependencies(${APP_NAME} ${AUDP_LIB})
 add_dependencies(${APP_NAME} ${PLOT_LIB})
+add_dependencies(${APP_NAME} ${JLINKARM})
 
 install(TARGETS ${ATCLIENT_LIB}
         ARCHIVE DESTINATION bin     # 静态库 (.a / .lib)
