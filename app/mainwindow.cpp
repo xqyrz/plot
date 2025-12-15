@@ -19,27 +19,24 @@
 #  include <QtWidgets/QActionGroup>
 #endif
 
-// #include <QtWebEngineWidgets/QWebEngineView>
-
+#include <QVBoxLayout>
 #include <QWKWidgets/widgetwindowagent.h>
 
 #include "shared/widgetframe/windowbar.h"
 #include "shared/widgetframe/windowbutton.h"
 
-
+#include "src/page/maindock.h"
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setAttribute(Qt::WA_DontCreateNativeAncestors);
 
     installWindowAgent();
 
-    setCentralWidget(new QWidget());
+    setCentralWidget(new MainDock(this));
 
     loadStyleSheet(Dark);
 
-    setWindowTitle(tr("Example MainWindow"));
+    setWindowTitle(tr("APP"));
     resize(800, 600);
-
-
 }
 
 static inline void emulateLeaveEvent(QWidget *widget) {

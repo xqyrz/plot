@@ -24,7 +24,7 @@ endif()
 option(QWINDOWKIT_BUILD_STATIC "Build static libraries" ON)
 option(QWINDOWKIT_BUILD_WIDGETS "Build widgets module" ON)
 option(QWINDOWKIT_BUILD_QUICK "Build quick module" OFF)
-option(QWINDOWKIT_BUILD_EXAMPLES "Build examples" ON)
+option(QWINDOWKIT_BUILD_EXAMPLES "Build examples" OFF)
 option(QWINDOWKIT_BUILD_DOCUMENTATIONS "Build documentations" OFF)
 option(QWINDOWKIT_INSTALL "Install library" ON)
 
@@ -126,6 +126,3 @@ qm_init_directories()
 # ----------------------------------
 add_subdirectory(src)
 
-if(QWINDOWKIT_BUILD_EXAMPLES)
-    add_subdirectory(examples)
-endif()

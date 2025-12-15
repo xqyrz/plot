@@ -126,13 +126,15 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets PrintSupport 
 find_package(Qt${QT_VERSION_MAJOR}  REQUIRED COMPONENTS Core Gui Widgets PrintSupport OpenGL)
 
 
-set(QWindowKit_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/QWindowKit)
-find_package(QWindowKit COMPONENTS Core Widgets REQUIRED)
+
 
 
 add_subdirectory(nodes)
 add_subdirectory(qwindowkit)
 add_subdirectory(elf)
+add_subdirectory(ads)
+
+
 # 添加子目录
 add_subdirectory(plot)
 add_subdirectory(plug)
