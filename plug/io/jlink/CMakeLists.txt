@@ -24,7 +24,7 @@ target_link_libraries(${JLINKARM}
 #    target_link_libraries(${JLINKARM} ws2_32 mswsock)
 #endif()
 install(TARGETS ${JLINKARM}
-        ARCHIVE DESTINATION plugins     # 静态库 (.a / .lib)
-        LIBRARY DESTINATION plugins     # 共享库 (.so / .dll)
+        ARCHIVE DESTINATION lib     # 静态库 (.a / .lib)
+        LIBRARY DESTINATION lib     # 共享库 (.so / .dll)
         RUNTIME DESTINATION plugins
 )

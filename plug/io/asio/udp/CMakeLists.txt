@@ -24,7 +24,7 @@ if(WIN32)
     target_link_libraries(${AUDP_LIB} ws2_32 mswsock)
 endif()
 install(TARGETS ${AUDP_LIB}
-        ARCHIVE DESTINATION plugins     # 静态库 (.a / .lib)
-        LIBRARY DESTINATION plugins     # 共享库 (.so / .dll)
+        ARCHIVE DESTINATION lib     # 静态库 (.a / .lib)
+        LIBRARY DESTINATION lib     # 共享库 (.so / .dll)
         RUNTIME DESTINATION plugins
 )

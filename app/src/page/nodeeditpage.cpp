@@ -34,7 +34,6 @@ static std::shared_ptr<NodeDelegateModelRegistry> registerDataModels()
     QDir path = QDir( plugins);
     foreach(QFileInfo info, path.entryInfoList(QDir::Files | QDir::NoDotAndDotDot))
     {
-        qInfo() <<"........... "<<info.absoluteFilePath();
         QPluginLoader pluginLoader(info.absoluteFilePath());
         QObject* plugin = pluginLoader.instance();
         if (plugin)

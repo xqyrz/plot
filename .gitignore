@@ -6,3 +6,4 @@ plug/io/asio/asio
 elf/elfio/doc
 elf/elfio/examples
 elf/elfio/tests
+install/*
