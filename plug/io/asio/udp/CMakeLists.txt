@@ -9,6 +9,7 @@ file(GLOB_RECURSE SRC_FILES
 add_library(${AUDP_LIB} SHARED
         ${SRC_FILES}
 )
+target_compile_definitions(${AUDP_LIB} PRIVATE P_LIBRARY)
 MESSAGE("AUDP_LIB ${AUDP_LIB}")
 target_include_directories(${AUDP_LIB}
         PUBLIC
@@ -23,7 +24,7 @@ if(WIN32)
     target_link_libraries(${AUDP_LIB} ws2_32 mswsock)
 endif()
 install(TARGETS ${AUDP_LIB}
-        ARCHIVE DESTINATION plug     # 静态库 (.a / .lib)
-        LIBRARY DESTINATION plug     # 共享库 (.so / .dll)
-        RUNTIME DESTINATION plug
+        ARCHIVE DESTINATION plugins     # 静态库 (.a / .lib)
+        LIBRARY DESTINATION plugins     # 共享库 (.so / .dll)
+        RUNTIME DESTINATION plugins
 )

@@ -24,6 +24,7 @@ public:
     QMenu *createSceneMenu(QPointF const scenePos) override;
 
 public Q_SLOTS:
+    bool load(QString file);
     bool save() const;
     bool load();
 
@@ -32,6 +33,8 @@ Q_SIGNALS:
 
 private:
     DataFlowGraphModel &_graphModel;
+    QAction* saveAction;
+    QAction* loadAction;
 };
 
 } // namespace QtNodes

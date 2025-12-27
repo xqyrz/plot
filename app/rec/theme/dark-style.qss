@@ -157,6 +157,13 @@ QMenu::separator {
 MainWindow {
     background-color: #1E1E1E;
 }
+MainDock {
+   background-color: #1E1E1E;
+   color: white;
+}
+CDockManager {
+  background-color: #1E1E1E;
+}
 
 MainWindow[custom-style=true] {
     background-color: transparent;
@@ -167,4 +174,18 @@ QWidget#clock-widget {
     color: #FEFEFE;
     font-weight: bold;
     background-color: transparent;
+}
+
+/* Dock */
+CDockManager{
+    background-color: #1E1E1E;
+    color: white;
+}
+#mainDock{
+    background-color: #1E1E1E;
+    color: white;
+}
+#mainDock QLabel#label {
+    background-color: #1E1E1E;
+    color: white;
 }

@@ -25,7 +25,7 @@ if(WIN32)
     target_link_libraries(${ATCPSERVER_LIB} ws2_32 mswsock)
 endif()
 install(TARGETS ${ATCPSERVER_LIB}
-        ARCHIVE DESTINATION plug     # 静态库 (.a / .lib)
-        LIBRARY DESTINATION plug     # 共享库 (.so / .dll)
-        RUNTIME DESTINATION plug
+        ARCHIVE DESTINATION plugins     # 静态库 (.a / .lib)
+        LIBRARY DESTINATION plugins     # 共享库 (.so / .dll)
+        RUNTIME DESTINATION plugins
 )

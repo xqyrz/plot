@@ -3,5 +3,6 @@
   "date" : "2025/10/05",
   "version" : "0.0.1",
   "des" : "this is a udp",
-  "dependencies" : []
+  "Keys": ["AUdp"],
+  "Description": "UDP IO plugin"
 }

@@ -4,10 +4,14 @@
 
 #ifndef IOCOMMON_H
 #define IOCOMMON_H
-#include <QObject>
 #include <QDateTime>
-//#include <chrono>
-//using TimePoint = std::chrono::system_clock::time_point;
+#include <QtCore/qglobal.h>
+
+#if defined(P_LIBRARY)
+#  define P_EXPORT Q_DECL_EXPORT
+#else
+#  define P_EXPORT Q_DECL_IMPORT
+#endif
 namespace IO{
     typedef struct {
         QString dev;//设备 ip

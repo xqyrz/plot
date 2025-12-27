@@ -32,7 +32,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     installWindowAgent();
 
     setCentralWidget(new MainDock(this));
-
     loadStyleSheet(Dark);
 
     setWindowTitle(tr("APP"));
@@ -352,6 +351,7 @@ void MainWindow::loadStyleSheet(Theme theme) {
                                 : QStringLiteral(":/light-style.qss"));
         qss.open(QIODevice::ReadOnly | QIODevice::Text)) {
         setStyleSheet(QString::fromUtf8(qss.readAll()));
+        centralWidget()->setStyleSheet(QString::fromUtf8(qss.readAll()));
         Q_EMIT themeChanged();
     }
 }

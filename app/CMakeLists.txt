@@ -3,6 +3,7 @@ set(APP_NAME app)
 file(GLOB_RECURSE SRC_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/*.qrc"
 )
 #set(QWindowKit_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/QWindowKit)
@@ -10,8 +11,12 @@ file(GLOB_RECURSE SRC_FILES
 include_directories(${CMAKE_SOURCE_DIR}/shared ${CMAKE_SOURCE_DIR}/src)
 
 add_executable(${APP_NAME} ${SRC_FILES}
-        src/page/maindock.cpp
-        src/page/maindock.h)
+#        src/page/node/nodemodel.cpp
+#        src/page/node/nodemodel.h
+#        src/page/node/nodedata.cpp
+#        src/page/node/nodedata.h
+#        src/log/sflogger.hpp
+)
 
 target_link_libraries(${APP_NAME}
         Qt${QT_VERSION_MAJOR}::Core
@@ -21,9 +26,11 @@ target_link_libraries(${APP_NAME}
         QWindowKit::Core
         QWindowKit::Widgets
         qtadvanceddocking-qt${QT_VERSION_MAJOR}
+        QtNodes
 )
 target_include_directories(${APP_NAME}
         PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${IO_PATH}
         ${IOAPP_PATH}
 )
@@ -32,8 +39,8 @@ target_compile_definitions(${APP_NAME}
         PROJECT_NAME="${APP_NAME}"
 )
 
-install(TARGETS ${ATCLIENT_LIB}
+install(TARGETS ${APP_NAME}
         ARCHIVE DESTINATION bin     # 静态库 (.a / .lib)
-        LIBRARY DESTINATION lib     # 共享库 (.so / .dll)
+        LIBRARY DESTINATION bin     # 共享库 (.so / .dll)
         RUNTIME DESTINATION bin
 )

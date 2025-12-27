@@ -13,9 +13,14 @@
 #include <QTableWidget>
 #include <QInputDialog>
 #include <QVBoxLayout>
+
+
+
+
+#include "nodeeditpage.h"
 using namespace  ads;
  MainDock::MainDock(QWidget *parent):QWidget(parent) {
-
+ 	setObjectName("mainDock");
 	ads::CDockManager::setConfigFlag( ads::CDockManager::DockAreaHasCloseButton, false );
 	ads::CDockManager::setConfigFlag( ads::CDockManager::AllTabsHaveCloseButton, true );
 	ads::CDockManager::setConfigFlag( ads::CDockManager::DockAreaHasUndockButton, false );
@@ -23,20 +28,23 @@ using namespace  ads;
 	ads::CDockManager::setConfigFlag( ads::CDockManager::DisableTabTextEliding, true );
 	ads::CDockManager::setConfigFlag( ads::CDockManager::DoubleClickUndocksWidget, false );
     DockManager = new CDockManager(this);
+ 	//让 QSS 生效的 唯一可靠做法
+
 	auto layout = new QVBoxLayout(this);
  	layout->addWidget(DockManager);
  	layout->setContentsMargins(0,0,0,0);
  	layout->setSpacing(0);
-    // Set central widget
-    auto* label = new QLabel();
-    label->setText("This is a DockArea which is always visible, even if it does not contain any DockWidgets.");
+    //Set central widget
+    auto* label = new NodeEditPage(this);
+ 	label->setObjectName("label");
+  //  label->setText("This is a DockArea which is always visible, even if it does not contain any DockWidgets.");
     label->setAlignment(Qt::AlignCenter);
     CDockWidget* CentralDockWidget = DockManager->createDockWidget("CentralWidget");
     CentralDockWidget->setWidget(label);
     CentralDockWidget->setFeature(ads::CDockWidget::NoTab, true);
     auto* CentralDockArea = DockManager->setCentralWidget(CentralDockWidget);
 
-    createPerspectiveUi();
+    // createPerspectiveUi();
 }
 
 void MainDock::closeEvent(QCloseEvent *event) {

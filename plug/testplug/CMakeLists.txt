@@ -33,7 +33,7 @@ add_dependencies(${APP_NAME} ${AUDP_LIB})
 add_dependencies(${APP_NAME} ${PLOT_LIB})
 add_dependencies(${APP_NAME} ${JLINKARM})
 
-install(TARGETS ${ATCLIENT_LIB}
+install(TARGETS ${APP_NAME}
         ARCHIVE DESTINATION bin     # 静态库 (.a / .lib)
         LIBRARY DESTINATION lib     # 共享库 (.so / .dll)
         RUNTIME DESTINATION bin

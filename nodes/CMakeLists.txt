@@ -184,4 +184,4 @@ install(FILES
         DESTINATION ${INSTALL_CONFIGDIR}
 )
 
-add_subdirectory(nodesdemo)
+#add_subdirectory(nodesdemo)

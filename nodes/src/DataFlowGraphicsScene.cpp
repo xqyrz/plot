@@ -25,17 +25,25 @@
 
 #include <stdexcept>
 #include <utility>
-
+#include <QStandardPaths>
 
 namespace QtNodes {
 
 DataFlowGraphicsScene::DataFlowGraphicsScene(DataFlowGraphModel &graphModel, QObject *parent)
     : BasicGraphicsScene(graphModel, parent)
     , _graphModel(graphModel)
+    , saveAction(new QAction(tr("save"), this))
+    , loadAction(new QAction(tr("load"), this))
 {
+    connect(saveAction,&QAction::triggered,this,&DataFlowGraphicsScene::save);
+    connect(loadAction,&QAction::triggered,this,[this](){this->load();});
+
     connect(&_graphModel,
             &DataFlowGraphModel::inPortDataWasSet,
             [this](NodeId const nodeId, PortType const, PortIndex const) { onNodeUpdated(nodeId); });
+    load(QStandardPaths::writableLocation(
+       QStandardPaths::AppConfigLocation
+   )+"/default.flow");
 }
 
 // TODO constructor for an empyt scene?
@@ -58,26 +66,28 @@ std::vector<NodeId> DataFlowGraphicsScene::selectedNodes() const
     return result;
 }
 
-QMenu *DataFlowGraphicsScene::createSceneMenu(QPointF const scenePos)
+QMenu* DataFlowGraphicsScene::createSceneMenu(QPointF const scenePos)
 {
-    QMenu *modelMenu = new QMenu();
-
+    QMenu* modelMenu = new QMenu();
+    modelMenu->addAction(saveAction);
+    modelMenu->addAction(loadAction);
     // Add filterbox to the context menu
-    auto *txtBox = new QLineEdit(modelMenu);
+    auto* txtBox = new QLineEdit(modelMenu);
     txtBox->setPlaceholderText(QStringLiteral("Filter"));
     txtBox->setClearButtonEnabled(true);
 
-    auto *txtBoxAction = new QWidgetAction(modelMenu);
+
+    auto* txtBoxAction = new QWidgetAction(modelMenu);
     txtBoxAction->setDefaultWidget(txtBox);
 
     // 1.
     modelMenu->addAction(txtBoxAction);
 
     // Add result treeview to the context menu
-    QTreeWidget *treeView = new QTreeWidget(modelMenu);
+    QTreeWidget* treeView = new QTreeWidget(modelMenu);
     treeView->header()->close();
 
-    auto *treeViewAction = new QWidgetAction(modelMenu);
+    auto* treeViewAction = new QWidgetAction(modelMenu);
     treeViewAction->setDefaultWidget(treeView);
 
     // 2.
@@ -85,14 +95,16 @@ QMenu *DataFlowGraphicsScene::createSceneMenu(QPointF const scenePos)
 
     auto registry = _graphModel.dataModelRegistry();
 
-    for (auto const &cat : registry->categories()) {
+    for (auto const& cat : registry->categories())
+    {
         auto item = new QTreeWidgetItem(treeView);
         item->setText(0, cat);
         item->setFlags(item->flags() & ~Qt::ItemIsSelectable);
     }
 
-    for (auto const &assoc : registry->registeredModelsCategoryAssociation()) {
-        QList<QTreeWidgetItem *> parent = treeView->findItems(assoc.second, Qt::MatchExactly);
+    for (auto const& assoc : registry->registeredModelsCategoryAssociation())
+    {
+        QList<QTreeWidgetItem*> parent = treeView->findItems(assoc.second, Qt::MatchExactly);
 
         if (parent.count() <= 0)
             continue;
@@ -103,10 +115,11 @@ QMenu *DataFlowGraphicsScene::createSceneMenu(QPointF const scenePos)
 
     treeView->expandAll();
 
-    connect(treeView,
-            &QTreeWidget::itemClicked,
-            [this, modelMenu, scenePos](QTreeWidgetItem *item, int) {
-                if (!(item->flags() & (Qt::ItemIsSelectable))) {
+    connect(treeView, &QTreeWidget::itemClicked,
+            [this, modelMenu, scenePos](QTreeWidgetItem* item, int)
+            {
+                if (!(item->flags() & (Qt::ItemIsSelectable)))
+                {
                     return;
                 }
 
@@ -115,26 +128,31 @@ QMenu *DataFlowGraphicsScene::createSceneMenu(QPointF const scenePos)
                 modelMenu->close();
             });
 
-    //Setup filtering
-    connect(txtBox, &QLineEdit::textChanged, [treeView](const QString &text) {
-        QTreeWidgetItemIterator categoryIt(treeView, QTreeWidgetItemIterator::HasChildren);
-        while (*categoryIt)
-            (*categoryIt++)->setHidden(true);
-        QTreeWidgetItemIterator it(treeView, QTreeWidgetItemIterator::NoChildren);
-        while (*it) {
-            auto modelName = (*it)->text(0);
-            const bool match = (modelName.contains(text, Qt::CaseInsensitive));
-            (*it)->setHidden(!match);
-            if (match) {
-                QTreeWidgetItem *parent = (*it)->parent();
-                while (parent) {
-                    parent->setHidden(false);
-                    parent = parent->parent();
+    // Setup filtering
+    connect(txtBox, &QLineEdit::textChanged,
+            [treeView](const QString& text)
+            {
+                QTreeWidgetItemIterator categoryIt(treeView, QTreeWidgetItemIterator::HasChildren);
+                while (*categoryIt)
+                    (*categoryIt++)->setHidden(true);
+                QTreeWidgetItemIterator it(treeView, QTreeWidgetItemIterator::NoChildren);
+                while (*it)
+                {
+                    auto modelName = (*it)->text(0);
+                    const bool match = (modelName.contains(text, Qt::CaseInsensitive));
+                    (*it)->setHidden(!match);
+                    if (match)
+                    {
+                        QTreeWidgetItem* parent = (*it)->parent();
+                        while (parent)
+                        {
+                            parent->setHidden(false);
+                            parent = parent->parent();
+                        }
+                    }
+                    ++it;
                 }
-            }
-            ++it;
-        }
-    });
+            });
 
     // make sure the text box gets focus so the user doesn't have to click on it
     txtBox->setFocus();
@@ -143,6 +161,26 @@ QMenu *DataFlowGraphicsScene::createSceneMenu(QPointF const scenePos)
     modelMenu->setAttribute(Qt::WA_DeleteOnClose);
 
     return modelMenu;
+}
+bool DataFlowGraphicsScene::load(QString fileName)
+{
+    if (!QFileInfo::exists(fileName))
+        return false;
+
+    QFile file(fileName);
+
+    if (!file.open(QIODevice::ReadOnly))
+        return false;
+
+    clearScene();
+
+    QByteArray const wholeFile = file.readAll();
+
+    _graphModel.load(QJsonDocument::fromJson(wholeFile).object());
+
+    Q_EMIT sceneLoaded();
+
+    return true;
 }
 
 bool DataFlowGraphicsScene::save() const
@@ -172,23 +210,7 @@ bool DataFlowGraphicsScene::load()
                                                     QDir::homePath(),
                                                     tr("Flow Scene Files (*.flow)"));
 
-    if (!QFileInfo::exists(fileName))
-        return false;
-
-    QFile file(fileName);
-
-    if (!file.open(QIODevice::ReadOnly))
-        return false;
-
-    clearScene();
-
-    QByteArray const wholeFile = file.readAll();
-
-    _graphModel.load(QJsonDocument::fromJson(wholeFile).object());
-
-    Q_EMIT sceneLoaded();
-
-    return true;
+    return load(fileName);
 }
 
 } // namespace QtNodes

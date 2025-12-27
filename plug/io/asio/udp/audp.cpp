@@ -4,7 +4,8 @@
 
 #include "audp.h"
 #include <QDebug>
-AUdp::AUdp(IO::Config config, QObject *parent)    :QObject(parent)
+
+AUdp::AUdp(QObject *parent,IO::Config config )    :QObject(parent)
     ,IOInterface("aUdp",config)
     ,_socket(new udp::socket(io_context))
     ,recv_buffer_()

@@ -9,12 +9,12 @@
 #include "asio.hpp"
 using asio::ip::udp;
 
-class AUdp:public QObject,public IOInterface{
+class  AUdp:public QObject,public IOInterface{
     Q_OBJECT
     Q_PLUGIN_METADATA(IID IOInterface_Id FILE "audp.json")
     Q_INTERFACES(IOInterface)
 public:
-    explicit AUdp(IO::Config config=IO::Config(), QObject* parent = nullptr);
+    explicit AUdp( QObject* parent = nullptr,IO::Config config=IO::Config());
     ~AUdp() override;
     void run() override;
     bool open() override;
@@ -31,6 +31,9 @@ private:
     udp::endpoint endpoint;
     std::array<char, 1024> recv_buffer_;
 };
-
+// QT_BEGIN_NAMESPACE
+// #define UDP_Id "IO.Plugin.udp"
+// Q_DECLARE_INTERFACE(AUdp, UDP_Id);
+// QT_END_NAMESPACE
 
 #endif //AUDP_H

@@ -5,7 +5,7 @@
 #include <QtWidgets/QApplication>
 
 #include "mainwindow.h"
-
+#include "SRC/log/sflogger.hpp"
 int main(int argc, char *argv[]) {
     qputenv("QT_WIN_DEBUG_CONSOLE", "attach");
     qputenv("QSG_INFO", "1");
@@ -14,7 +14,8 @@ int main(int argc, char *argv[]) {
     qputenv("QSG_RHI_BACKEND", "d3d12");
     qputenv("QSG_RHI_HDR", "scrgb");
     qputenv("QT_QPA_DISABLE_REDIRECTION_SURFACE", "1");
-
+    SfLogger::instance("APP");
+    qInstallMessageHandler(SfLogger::customMessageHandler);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
         Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);

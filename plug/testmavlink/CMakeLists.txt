@@ -22,3 +22,9 @@ target_compile_definitions(${APP_NAME}
 
 add_dependencies(${APP_NAME} ${ATCPSERVER_LIB})
 add_dependencies(${APP_NAME} ${SELFIOAPP_LIB})
+
+install(TARGETS ${APP_NAME}
+        ARCHIVE DESTINATION bin     # 静态库 (.a / .lib)
+        LIBRARY DESTINATION bin     # 共享库 (.so / .dll)
+        RUNTIME DESTINATION bin
+)

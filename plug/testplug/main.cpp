@@ -58,21 +58,23 @@ int main(int argc, char *argv[])
 #endif
     // 致命错误追加调用栈（需启用 QT_MESSAGE_PATTERN 环境变量）
     );
-    qInfo()<<QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")<<"plug run";
-    QApplication a(argc, argv);
-    QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() +"/lib");
-
-
-
-    QDir path = QDir( QCoreApplication::applicationDirPath());
-    path.cd("../install/plug");
     IOInterface* tcpServer{nullptr};
     IOInterface* tcpClient{nullptr};
     IOInterface* udp{nullptr};
     IOAPPInterface* selfio{nullptr};
+    qInfo()<<QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")<<"plug run";
+    QApplication a(argc, argv);
+    QDir dir(QCoreApplication::applicationDirPath());
+    dir.cdUp();
+    auto plugins =dir.absolutePath()+"/plugins";
+    QCoreApplication::addLibraryPath(plugins);
+    // qInfo() <<plugins<<"libraryPaths "<< QCoreApplication::libraryPaths();
+    QDir path = QDir( plugins);
+
+    qInfo() <<plugins;
     foreach(QFileInfo info, path.entryInfoList(QDir::Files | QDir::NoDotAndDotDot))
     {
-
+        qInfo() <<info.absoluteFilePath();
         QPluginLoader pluginLoader(info.absoluteFilePath());
         QObject* plugin = pluginLoader.instance();
         if (plugin)
@@ -119,8 +121,12 @@ int main(int argc, char *argv[])
                 }
             }
         }
+        else
+        {
+            qInfo() << pluginLoader.errorString();
+        }
     }
-    
+
     //tcpClient->open();
     QTimer timer;
     QObject::connect(&timer,&QTimer::timeout,[=]()

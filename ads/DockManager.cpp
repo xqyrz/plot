@@ -507,6 +507,8 @@ CDockManager::CDockManager(QWidget *parent) :
 	CDockContainerWidget(this, parent),
 	d(new DockManagerPrivate(this))
 {
+	setAttribute(Qt::WA_StyledBackground, true);
+	setFrameShape(QFrame::NoFrame);
 	createRootSplitter();
 	createSideTabBarWidgets();
 	QMainWindow* MainWindow = qobject_cast<QMainWindow*>(parent);
