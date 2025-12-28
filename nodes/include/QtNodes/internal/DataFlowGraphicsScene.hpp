@@ -3,7 +3,7 @@
 #include "BasicGraphicsScene.hpp"
 #include "DataFlowGraphModel.hpp"
 #include "Export.hpp"
-
+#include <QStandardPaths>
 namespace QtNodes {
 
 /**
@@ -22,11 +22,13 @@ public:
 public:
     std::vector<NodeId> selectedNodes() const;
     QMenu *createSceneMenu(QPointF const scenePos) override;
-
+    QString getDefaultConfigPath(){return defaultConfigPath;}
 public Q_SLOTS:
     bool load(QString file);
-    bool save() const;
-    bool load();
+private Q_SLOTS:
+    bool _save()const;
+    bool _export() const;
+    bool _load();
 
 Q_SIGNALS:
     void sceneLoaded();
@@ -34,7 +36,11 @@ Q_SIGNALS:
 private:
     DataFlowGraphModel &_graphModel;
     QAction* saveAction;
+    QAction* exportAction;
     QAction* loadAction;
+    const QString defaultConfigPath =  QStandardPaths::writableLocation(
+                QStandardPaths::AppConfigLocation
+            )+"/default.flow";
 };
 
 } // namespace QtNodes

@@ -30,7 +30,8 @@ private:
     ads::CDockWidget* TimelineDockWidget{};
 
     void createPerspectiveUi();
-
+    void _InitPage();
+    ads::CDockAreaWidget* _addDock(QWidget* widget,QString name,ads::CDockAreaWidget* parent = nullptr);
 private slots:
     void savePerspective();
 };

@@ -27,6 +27,7 @@ target_link_libraries(${APP_NAME}
         QWindowKit::Widgets
         qtadvanceddocking-qt${QT_VERSION_MAJOR}
         QtNodes
+        ${PLOT_LIB}
 )
 target_include_directories(${APP_NAME}
         PUBLIC

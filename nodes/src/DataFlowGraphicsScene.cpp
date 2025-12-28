@@ -1,5 +1,7 @@
 #include "DataFlowGraphicsScene.hpp"
 
+#include <QMessageBox>
+
 #include "ConnectionGraphicsObject.hpp"
 #include "GraphicsView.hpp"
 #include "NodeDelegateModelRegistry.hpp"
@@ -32,18 +34,18 @@ namespace QtNodes {
 DataFlowGraphicsScene::DataFlowGraphicsScene(DataFlowGraphModel &graphModel, QObject *parent)
     : BasicGraphicsScene(graphModel, parent)
     , _graphModel(graphModel)
+    ,exportAction(new QAction(tr("export"), this))
     , saveAction(new QAction(tr("save"), this))
     , loadAction(new QAction(tr("load"), this))
 {
-    connect(saveAction,&QAction::triggered,this,&DataFlowGraphicsScene::save);
-    connect(loadAction,&QAction::triggered,this,[this](){this->load();});
+    connect(exportAction,&QAction::triggered,this,&DataFlowGraphicsScene::_export);
+    connect(saveAction,&QAction::triggered,this,&DataFlowGraphicsScene::_save);
+    connect(loadAction,&QAction::triggered,this,[this](){this->_load();});
 
     connect(&_graphModel,
             &DataFlowGraphModel::inPortDataWasSet,
             [this](NodeId const nodeId, PortType const, PortIndex const) { onNodeUpdated(nodeId); });
-    load(QStandardPaths::writableLocation(
-       QStandardPaths::AppConfigLocation
-   )+"/default.flow");
+
 }
 
 // TODO constructor for an empyt scene?
@@ -71,6 +73,7 @@ QMenu* DataFlowGraphicsScene::createSceneMenu(QPointF const scenePos)
     QMenu* modelMenu = new QMenu();
     modelMenu->addAction(saveAction);
     modelMenu->addAction(loadAction);
+    modelMenu->addAction(exportAction);
     // Add filterbox to the context menu
     auto* txtBox = new QLineEdit(modelMenu);
     txtBox->setPlaceholderText(QStringLiteral("Filter"));
@@ -182,8 +185,21 @@ bool DataFlowGraphicsScene::load(QString fileName)
 
     return true;
 }
+bool DataFlowGraphicsScene::_save() const
+{
+    QFile file(defaultConfigPath);
+    if (file.open(QIODevice::WriteOnly)) {
+        file.write(QJsonDocument(_graphModel.save()).toJson());
+        QMessageBox::information(nullptr,"信息","保存成功");
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
 
-bool DataFlowGraphicsScene::save() const
+bool DataFlowGraphicsScene::_export() const
 {
     QString fileName = QFileDialog::getSaveFileName(nullptr,
                                                     tr("Open Flow Scene"),
@@ -203,7 +219,7 @@ bool DataFlowGraphicsScene::save() const
     return false;
 }
 
-bool DataFlowGraphicsScene::load()
+bool DataFlowGraphicsScene::_load()
 {
     QString fileName = QFileDialog::getOpenFileName(nullptr,
                                                     tr("Open Flow Scene"),

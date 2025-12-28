@@ -5,44 +5,15 @@
 #include "nodemodel.h"
 
 #include <utility>
-
+#include <QLabel>
 using namespace QtNodes;
-IOModel::IOModel(NodeTye type, QString _name)
+BaseModel::BaseModel(NodeTye type,QString _name,QList<QtNodes::NodeDataTypeEnum::InputType> _in,QList<QtNodes::NodeDataTypeEnum::OutputType> _out)
+    :m_type(type), m_name(std::move(_name)), in(std::move(_in)),out(std::move(_out))
 {
-    m_type=type;
-    m_name=std::move(_name);
     m_caption=m_name;
-    switch (type)
-    {
-    case DEFAULT_TYPE:
-        break;
-    case IO_TYPE:
-    {
-        in<<NodeDataTypeEnum::IN_VIRTUAL_TX<<NodeDataTypeEnum::IN_IO_TX;
-        out<<NodeDataTypeEnum::OUT_IO_RX;
-    }
-        break;
-    case IOAPP_TYPE:
-    {
-        in<<NodeDataTypeEnum::IN_IO_RX<<NodeDataTypeEnum::IN_APP_TX;
-        out
-        <<NodeDataTypeEnum::OUT_IO_TX
-        <<NodeDataTypeEnum::OUT_APP_RX
-        <<NodeDataTypeEnum::OUT_APP_SIGNAL;
-    }
-        break;
-    case VIEW_TYPE:
-    {
-        in<<NodeDataTypeEnum::IN_APP_RX<<NodeDataTypeEnum::IN_APP_SIGNAL;
-        out<<NodeDataTypeEnum::OUT_APP_TX;
-    }
-        break;
-    default:
-        break;
-    }
 
 }
-unsigned int IOModel::nPorts(PortType const portType) const
+unsigned int BaseModel::nPorts(PortType const portType) const
 {
     unsigned int result = 1;
 
@@ -56,7 +27,7 @@ unsigned int IOModel::nPorts(PortType const portType) const
     return result;
 }
 
-NodeDataType IOModel::dataType(PortType const portType, PortIndex const portIndex) const
+NodeDataType BaseModel::dataType(PortType const portType, PortIndex const portIndex) const
 {
     switch (portType) {
     case PortType::In:
@@ -72,10 +43,14 @@ NodeDataType IOModel::dataType(PortType const portType, PortIndex const portInde
     return NodeDataType();
 }
 
-std::shared_ptr<NodeData> IOModel::outData(PortIndex const port)
+std::shared_ptr<NodeData> BaseModel::outData(PortIndex const port)
 {
- // qWarning()<<".........."<<out.at(port);
-  return std::make_shared<OUTNodeData>(OUTNodeData(out.at(port)));
+    // qWarning()<<".........."<<out.at(port);
+    return std::make_shared<OUTNodeData>(OUTNodeData(out.at(port)));
     // if (port < 1)return std::make_shared<MyNodeData>();
     // return std::make_shared<SimpleNodeData>();
+}
+QWidget* BaseModel::embeddedWidget()
+{
+    return m_widget;
 }

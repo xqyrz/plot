@@ -76,7 +76,7 @@ find_package(Qt${QT_VERSION_MAJOR}  REQUIRED COMPONENTS Core Gui Widgets PrintSu
 # 添加子目录
 
 
-
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/plot)
 
 add_subdirectory(nodes)
 add_subdirectory(qwindowkit)

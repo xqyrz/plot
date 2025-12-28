@@ -13,8 +13,8 @@
 #include <QTableWidget>
 #include <QInputDialog>
 #include <QVBoxLayout>
-
-
+#include <QTabWidget>
+#include "plotview.h"
 
 
 #include "nodeeditpage.h"
@@ -35,16 +35,8 @@ using namespace  ads;
  	layout->setContentsMargins(0,0,0,0);
  	layout->setSpacing(0);
     //Set central widget
-    auto* label = new NodeEditPage(this);
- 	label->setObjectName("label");
-  //  label->setText("This is a DockArea which is always visible, even if it does not contain any DockWidgets.");
-    label->setAlignment(Qt::AlignCenter);
-    CDockWidget* CentralDockWidget = DockManager->createDockWidget("CentralWidget");
-    CentralDockWidget->setWidget(label);
-    CentralDockWidget->setFeature(ads::CDockWidget::NoTab, true);
-    auto* CentralDockArea = DockManager->setCentralWidget(CentralDockWidget);
+     _InitPage();
 
-    // createPerspectiveUi();
 }
 
 void MainDock::closeEvent(QCloseEvent *event) {
@@ -52,25 +44,40 @@ void MainDock::closeEvent(QCloseEvent *event) {
 	QWidget::closeEvent(event);
 }
 
-void MainDock::createPerspectiveUi() {
- 	SavePerspectiveAction = new QAction("Create Perspective", this);
- 	connect(SavePerspectiveAction, SIGNAL(triggered()), SLOT(savePerspective()));
- 	PerspectiveListAction = new QWidgetAction(this);
- 	PerspectiveComboBox = new QComboBox(this);
- 	PerspectiveComboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
- 	PerspectiveComboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+void MainDock::createPerspectiveUi()
+{
+    SavePerspectiveAction = new QAction("Create Perspective", this);
+    connect(SavePerspectiveAction, SIGNAL(triggered()), SLOT(savePerspective()));
+    PerspectiveListAction = new QWidgetAction(this);
+    PerspectiveComboBox = new QComboBox(this);
+    PerspectiveComboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    PerspectiveComboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
- 	connect(PerspectiveComboBox, &QComboBox::textActivated,
-		 DockManager, &CDockManager::openPerspective);
+    connect(PerspectiveComboBox, &QComboBox::textActivated, DockManager, &CDockManager::openPerspective);
 #else
- 	connect(PerspectiveComboBox, SIGNAL(activated(const QString&)),
-		 DockManager, SLOT(openPerspective(const QString&)));
+    connect(PerspectiveComboBox, SIGNAL(activated(const QString&)), DockManager, SLOT(openPerspective(const QString&)));
 #endif
- 	PerspectiveListAction->setDefaultWidget(PerspectiveComboBox);
- 	// ui->toolBar->addSeparator();
- 	// ui->toolBar->addAction(PerspectiveListAction);
- 	// ui->toolBar->addAction(SavePerspectiveAction);
+    PerspectiveListAction->setDefaultWidget(PerspectiveComboBox);
+    // ui->toolBar->addSeparator();
+    // ui->toolBar->addAction(PerspectiveListAction);
+    // ui->toolBar->addAction(SavePerspectiveAction);
 }
+void MainDock::_InitPage()
+{
+    auto pre =  _addDock(new NodeEditPage(this),"node");
+     _addDock(new PlotView(this),"plot",pre);
+     pre->setCurrentDockWidget(pre->dockWidget(0));
+}
+ads::CDockAreaWidget* MainDock::_addDock(QWidget* widget, QString name,ads::CDockAreaWidget* parent)
+ {
+     widget->setObjectName(name);
+     auto dockWidget = DockManager->createDockWidget(name);
+     dockWidget->setWidget(widget);
+     dockWidget->setMinimumSizeHintMode(CDockWidget::MinimumSizeHintFromDockWidget);
+     dockWidget->setMinimumSize(200, 150);
+
+     return DockManager->addDockWidget(ads::CenterDockWidgetArea, dockWidget,parent);
+ }
 
 void MainDock::savePerspective() {
  	QString PerspectiveName = QInputDialog::getText(this, "Save Perspective", "Enter unique name:");
