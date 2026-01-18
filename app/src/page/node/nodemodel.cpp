@@ -50,7 +50,4 @@ std::shared_ptr<NodeData> BaseModel::outData(PortIndex const port)
     // if (port < 1)return std::make_shared<MyNodeData>();
     // return std::make_shared<SimpleNodeData>();
 }
-QWidget* BaseModel::embeddedWidget()
-{
-    return m_widget;
-}
+

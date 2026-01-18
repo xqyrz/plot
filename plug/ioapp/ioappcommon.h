@@ -24,6 +24,7 @@ namespace IOAPP
         uint64_t time;
         std::string name;
         std::string unit;
+
         double value{};
 
         // 构造函数初始化

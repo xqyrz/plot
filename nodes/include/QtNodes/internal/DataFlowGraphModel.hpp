@@ -30,6 +30,7 @@ public:
 
     std::shared_ptr<NodeDelegateModelRegistry> dataModelRegistry() { return _registry; }
 
+
 public:
     std::unordered_set<NodeId> allNodeIds() const override;
 

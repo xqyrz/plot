@@ -9,7 +9,6 @@ file(GLOB_RECURSE SRC_FILES
 add_library(${JLINKARM} SHARED
         ${SRC_FILES}
 )
-MESSAGE("JLINKARM ${JLINKARM}")
 
 target_include_directories(${JLINKARM}
         PUBLIC

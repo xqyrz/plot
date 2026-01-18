@@ -12,23 +12,25 @@
 
 #include "plottree.h"
 #include "plotcustom.h"
-PlotView::PlotView(QWidget*parent)
-	: QWidget(parent)
-	,zero(QDateTime::currentDateTime().toMSecsSinceEpoch())
-	,_graphView(new PlotCustom(this))
-	,_treeView(new PlotTree(this))
-	,_toolBar(new QToolBar(this))
-	,_modleComboBox(new QComboBox(this))
-	,_xSpinBox(new QSpinBox(this))
-    ,_xCheckBox(new QCheckBox(this))
-	,_model(new PlotModel(this))
+PlotView::PlotView(QWidget* parent) :
+    QWidget(parent), zero(QDateTime::currentDateTime().toMSecsSinceEpoch()), _graphView(new PlotCustom(this)),
+    _treeView(new PlotTree(this)), _toolBar(new QToolBar(this)), _modleComboBox(new QComboBox(this)),
+    _xSpinBox(new QSpinBox(this)), _xCheckBox(new QCheckBox(this)), _model(new PlotModel(this))
 {
-	QSettings settings(PLOT::PLOT_COMPANY,PLOT::PLOT_PRODUCT);
-	plotType =(PLOT::PlotType)settings.value("plotType",PLOT::TYPE_oneXoneY).toInt();
-	initUI();
-	initConnect();
+    QSettings settings(PLOT::PLOT_COMPANY, PLOT::PLOT_PRODUCT);
+    plotType = (PLOT::PlotType)settings.value("plotType", PLOT::TYPE_oneXoneY).toInt();
+    initUI();
+    initConnect();
 }
-
+PlotView* PlotView::m_plotView = nullptr;
+PlotView* PlotView::instance(QWidget *parent)
+{
+    if (m_plotView == nullptr)
+    {
+        m_plotView = new PlotView(parent);
+    }
+    return m_plotView;
+}
 void PlotView::expandAll() const {
 	_treeView->expandAll();
 }
@@ -81,42 +83,56 @@ void PlotView::initUI()
 
 void PlotView::initConnect()
 {
-	connect(_modleComboBox,QOverload<int>::of(&QComboBox::currentIndexChanged),this, &PlotView::setPlotType);
+    connect(_modleComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PlotView::setPlotType);
 
-	connect(_xSpinBox,QOverload<int>::of(&QSpinBox::valueChanged),_graphView, &PlotCustom::setXInterval);
-	connect(_xCheckBox,QOverload<int>::of(&QCheckBox::stateChanged),_graphView, &PlotCustom::setXCheckBox);
+    connect(_xSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), _graphView, &PlotCustom::setXInterval);
+    connect(_xCheckBox, QOverload<int>::of(&QCheckBox::stateChanged), _graphView, &PlotCustom::setXCheckBox);
 
-	connect(this, &PlotView::plotTypeChanged, _graphView, &PlotCustom::setPlotType);
-	//connect(_graphView,&PlotCustom::pressedPlot,_treeView,&PlotTree::set)
-	connect(_model, &QAbstractItemModel::dataChanged, this,[this]() {
-		_graphView->resetUI();
-	});
-
+    connect(this, &PlotView::plotTypeChanged, _graphView, &PlotCustom::setPlotType);
+    // connect(_graphView,&PlotCustom::pressedPlot,_treeView,&PlotTree::set)
+    connect(_model, &QAbstractItemModel::dataChanged, this, [this]() { _graphView->resetUI(); });
 }
 
-void PlotView::addSignalData(const QList<IOAPP::SIGNALS> &_signals) {
-	{
-		for (const auto &s : _signals) {
-			auto node = _model->getNode(s.id);
-			if (!node) {
-				auto d = QSharedPointer<QCPGraphDataContainer>::create();
-				QMetaObject::invokeMethod(
-						this,
-						"add_plotData", // 必须是 QObject slots 函数
-						Qt::BlockingQueuedConnection, // 阻塞等待执行完成
-						Q_ARG(uint64_t, s.id),
-						Q_ARG(QSharedPointer<QCPGraphDataContainer>&, d),
-						Q_ARG(QString, QString::fromStdString(s.name))
-					);
-				node = _model->getNode(s.id);
-				if (!node) {
-					qCritical() << "add_plotData failed:" << QString::fromStdString(s.name);
-					continue;
-				}
-			}
-			node->plotData->getData()->add(QCPGraphData((s.time-zero)/1000.0, s.value));
-		}
-	}
+void PlotView::addSignalData(const IOAPP::SIGNALS& _signal)
+{
+    auto node = _model->getNode(_signal.id);
+    if (!node) {
+        auto d = QSharedPointer<QCPGraphDataContainer>::create();
+        QMetaObject::invokeMethod(
+                this,
+                "add_plotData", // 必须是 QObject slots 函数
+                Qt::AutoConnection, // TODO:线程安全
+                Q_ARG(uint64_t, _signal.id),
+                Q_ARG(QSharedPointer<QCPGraphDataContainer>&, d),
+                Q_ARG(QString, QString::fromStdString(_signal.name))
+            );
+        //this->add_plotData(_signal.id,d, QString::fromStdString(_signal.name));
+        node = _model->getNode(_signal.id);
+        if (!node) {
+            qCritical() << "add_plotData failed:" << QString::fromStdString(_signal.name);
+            return;
+        }
+    }
+    node->plotData->getData()->add(QCPGraphData((_signal.time-zero)/1000.0, _signal.value));
+}
+void PlotView::addSignalData(const QList<IOAPP::SIGNALS>& _signals)
+{
+    for (const auto& s : _signals)
+    {
+        addSignalData(s);
+    }
+}
+const char* PlotView::getSignal(int index) const
+{
+    return nullptr;
+}
+const char* PlotView::getSlot(int index) const
+{
+   switch (index)
+   {
+   case 1: return SLOT(addSignalData(const QList<IOAPP::SIGNALS>&));
+   default:return nullptr;
+   }
 }
 
 TreeNode* PlotView::add_plotData( uint64_t id, QSharedPointer<QCPGraphDataContainer> &data, QString plot_name) {

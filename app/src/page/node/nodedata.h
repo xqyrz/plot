@@ -7,10 +7,12 @@
 
 #include <QtNodes/NodeData>
 #include <QMetaEnum>
+#include <QMap>
 namespace QtNodes {
 class NodeDataTypeEnum:public QObject {
   Q_OBJECT
 public:
+
   // 修正枚举命名：避免使用IN/OUT这类可能与关键字冲突的名字
   enum InputType {          // 更好的命名
     IN_VIRTUAL_TX,
@@ -19,7 +21,6 @@ public:
     IN_APP_TX,
     IN_APP_RX,
     IN_APP_SIGNAL
-
 };
   Q_ENUM(InputType)        // 注册枚举到元对象系统
 

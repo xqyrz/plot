@@ -52,8 +52,8 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
 
-    PlotView w(nullptr);
-    w.resize(800, 600);
+    auto w =PlotView::instance(nullptr);
+    w->resize(800, 600);
 
 
     for (int i = 1; i < 3; i++) {
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
             data->add(QCPGraphData(j, 50 * i * cos((i * 1000 + j) / 5000.0 * 3.14)));
         }
     }
-    w.expandAll();
-    w.show();
+    w->expandAll();
+    w->show();
     return QApplication::exec();
 }

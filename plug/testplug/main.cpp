@@ -13,7 +13,7 @@
 #include <QMutexLocker>
 
 #include <QMutex>
-
+#include "test.h"
 int main(int argc, char *argv[])
 {
     // qInstallMessageHandler(customMessageHandler);
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
     );
     IOInterface* tcpServer{nullptr};
     IOInterface* tcpClient{nullptr};
-    IOInterface* udp{nullptr};
+    QObject* udp{nullptr};
     IOAPPInterface* selfio{nullptr};
     qInfo()<<QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")<<"plug run";
     QApplication a(argc, argv);
@@ -101,16 +101,16 @@ int main(int argc, char *argv[])
                     tcpServer->setConfig(IO::Config{"127.0.0.1","1234"});
                   //  tcpServer->open();
                 }
-                else if (className == "ATCPClient") {
-                    tcpClient= qobject_cast<IOInterface*>(plugin);
-                    tcpClient->setConfig(IO::Config{"127.0.0.1","1234"});
-                }
+                // else if (className == "ATCPClient") {
+                //     tcpClient= qobject_cast<IOInterface*>(plugin);
+                //     tcpClient->setConfig(IO::Config{"127.0.0.1","1234"});
+                // }
                 else if (className == "AUdp") {
-                    udp =  qobject_cast<IOInterface*>(plugin);
-                    udp->setConfig(IO::Config{""
+                    udp = (plugin);
+                     qobject_cast<IOInterface*>(udp)->setConfig(IO::Config{""
                         ,"6123"
                     });
-                    udp->open();
+                    qobject_cast<IOInterface*>(udp)->open();
                 }
             }
             else if (iid == IOAPPInterface_Id)
@@ -135,25 +135,24 @@ int main(int argc, char *argv[])
         tcpClient->write(frame);
     });
 
-    PlotView w(nullptr);
-    w.resize(800, 600);
+    auto w = PlotView::instance(nullptr);
+    w->resize(800, 600);
 
-    w.expandAll();
-    w.show();
+    w->expandAll();
+    w->show();
     QMutex mutex;
-    udp->setReadReadyCallback([&](int)
-    {
-      //  QMutexLocker locker(&mutex);
-    auto frams = udp->readALL();
-
-    foreach(auto const & var,frams)
+    Test t;
+    t.setCallBack([&](const IO::Frame& var)
     {
       auto sigs =  selfio->decode(var);
         if (sigs.size() ) {
-            w.enupRang();
-            w.addSignalData(sigs);
+            w->enupRang();
+            w->addSignalData(sigs);
         }
-    }
+
 });
+
+    qDebug()<<qobject_cast<IOInterface*>(udp)->getSignal(0);
+    QObject::connect( udp,qobject_cast<IOInterface*>(udp)->getSignal(0),&t,SLOT(tx_frame(const IO::Frame&)));
     return QApplication::exec();
 }

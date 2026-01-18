@@ -16,7 +16,10 @@ public:
     bool close() override;
     int write(const IO::Frame&) override;
     int write(const QList<IO::Frame>&) override;
-
+signals:
+        void rx_frame(const IO::Frame&);
+public   slots:
+    void tx_frame(const IO::Frame& frame){write(frame);};
 private:
     void do_read();
 private:

@@ -19,6 +19,11 @@ class NodeEditPage : public GraphicsView
     Q_OBJECT
 public:
     NodeEditPage(QWidget *parent = Q_NULLPTR);
+    signals:
+    void d(int);
+private:
+    static std::shared_ptr<NodeDelegateModelRegistry> registerDataModels();
+    void _sceneLoaded();
 private:
     std::shared_ptr<NodeDelegateModelRegistry> registry;
     DataFlowGraphModel* dataFlowGraphModel=nullptr;

@@ -16,6 +16,10 @@ public:
     explicit SelfIOAPP( QObject* parent = nullptr);
     QList<IOAPP::SIGNALS>  decode(const IO::Frame& data) override ;
     IO::Frame encode() override;
+signals:
+   void hasSignal(const QList<IOAPP::SIGNALS>&);
+private slots:
+    void rx_frame(const IO::Frame&);
 private:
     mavlink_message_t rcv_msg;
     mavlink_status_t status;

@@ -5,6 +5,10 @@ AJLinkArm::AJLinkArm(IO::Config config, QObject* parent)
     :QObject(parent)
     ,IOInterface("aJlinkArm", config)
 {
+    addCallback(0,[this](const IO::Frame& frame)
+{
+    emit rx_frame(frame);
+});
 }
 
 AJLinkArm::~AJLinkArm()

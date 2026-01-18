@@ -74,10 +74,12 @@ public:
     inline static QElapsedTimer* getTimer() {return g_startupTimer;};
 
     static QString extractShortFunctionName(const QString& fullFunction) {
-        if (fullFunction.isEmpty()) {
-            return "unknown";
-        }
-
+        return fullFunction;
+        // if (fullFunction.isEmpty()) {
+        //     return "unknown";
+        // }
+        // auto vars = fullFunction.split(" ");
+        // return vars.last();
         // 匹配 类名::函数名 的模式
         static QRegularExpression regex(R"((\w+::\w+))");
         QRegularExpressionMatch match = regex.match(fullFunction);
@@ -135,9 +137,9 @@ public:
 #endif // DEBUG
 
             std::cout << logLevel[type] << " "
-                      << formattedMessage.info.toUtf8().constData()
-                      << formattedMessage.msg.toUtf8().constData()
-                      << " \033[0m"<<std::endl;
+           << formattedMessage.info.toStdString()
+           << formattedMessage.msg.toStdString()
+           << " \033[0m\n";
             logger.queue.enqueue(formattedMessage);
         }
         if (!logger.writeFuture.isRunning()) {

@@ -10,10 +10,16 @@ AUdp::AUdp(QObject *parent,IO::Config config )    :QObject(parent)
     ,_socket(new udp::socket(io_context))
     ,recv_buffer_()
 {
-
+    addCallback(0,[this](const IO::Frame& frame)
+    {
+        emit rx_frame(frame);
+    });
 }
 
 AUdp::~AUdp() {
+   // qDebug()<<"xx AUDP";
+    // io_context.stop();
+    // io_thread_.join();
 }
 
 void AUdp::run() {
@@ -71,13 +77,17 @@ int AUdp::write(const IO::Frame & frame) {
     return _socket->send(asio::buffer(frame.data.data(), frame.data.size()));
 }
 
-int AUdp::write(const QList<IO::Frame> & frames) {
+int AUdp::write(const QList<IO::Frame>& frames)
+{
 
-    foreach (const IO::Frame & frame, frames) {
+    foreach (const IO::Frame& frame, frames)
+    {
         write(frame);
     }
     return 0;
 }
+
+
 
 void AUdp::do_read() {
     _socket->async_receive_from(

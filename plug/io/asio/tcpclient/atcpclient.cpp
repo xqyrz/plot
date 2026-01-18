@@ -4,19 +4,39 @@
 #include "atcpclient.h"
 #include <QDebug>
 
-
 ATCPClient::ATCPClient(IO::Config con,QObject* parent)
     :QObject(parent)
     ,IOInterface("atcpclient",con)
     ,_socket(new tcp::socket(io_context))
 {
+    auto fun = [this](const IO::Frame& frame)
+    {
+        emit rx_frame(frame);
+    };
+    addCallback(0,fun);
 }
 
 ATCPClient::~ATCPClient()
 {
-    qDebug()<<"~ATCPServer";
-    io_context.stop();
-    io_thread_.join();
+    try {
+        // 先停止接受新工作
+        io_context.stop();
+
+        // 等待所有操作完成（如果有工作线程）
+        if (io_thread_.joinable()) {
+            io_thread_.join();
+        }
+
+        // 清理剩余工作（可选）
+        io_context.restart();
+        while (io_context.poll()) {
+            // 执行剩余handlers
+        }
+    }
+    catch (...) {
+        // 记录日志，但不抛出异常
+     //   qWarning() << "Exception in ATCPClient destructor";
+    }
 }
 
 void ATCPClient::run() {

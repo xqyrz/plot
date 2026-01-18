@@ -9,7 +9,10 @@
 SelfIOAPP::SelfIOAPP( QObject* parent): QObject(parent)
 ,IOAPPInterface()
 {
-
+    addCallback(0,[this]( const QList<IOAPP::SIGNALS>& _signals)
+    {
+        emit hasSignal(_signals);
+    });
 }
 
 QList<IOAPP::SIGNALS>  SelfIOAPP::decode(const IO::Frame& frame)
@@ -41,7 +44,7 @@ QList<IOAPP::SIGNALS>  SelfIOAPP::decode(const IO::Frame& frame)
                     mavlink_gyroscope_t sb;
                     mavlink_msg_gyroscope_decode(&rcv_msg, &sb);
                     //qDebug()  << QString("x:%1 y:%2 z:%3").arg(sb.ACC_X).arg(sb.ACC_Y).arg(sb.ACC_Z);
-                    auto sig=getSignal(IOAPP::SELFIO_ID);
+                    auto sig=getSignalData(IOAPP::SELFIO_ID);
                     fun(sig,msgId<<16|1,"GYRO_X", sb.GYRO_X);
                     list.append(sig);
 
@@ -57,7 +60,7 @@ QList<IOAPP::SIGNALS>  SelfIOAPP::decode(const IO::Frame& frame)
                     mavlink_accelerometer_t sb;
                     mavlink_msg_accelerometer_decode(&rcv_msg, &sb);
                     //qDebug()  << QString("x:%1 y:%2 z:%3").arg(sb.ACC_X).arg(sb.ACC_Y).arg(sb.ACC_Z);
-                    auto sig=getSignal(IOAPP::SELFIO_ID);
+                    auto sig=getSignalData(IOAPP::SELFIO_ID);
                     fun(sig,msgId<<16|1,"ACC_X", sb.ACC_X);
                     list.append(sig);
 
@@ -73,7 +76,7 @@ QList<IOAPP::SIGNALS>  SelfIOAPP::decode(const IO::Frame& frame)
                     mavlink_magnetometer_t sb;
                     mavlink_msg_magnetometer_decode(&rcv_msg, &sb);
                    // qDebug()  << QString("x:%1 y:%2 z:%3").arg(sb.MAG_X).arg(sb.MAG_Y).arg(sb.MAG_Z);
-                    auto sig=getSignal(IOAPP::SELFIO_ID);
+                    auto sig=getSignalData(IOAPP::SELFIO_ID);
                     fun(sig,msgId<<16|1,"MAG_X", sb.MAG_X);
                     list.append(sig);
 
@@ -89,7 +92,7 @@ QList<IOAPP::SIGNALS>  SelfIOAPP::decode(const IO::Frame& frame)
                     mavlink_tiltsensor_t sb;
                     mavlink_msg_tiltsensor_decode(&rcv_msg, &sb);
                     // qDebug()  << QString("x:%1 y:%2 z:%3").arg(sb.MAG_X).arg(sb.MAG_Y).arg(sb.MAG_Z);
-                    auto sig=getSignal(IOAPP::SELFIO_ID);
+                    auto sig=getSignalData(IOAPP::SELFIO_ID);
                     fun(sig,msgId<<16|1,"Tilt_X", sb.Tilt_X);
                     list.append(sig);
 
@@ -101,7 +104,7 @@ QList<IOAPP::SIGNALS>  SelfIOAPP::decode(const IO::Frame& frame)
                     mavlink_orientationsensor_t sb;
                     mavlink_msg_orientationsensor_decode(&rcv_msg, &sb);
                     // qDebug()  << QString("x:%1 y:%2 z:%3").arg(sb.MAG_X).arg(sb.MAG_Y).arg(sb.MAG_Z);
-                    auto sig=getSignal(IOAPP::SELFIO_ID);
+                    auto sig=getSignalData(IOAPP::SELFIO_ID);
                     fun(sig,msgId<<16|1,"Orientation", sb.Orientation);
                     list.append(sig);
                 }
@@ -110,7 +113,7 @@ QList<IOAPP::SIGNALS>  SelfIOAPP::decode(const IO::Frame& frame)
                     mavlink_lightsensor_t sb;
                     mavlink_msg_lightsensor_decode(&rcv_msg, &sb);
                     // qDebug()  << QString("x:%1 y:%2 z:%3").arg(sb.MAG_X).arg(sb.MAG_Y).arg(sb.MAG_Z);
-                    auto sig=getSignal(IOAPP::SELFIO_ID);
+                    auto sig=getSignalData(IOAPP::SELFIO_ID);
                     fun(sig,msgId<<16|1,"light", sb.light);
                     list.append(sig);
                 }
@@ -127,9 +130,13 @@ IO::Frame SelfIOAPP::encode()
     mavlink_message_t msg;
     mavlink_sensor_t sb;
     sb.sensor1 = 12345.678;
-    mavlink_msg_sensor_encode(sys_id, comp_id,&msg, &sb);
+    mavlink_msg_sensor_encode(sys_id, comp_id, &msg, &sb);
     uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
-    uint16_t len = mavlink_msg_to_send_buffer(buffer,&msg);
-    frame.data = QByteArray((char*)buffer,len);
+    uint16_t len = mavlink_msg_to_send_buffer(buffer, &msg);
+    frame.data = QByteArray((char*)buffer, len);
     return frame;
+}
+void SelfIOAPP::rx_frame(const IO::Frame& frame)
+{
+    decode(frame);
 }

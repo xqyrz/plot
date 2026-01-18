@@ -65,8 +65,8 @@ void MainDock::createPerspectiveUi()
 void MainDock::_InitPage()
 {
     auto pre =  _addDock(new NodeEditPage(this),"node");
-     _addDock(new PlotView(this),"plot",pre);
-     pre->setCurrentDockWidget(pre->dockWidget(0));
+    _addDock(PlotView::instance(this),"plot",pre);
+    pre->setCurrentDockWidget(pre->dockWidget(0));
 }
 ads::CDockAreaWidget* MainDock::_addDock(QWidget* widget, QString name,ads::CDockAreaWidget* parent)
  {

@@ -23,6 +23,7 @@ public:
     std::vector<NodeId> selectedNodes() const;
     QMenu *createSceneMenu(QPointF const scenePos) override;
     QString getDefaultConfigPath(){return defaultConfigPath;}
+    const DataFlowGraphModel & getGraphModel(){return _graphModel;}
 public Q_SLOTS:
     bool load(QString file);
 private Q_SLOTS:

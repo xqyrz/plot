@@ -8,10 +8,12 @@ file(GLOB_RECURSE SRC_FILES
 )
 #set(QWindowKit_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/QWindowKit)
 #find_package(QWindowKit COMPONENTS Core Widgets REQUIRED)
-include_directories(${CMAKE_SOURCE_DIR}/shared ${CMAKE_SOURCE_DIR}/src)
-
+include_directories(${CMAKE_SOURCE_DIR}/shared ${CMAKE_SOURCE_DIR}/src )
+#message("SRC_FILES ${SRC_FILES}")
 add_executable(${APP_NAME} ${SRC_FILES}
-#        src/page/node/nodemodel.cpp
+        src/interface/manage.cpp
+        src/interface/manage.h
+        #        src/page/node/nodemodel.cpp
 #        src/page/node/nodemodel.h
 #        src/page/node/nodedata.cpp
 #        src/page/node/nodedata.h

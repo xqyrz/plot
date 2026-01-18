@@ -3,3 +3,4 @@
 //
 
 #include "nodedata.h"
+using namespace QtNodes;

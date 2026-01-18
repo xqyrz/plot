@@ -25,6 +25,10 @@ public:
     int write(const QList<IO::Frame>&) override;
     auto & getSessions(){return sessions;}
     auto & getAccept(){return acceptor_;}
+    signals:
+    void rx_frame(const IO::Frame&);
+public   slots:
+    void tx_frame(const IO::Frame& frame){write(frame);};
 private:
     void do_accept();
 private:
