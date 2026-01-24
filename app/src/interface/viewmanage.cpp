@@ -18,19 +18,19 @@ QString VIEWManage::check(QString& var) const
 {
     return var;
 }
-bool VIEWManage::creatObj(int index, QString type)
+QObject* VIEWManage::creatObj(const BaseModel*  index, QString type)
 {
     auto view_index = VIEW_ENUM_DATA.key(type);
     switch (view_index)
     {
     case PLOT_VIEW:
         objs.insert(index, PlotView::instance());
-        return true;
+        return objs.value(index);
     default:
-        return false;
+        return nullptr;
     }
 }
-bool VIEWManage::hasIndex(int index) const
+bool VIEWManage::hasIndex(const BaseModel*  index) const
 {
     return objs.contains(index);
 }

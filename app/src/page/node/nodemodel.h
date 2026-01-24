@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by 25137 on 25-12-21.
 //
 
@@ -7,21 +7,20 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
-#include <QtNodes/NodeData>
 #include <QtNodes/NodeDelegateModel>
 
 #include <QPushButton>
-#include <QMessageBox>
 #include <memory>
 #include <utility>
 #include "nodedata.h"
+#include "interface/manage.h"
 using QtNodes::NodeData;
 using QtNodes::NodeDataType;
 using QtNodes::NodeDelegateModel;
 using QtNodes::PortIndex;
 using QtNodes::PortType;
 
-
+;
 class BaseModel : public NodeDelegateModel
 {
 Q_OBJECT
@@ -54,6 +53,7 @@ public:
 
     bool resizable() const override { return true; }
     QWidget *embeddedWidget() override{return nullptr;}
+    void setObj(QObject* _obj){obj.reset(_obj);};
 protected:
     NodeTye m_type=DEFAULT_TYPE;
     QString m_name;
@@ -78,7 +78,8 @@ public:
         m_widget =( new QPushButton("配置"));
         QObject::connect(qobject_cast<QPushButton*>(m_widget),&QPushButton::clicked,this,[this]()
         {
-            QMessageBox::information(nullptr,"IOModel","IOModel");
+            emit clickedBtn(this);
+           // QMessageBox::information(nullptr,"IOModel","IOModel");
         });
     };
     QWidget *embeddedWidget() override

@@ -111,93 +111,68 @@ void NodeEditPage::_sceneLoaded()
 {
     auto & model = scene->getGraphModel();
     auto allNodeIds = model.allNodeIds();
-
-    for (auto &var:allNodeIds)
-    {
-        auto type = model.nodeData(var, NodeRole::Type).toString();
-        if (VIEWManage::VIEW_ENUM_DATA.values().contains(type))//管理
-        {
-            VIEWManage::instance()->creatObj(var,type);
-        }
-        else if (!IOInterfaceManage::instance()->check(type).isEmpty())
-        {
-            IOInterfaceManage::instance()->creatObj(var,type);
-        }
-        else if (!IOAPPInterfaceManage::instance()->check(type).isEmpty())
-        {
-            IOAPPInterfaceManage::instance()->creatObj(var,type);
-        }
-        else if (!SignalManage::instance()->check(type).isEmpty())
-        {
-            SignalManage::instance()->creatObj(var,type);
-        }
-        else
-        {
-            qCritical()<<"todo: not type nodeIds"<<var<<type;
-        }
-    }
     for (auto & var:allNodeIds)
     {
-       auto cIds =  model.allConnectionIds(var);
+    auto cIds =  model.allConnectionIds(var);
 
-        for (auto & cid: cIds)
-        {
-            try
-            {
-                QObject* in_obj=Manage::getObj(cid.inNodeId);
-                QObject* out_obj=Manage::getObj(cid.outNodeId);
-                qDebug()<<"in:"<<cid.inNodeId<<in_obj<<"out:"<<cid.outNodeId<<out_obj;
+     for (auto & cid: cIds)
+     {
+         try
+         {
+             QObject* in_obj=Manage::getObj(model.delegateModel<BaseModel>(cid.inNodeId));
+             QObject* out_obj=Manage::getObj(model.delegateModel<BaseModel>(cid.outNodeId));
+             qDebug()<<"in:"<<cid.inNodeId<<in_obj<<"out:"<<cid.outNodeId<<out_obj;
 
-                if (!in_obj || !out_obj)
-                {
-                    throw std::runtime_error(QString("connection skipped because obj is null; inNodeId=%1 outNodeId=%2")
-                                                 .arg(cid.inNodeId)
-                                                 .arg(cid.outNodeId)
-                                                 .toStdString());
-                }
+             if (!in_obj || !out_obj)
+             {
+                 throw std::runtime_error(QString("connection skipped because obj is null; inNodeId=%1 outNodeId=%2")
+                                              .arg(cid.inNodeId)
+                                              .arg(cid.outNodeId)
+                                              .toStdString());
+             }
 
-                auto *in_base = dynamic_cast<InterfaceBase*>(in_obj);
-                auto *out_base = dynamic_cast<InterfaceBase*>(out_obj);
-                if (!in_base || !out_base)
-                {
-                    throw std::runtime_error(QString("%1: connection skipped because obj is not InterfaceBase; inNodeId=%2 outNodeId=%3")
-                        .arg(in_base?"out":"in")
-                                                 .arg(cid.inNodeId)
-                                                 .arg(cid.outNodeId)
-                                                 .toStdString());
-                }
+             auto *in_base = dynamic_cast<InterfaceBase*>(in_obj);
+             auto *out_base = dynamic_cast<InterfaceBase*>(out_obj);
+             if (!in_base || !out_base)
+             {
+                 throw std::runtime_error(QString("%1: connection skipped because obj is not InterfaceBase; inNodeId=%2 outNodeId=%3")
+                     .arg(in_base?"out":"in")
+                                              .arg(cid.inNodeId)
+                                              .arg(cid.outNodeId)
+                                              .toStdString());
+             }
 
-                const char* in_slot = in_base->getSlot(cid.inPortIndex);
-                const char* out_signal = out_base->getSignal(cid.outPortIndex);
-                if (!in_slot || !out_signal)
-                {
-                    throw std::runtime_error(QString("%1: connection skipped because  is null; inNodeId=%2 inPort=%3 outNodeId=%4 outPort=%5")
-                                                 .arg(in_slot?"out signal":"in slot")
-                                                 .arg(cid.inNodeId)
-                                                 .arg(cid.inPortIndex)
-                                                 .arg(cid.outNodeId)
-                                                 .arg(cid.outPortIndex)
-                                                 .toStdString());
-                }
+             const char* in_slot = in_base->getSlot(cid.inPortIndex);
+             const char* out_signal = out_base->getSignal(cid.outPortIndex);
+             if (!in_slot || !out_signal)
+             {
+                 throw std::runtime_error(QString("%1: connection skipped because  is null; inNodeId=%2 inPort=%3 outNodeId=%4 outPort=%5")
+                                              .arg(in_slot?"out signal":"in slot")
+                                              .arg(cid.inNodeId)
+                                              .arg(cid.inPortIndex)
+                                              .arg(cid.outNodeId)
+                                              .arg(cid.outPortIndex)
+                                              .toStdString());
+             }
 
-                const bool ok = QObject::connect(out_obj, out_signal, in_obj, in_slot);
-                if (!ok)
-                {
-                    dumpMeta(in_obj);
-                    dumpMeta(out_obj);
-                    throw std::runtime_error(QString("QObject::connect failed; inNodeId: %1 inPort: %2 outNodeId: %3 outPort: %4")
-                                                 .arg(cid.inNodeId)
-                                                 .arg(in_slot)
-                                                 .arg(cid.outNodeId)
-                                                 .arg(out_signal)
-                                                 .toStdString());
-                }
-            }
-            catch (const std::exception& e)
-            {
-                qWarning() << "sceneLoaded:" << e.what();
-            }
-        }
+             const bool ok = QObject::connect(out_obj, out_signal, in_obj, in_slot);
+             if (!ok)
+             {
+                 dumpMeta(in_obj);
+                 dumpMeta(out_obj);
+                 throw std::runtime_error(QString("QObject::connect failed; inNodeId: %1 inPort: %2 outNodeId: %3 outPort: %4")
+                                              .arg(cid.inNodeId)
+                                              .arg(in_slot)
+                                              .arg(cid.outNodeId)
+                                              .arg(out_signal)
+                                              .toStdString());
+             }
+         }
+         catch (const std::exception& e)
+         {
+             qWarning() << "sceneLoaded:" << e.what();
+         }
+     }
 
     }
 

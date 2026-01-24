@@ -20,10 +20,10 @@ QString ManageBase::check(QString& var) const
     }
     return {};
 }
-QObject* Manage::getObj(int index)
+QObject* Manage::getObj(const BaseModel* index)
 {
-    QObject* obj=nullptr;
-    if ( IOInterfaceManage::instance()->hasIndex(index))
+    QObject* obj = nullptr;
+    if (IOInterfaceManage::instance()->hasIndex(index))
     {
         obj = IOInterfaceManage::instance()->getObj(index);
     }
@@ -33,11 +33,36 @@ QObject* Manage::getObj(int index)
     }
     else if (SignalManage::instance()->hasIndex(index))
     {
-        obj =SignalManage::instance()->getObj(index);
+        obj = SignalManage::instance()->getObj(index);
     }
     else if (VIEWManage::instance()->hasIndex(index))
     {
-        obj =VIEWManage::instance()->getObj(index);
+        obj = VIEWManage::instance()->getObj(index);
+    }
+    else
+    {
+        qWarning()<<"not find getObj index:"<<index;
+    }
+    return obj;
+}
+QObject* Manage::creatObj(const BaseModel* index, QString type)
+{
+    QObject* obj = nullptr;
+    if (IOInterfaceManage::instance()->hasIndex(index))
+    {
+        obj = IOInterfaceManage::instance()->creatObj(index,type);
+    }
+    else if (IOAPPInterfaceManage::instance()->hasIndex(index))
+    {
+        obj = IOAPPInterfaceManage::instance()->creatObj(index,type);
+    }
+    else if (SignalManage::instance()->hasIndex(index))
+    {
+        obj = SignalManage::instance()->creatObj(index,type);
+    }
+    else if (VIEWManage::instance()->hasIndex(index))
+    {
+        obj = VIEWManage::instance()->creatObj(index,type);
     }
 
     return obj;

@@ -6,17 +6,18 @@
 #include <QPluginLoader>
 
 #include "obj/signalobj.h"
+#include "page/node/nodemodel.h"
 IOAPPInterfaceManage* IOAPPInterfaceManage::m_iOAPPInterfaceManage = nullptr;
 
 
 
-bool IOAPPInterfaceManage::creatObj(int index, QString type)
+QObject* IOAPPInterfaceManage::creatObj(const BaseModel*  index, QString type)
 {
     QPluginLoader pluginLoader(check(type));
     objs.insert(index, ((pluginLoader.instance())));
-    return !objs.value(index);
+    return objs.value(index);
 }
-bool IOAPPInterfaceManage::hasIndex(int index) const { return objs.contains(index); }
+bool IOAPPInterfaceManage::hasIndex(const BaseModel*  index) const { return objs.contains(index); }
 IOAPPInterfaceManage::IOAPPInterfaceManage(QObject *parent)
     : QObject(parent)
 {

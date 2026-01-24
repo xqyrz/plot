@@ -16,8 +16,8 @@ public:
 
     static SignalManage *instance(QObject* parent=nullptr);
     QString check(QString& var) const override;
-    bool creatObj(int index, QString type)override;
-    bool hasIndex(int index) const override{ return objs.keys().contains(index); }
+    QObject* creatObj(const BaseModel*  index, QString type)override;
+    bool hasIndex(const BaseModel*  index) const override{ return objs.keys().contains(index); }
     bool addId(    uint outNodeId,
     uint outPortIndex,
     uint inNodeId,

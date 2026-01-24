@@ -11,7 +11,7 @@ BaseModel::BaseModel(NodeTye type,QString _name,QList<QtNodes::NodeDataTypeEnum:
     :m_type(type), m_name(std::move(_name)), in(std::move(_in)),out(std::move(_out))
 {
     m_caption=m_name;
-
+    this->setObj(Manage::creatObj(this,caption()));
 }
 unsigned int BaseModel::nPorts(PortType const portType) const
 {

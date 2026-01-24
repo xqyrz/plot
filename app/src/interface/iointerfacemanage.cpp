@@ -19,17 +19,14 @@ QString IOInterfaceManage::check(QString& var) const
     }
     return {};
 }
-bool IOInterfaceManage::creatObj(int index, QString type)
+QObject* IOInterfaceManage::creatObj(const BaseModel*  index, QString type)
 {
     QPluginLoader pluginLoader(check(type));
     objs.insert(index, (pluginLoader.instance()));
-    return !objs.value(index);
-}
-QObject* IOInterfaceManage::getObj(int index) const
-{
     return objs.value(index);
 }
-bool IOInterfaceManage::hasIndex(int index) const
+
+bool IOInterfaceManage::hasIndex(const BaseModel*  index) const
 {
    return objs.contains(index);
 }

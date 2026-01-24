@@ -6,6 +6,9 @@
 #define MANAGE_H
 #include <QSharedPointer>
 #include <QMap>
+#include "page/node/nodemodel.h"
+
+class BaseModel;
 namespace ManageData
 {
     enum class  Type
@@ -21,18 +24,19 @@ class ManageBase{
 public:
     virtual ~ManageBase()=default;
     virtual QString check(QString& var)const;
-    virtual bool creatObj(int index,QString type)=0;
-    virtual bool hasIndex(int index)const=0;
-     QObject* getObj(int index)const {return objs.value(index);}
+    virtual QObject* creatObj(const BaseModel* index,QString type)=0;
+    virtual bool hasIndex(const BaseModel*  index)const=0;
+     QObject* getObj(const BaseModel*  index)const {return objs.value(index);}
 protected:
     ManageData::Type type=ManageData::Type::Default;
-    QMap< int,QObject*> objs;
+    QMap< const BaseModel* ,QObject*> objs;
     QList<QString> plugs;
 };
 
 class Manage {
 public:
-    static QObject* getObj(int index);
+    static QObject* getObj(const BaseModel*  index);
+    static QObject* creatObj(const BaseModel* index,QString type);
 };
 
 

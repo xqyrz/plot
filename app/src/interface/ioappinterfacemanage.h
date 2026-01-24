@@ -8,6 +8,7 @@
 #include <QObject>
 
 #include "manage.h"
+
 class IOAPPInterfaceManage : public QObject ,public ManageBase {
     Q_OBJECT
 public:
@@ -19,8 +20,8 @@ public:
         plugs.append(plugPath);
         return true;
     }
-    bool creatObj(int index,QString type) override;
-    bool hasIndex(int index)const override;
+    QObject* creatObj(const BaseModel*  index,QString type) override;
+    bool hasIndex(const BaseModel*  index)const override;
 private:
     explicit IOAPPInterfaceManage(QObject *parent = nullptr);
     static IOAPPInterfaceManage* m_iOAPPInterfaceManage;

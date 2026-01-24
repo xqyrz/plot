@@ -23,14 +23,15 @@ QString SignalManage::check(QString& var) const
     }
     else return {};
 }
-bool SignalManage::creatObj(int index, QString type)
+QObject* SignalManage::creatObj(const BaseModel*  index, QString type)
 {
     if (!SIGNALS_ENUM_DATA.values().contains(type))
     {
-        return false;
+        return nullptr;
     }
-    objs.insert(index, new SignalObj(SIGNALS_ENUM_DATA.key(type), this));
-    return true;
+    auto obj =  new SignalObj(SIGNALS_ENUM_DATA.key(type), this);
+     objs.insert(index,obj);
+    return obj;
 }
 bool SignalManage::addId(uint outNodeId, uint outPortIndex, uint inNodeId, uint inPortIndex)
 {

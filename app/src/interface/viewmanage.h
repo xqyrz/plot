@@ -15,8 +15,8 @@ public:
     static QMap<VIEW_ENUM,QString> VIEW_ENUM_DATA;
     static VIEWManage *instance(QObject* parent=nullptr);
     QString check(QString& var)const override;
-    bool creatObj(int index,QString type) override;
-    bool hasIndex(int index)const override;
+    QObject* creatObj(const BaseModel*  index,QString type) override;
+    bool hasIndex(const BaseModel*  index)const override;
 private:
     explicit VIEWManage(QObject *parent = nullptr);
     static VIEWManage* m_viewManage;

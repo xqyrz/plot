@@ -7,10 +7,9 @@
 
 #include "../plug/io/iointerface.h"
 #include <QPluginLoader>
+#include "manage.h"
 
-#include <QObject>
-
-class IOInterfaceManage : public QObject
+class IOInterfaceManage : public QObject,public ManageBase
 {
     Q_OBJECT
 public:
@@ -22,15 +21,14 @@ public:
         plugs.append(plugPath);
         return true;
     }
-    QString check(QString& var)const;
-    bool creatObj(int index,QString type);
-    bool hasIndex(int index)const;
-    QObject* getObj(int index)const;
+    QString check(QString& var)const override;
+    QObject* creatObj(const BaseModel*  index,QString type) override;
+    bool hasIndex(const BaseModel*  index)const override;
 private:
     explicit IOInterfaceManage(QObject *parent = nullptr);
     static IOInterfaceManage* m_iOInterfaceManage;
     QList<QString> plugs;
-    QMap<int, QObject*> objs;
+    QMap<const BaseModel* , QObject*> objs;
 
     Q_DISABLE_COPY(IOInterfaceManage)
 };
