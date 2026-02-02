@@ -30,6 +30,7 @@ target_link_libraries(${APP_NAME}
         qtadvanceddocking-qt${QT_VERSION_MAJOR}
         QtNodes
         ${PLOT_LIB}
+        QtPropertyBrower
 )
 target_include_directories(${APP_NAME}
         PUBLIC

@@ -22,13 +22,12 @@ public:
         return true;
     }
     QString check(QString& var)const override;
-    QObject* creatObj(const BaseModel*  index,QString type) override;
-    bool hasIndex(const BaseModel*  index)const override;
+    QObject* creatObj(const int  index,QString type) override;
+    bool hasIndex(const int  index)const override;
 private:
     explicit IOInterfaceManage(QObject *parent = nullptr);
     static IOInterfaceManage* m_iOInterfaceManage;
     QList<QString> plugs;
-    QMap<const BaseModel* , QObject*> objs;
 
     Q_DISABLE_COPY(IOInterfaceManage)
 };

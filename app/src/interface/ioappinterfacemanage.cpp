@@ -11,13 +11,13 @@ IOAPPInterfaceManage* IOAPPInterfaceManage::m_iOAPPInterfaceManage = nullptr;
 
 
 
-QObject* IOAPPInterfaceManage::creatObj(const BaseModel*  index, QString type)
+QObject* IOAPPInterfaceManage::creatObj(const int  index, QString type)
 {
     QPluginLoader pluginLoader(check(type));
     objs.insert(index, ((pluginLoader.instance())));
     return objs.value(index);
 }
-bool IOAPPInterfaceManage::hasIndex(const BaseModel*  index) const { return objs.contains(index); }
+bool IOAPPInterfaceManage::hasIndex(const int  index) const { return objs.contains(index); }
 IOAPPInterfaceManage::IOAPPInterfaceManage(QObject *parent)
     : QObject(parent)
 {

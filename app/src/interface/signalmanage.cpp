@@ -23,7 +23,7 @@ QString SignalManage::check(QString& var) const
     }
     else return {};
 }
-QObject* SignalManage::creatObj(const BaseModel*  index, QString type)
+QObject* SignalManage::creatObj(const int  index, QString type)
 {
     if (!SIGNALS_ENUM_DATA.values().contains(type))
     {

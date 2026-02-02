@@ -24,19 +24,20 @@ class ManageBase{
 public:
     virtual ~ManageBase()=default;
     virtual QString check(QString& var)const;
-    virtual QObject* creatObj(const BaseModel* index,QString type)=0;
-    virtual bool hasIndex(const BaseModel*  index)const=0;
-     QObject* getObj(const BaseModel*  index)const {return objs.value(index);}
+    virtual QObject* creatObj(const int index,QString type)=0;
+    virtual bool hasIndex(const int  index)const=0;
+     QObject* getObj(const int  index)const {return objs.value(index);}
 protected:
     ManageData::Type type=ManageData::Type::Default;
-    QMap< const BaseModel* ,QObject*> objs;
+    QMap<  int ,QObject*> objs;
     QList<QString> plugs;
 };
 
 class Manage {
 public:
-    static QObject* getObj(const BaseModel*  index);
-    static QObject* creatObj(const BaseModel* index,QString type);
+    static QObject* getObj(const int  index);
+    static QObject* creatObj(const int index,QString type);
+    static void showConfig(const int  index);
 };
 
 

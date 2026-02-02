@@ -11,7 +11,8 @@ BaseModel::BaseModel(NodeTye type,QString _name,QList<QtNodes::NodeDataTypeEnum:
     :m_type(type), m_name(std::move(_name)), in(std::move(_in)),out(std::move(_out))
 {
     m_caption=m_name;
-    this->setObj(Manage::creatObj(this,caption()));
+   // this->setObj(Manage::creatObj(this,caption()));
+
 }
 unsigned int BaseModel::nPorts(PortType const portType) const
 {
@@ -50,4 +51,16 @@ std::shared_ptr<NodeData> BaseModel::outData(PortIndex const port)
     // if (port < 1)return std::make_shared<MyNodeData>();
     // return std::make_shared<SimpleNodeData>();
 }
+IOModel::IOModel(QString name):BaseModel(IO_TYPE,std::move(name)
+        ,{TypeEnum::IN_VIRTUAL_TX,TypeEnum::IN_IO_TX}
+        ,{TypeEnum::OUT_IO_RX})
+{
+    m_widget =( new QPushButton("配置"));
+    QObject::connect(qobject_cast<QPushButton*>(m_widget),&QPushButton::clicked,this,[this]()
+    {
+        emit configClicked(QPoint());
+       //Manage::showConfig(this);
+       // QMessageBox::information(nullptr,"IOModel","IOModel");
+    });
+};
 

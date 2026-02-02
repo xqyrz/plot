@@ -2,7 +2,7 @@
 #include "ConnectionIdHash.hpp"
 
 #include <QJsonArray>
-
+#include <QDebug>
 #include <stdexcept>
 
 namespace QtNodes {
@@ -93,6 +93,21 @@ NodeId DataFlowGraphModel::addNode(QString const nodeType)
                 this,
                 &DataFlowGraphModel::portsInserted);
 
+        connect(model.get(),&NodeDelegateModel::configClicked,
+                this,[this](QPoint /*point*/)
+                {
+                    auto obj = sender();
+                    for (auto &var:_models)
+                    {
+                        if (var.second.get() == obj)
+                        {
+                            Q_EMIT configClicked(var.first);
+                           return;
+                        }
+                    }
+                    qWarning()<<"not find "<<obj;
+                }
+                );
         _models[newId] = std::move(model);
 
         Q_EMIT nodeCreated(newId);
@@ -517,7 +532,19 @@ void DataFlowGraphModel::loadNode(QJsonObject const &nodeJson)
                 &NodeDelegateModel::portsInserted,
                 this,
                 &DataFlowGraphModel::portsInserted);
-
+        connect(model.get(),&NodeDelegateModel::configClicked,
+            this,[this](QPoint /*point*/)
+            {
+                auto obj = sender();
+                for (auto &var:_models)
+                {
+                    if (var.second.get() == obj)
+                    {
+                        Q_EMIT configClicked(var.first);
+                    }
+                }
+            }
+            );
         _models[restoredNodeId] = std::move(model);
 
         Q_EMIT nodeCreated(restoredNodeId);

@@ -75,11 +75,6 @@ public:
 
     static QString extractShortFunctionName(const QString& fullFunction) {
         return fullFunction;
-        // if (fullFunction.isEmpty()) {
-        //     return "unknown";
-        // }
-        // auto vars = fullFunction.split(" ");
-        // return vars.last();
         // 匹配 类名::函数名 的模式
         static QRegularExpression regex(R"((\w+::\w+))");
         QRegularExpressionMatch match = regex.match(fullFunction);

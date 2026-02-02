@@ -10,6 +10,8 @@
 #include "../interfacebase.h"
 #include "iocommon.h"
 #include <QDebug>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QHBoxLayout>
 class IOInterface:public InterfaceBase
 {
 public:
@@ -21,6 +23,8 @@ public:
     {
         qRegisterMetaType<IO::Frame>("IO::Frame");
         qRegisterMetaType<IO::Frame>("const IO::Frame&");
+        qRegisterMetaType<IO::Frame>("const QList<IOAPP::SIGNALS>");
+        qRegisterMetaType<IO::Frame>("const QList<IOAPP::SIGNALS>&");
     };
     ~IOInterface() = default;
     virtual bool open() = 0;
@@ -40,6 +44,14 @@ public:
 
     IO::Config getConfig() const { return config; }
     void setConfig(const IO::Config& config) { this->config = config; }
+    void setConfigDialog(QWidget* parent)
+    {
+        //TODO:写一个属性管理，显示，配置控件
+        QDialog d(parent);
+        QHBoxLayout layout(&d);
+
+    }
+
     QString getName() const { return name; }
 
     QList<IO::Frame> readALL()

@@ -18,7 +18,7 @@ QString VIEWManage::check(QString& var) const
 {
     return var;
 }
-QObject* VIEWManage::creatObj(const BaseModel*  index, QString type)
+QObject* VIEWManage::creatObj(const int  index, QString type)
 {
     auto view_index = VIEW_ENUM_DATA.key(type);
     switch (view_index)
@@ -30,7 +30,7 @@ QObject* VIEWManage::creatObj(const BaseModel*  index, QString type)
         return nullptr;
     }
 }
-bool VIEWManage::hasIndex(const BaseModel*  index) const
+bool VIEWManage::hasIndex(const int  index) const
 {
     return objs.contains(index);
 }

@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
       auto sigs =  selfio->decode(var);
         if (sigs.size() ) {
             w->enupRang();
-            w->addSignalData(sigs);
+            w->_addSignalData(sigs);
         }
 
 });

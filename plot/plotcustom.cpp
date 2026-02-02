@@ -19,7 +19,7 @@ PlotCustom::PlotCustom(QWidget* parent)
     connect(_updateTimer, &QTimer::timeout, this, &PlotCustom::_replot);
     connect(_resetUITimer, &QTimer::timeout, this, &PlotCustom::_resetUI);
 
-    _updateTimer->start(40);
+    _updateTimer->start(50);
 }
 
 void PlotCustom::resetUI(PlotModel* model)

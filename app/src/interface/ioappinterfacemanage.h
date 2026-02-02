@@ -20,8 +20,8 @@ public:
         plugs.append(plugPath);
         return true;
     }
-    QObject* creatObj(const BaseModel*  index,QString type) override;
-    bool hasIndex(const BaseModel*  index)const override;
+    QObject* creatObj(const int  index,QString type) override;
+    bool hasIndex(const int  index)const override;
 private:
     explicit IOAPPInterfaceManage(QObject *parent = nullptr);
     static IOAPPInterfaceManage* m_iOAPPInterfaceManage;

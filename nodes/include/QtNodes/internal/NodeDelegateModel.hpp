@@ -115,7 +115,7 @@ Q_SIGNALS:
     /// Call this function when data and port moditications are finished.
     void portsInserted();
 
-    void clickedBtn(NodeDelegateModel*);
+    void configClicked(QPoint point);
 private:
     NodeStyle _nodeStyle;
 };

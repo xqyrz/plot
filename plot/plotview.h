@@ -24,6 +24,7 @@ class  PlotView  : public QWidget,public InterfaceBase
     Q_OBJECT
 public:
     static PlotView *instance(QWidget *parent=nullptr);
+    ~PlotView() override;
     void expandAll()const;
     int getPlotType() const{return plotType;}
      void addSignalData(const IOAPP::SIGNALS& _signal);
@@ -38,7 +39,7 @@ public slots:
     TreeNode* add_plotData( uint64_t id, QSharedPointer<QCPGraphDataContainer>& data, QString plot_name = "plot");
     void setCurrentPlot(int type,const QCPLayerable * item);
     void enupRang();
-    void addSignalData(const QList<IOAPP::SIGNALS>& _signals);
+    void _addSignalData(const QList<IOAPP::SIGNALS>& _signals);
 private slots:
     void setPlotType(int type);
 
@@ -55,7 +56,7 @@ private:
     QPointer<PlotModel> _model;
     int plotType;
     uint64_t zero;
-    static PlotView* m_plotView;
+    static  PlotView* m_plotView;
 private:
     Q_PROPERTY(int plotType READ getPlotType WRITE setPlotType)
 };

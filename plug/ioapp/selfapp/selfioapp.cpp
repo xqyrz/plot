@@ -13,23 +13,31 @@ SelfIOAPP::SelfIOAPP( QObject* parent): QObject(parent)
     {
         emit hasSignal(_signals);
     });
+    // connect(this,&SelfIOAPP::hasSignal,this,[](const QList<IOAPP::SIGNALS>& s)
+    // {
+    //     qInfo()<<s.size();
+    // });
 }
 
 QList<IOAPP::SIGNALS>  SelfIOAPP::decode(const IO::Frame& frame)
 {
+
     int i = 0;
     QList<IOAPP::SIGNALS> list;
     auto buf = frame.data.constData();
+    
     while (i<frame.data.size())
     {
         if (mavlink_parse_char(MAVLINK_COMM_0, buf[i], &rcv_msg, &status)) {
+            __time = frame.time.toMSecsSinceEpoch();
             // 返回 true 表示一个完整消息已解析完成
 //           qDebug() << "Message received, id=" << rcv_msg.msgid;
-
             // 根据 msgid 处理具体消息
-            auto fun =[](IOAPP::SIGNALS& sig,uint64_t id,std::string name,double value) {
+            auto fun = [this](IOAPP::SIGNALS& sig, uint64_t id, std::string name, double value)
+            {
                 sig.ID.id = id;
                 sig.name =name;
+                sig.time = this->__time;
                 sig.value =value;
             };
             auto msgId = rcv_msg.msgid;
@@ -122,6 +130,11 @@ QList<IOAPP::SIGNALS>  SelfIOAPP::decode(const IO::Frame& frame)
         }
         i++;
     }
+    // for (auto &var:_signalCallback)
+    // {
+    //     var(list);
+    // }
+    emit hasSignal(list);
     return list;
 }
 IO::Frame SelfIOAPP::encode()

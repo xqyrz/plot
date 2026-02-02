@@ -29,19 +29,23 @@ public:
         DEFAULT_TYPE,
         IO_TYPE,
         IOAPP_TYPE,
-        VIEW_TYPE
+        VIEW_TYPE,
+        SIGNAL_TYPE
       }NodeTye;
-
+    Q_ENUM(NodeTye);
   BaseModel():NodeDelegateModel(),m_type(DEFAULT_TYPE){};
   BaseModel(NodeTye type,QString _name,QList<QtNodes::NodeDataTypeEnum::InputType> _in,QList<QtNodes::NodeDataTypeEnum::OutputType> _out);
 
-    virtual ~BaseModel() override {m_widget->deleteLater();}
+    virtual ~BaseModel() override
+    {
+        if (m_widget)m_widget->deleteLater();
+    }
 
 public:
     QString caption() const override { return m_caption; }
 
     QString name() const override { return m_name; }
-
+    NodeTye type()const {return m_type;};
 public:
     unsigned int nPorts(PortType const portType) const override;
 
@@ -53,17 +57,18 @@ public:
 
     bool resizable() const override { return true; }
     QWidget *embeddedWidget() override{return nullptr;}
-    void setObj(QObject* _obj){obj.reset(_obj);};
+private:
+    void setObj(QObject* _obj){obj =_obj;};
 protected:
     NodeTye m_type=DEFAULT_TYPE;
     QString m_name;
     QString m_caption;
-     QList<QtNodes::NodeDataTypeEnum::InputType> in;
-     QList<QtNodes::NodeDataTypeEnum::OutputType> out;
+    QList<QtNodes::NodeDataTypeEnum::InputType> in;
+    QList<QtNodes::NodeDataTypeEnum::OutputType> out;
 protected:
 
     QWidget* m_widget=nullptr;
-    QScopedPointer<QObject> obj;
+    QObject* obj;
 };
 
 
@@ -71,17 +76,7 @@ class IOModel:public BaseModel
 {
     using TypeEnum=QtNodes::NodeDataTypeEnum;
 public:
-    IOModel(QString name):BaseModel(IO_TYPE,std::move(name)
-        ,{TypeEnum::IN_VIRTUAL_TX,TypeEnum::IN_IO_TX}
-        ,{TypeEnum::OUT_IO_RX})
-    {
-        m_widget =( new QPushButton("配置"));
-        QObject::connect(qobject_cast<QPushButton*>(m_widget),&QPushButton::clicked,this,[this]()
-        {
-            emit clickedBtn(this);
-           // QMessageBox::information(nullptr,"IOModel","IOModel");
-        });
-    };
+    IOModel(QString name);
     QWidget *embeddedWidget() override
     {
         return m_widget;
@@ -115,7 +110,7 @@ class AppSignalModel:public BaseModel
 {
     using TypeEnum=QtNodes::NodeDataTypeEnum;
 public:
-    AppSignalModel(QString name):BaseModel(VIEW_TYPE,std::move(name)
+    AppSignalModel(QString name):BaseModel(SIGNAL_TYPE,std::move(name)
         ,{TypeEnum::IN_APP_SIGNAL
             ,TypeEnum::IN_APP_SIGNAL,TypeEnum::IN_APP_SIGNAL,TypeEnum::IN_APP_SIGNAL
             ,TypeEnum::IN_APP_SIGNAL,TypeEnum::IN_APP_SIGNAL,TypeEnum::IN_APP_SIGNAL
@@ -129,7 +124,7 @@ class AppRxModel:public BaseModel
 {
     using TypeEnum=QtNodes::NodeDataTypeEnum;
 public:
-    AppRxModel(QString name):BaseModel(VIEW_TYPE,std::move(name)
+    AppRxModel(QString name):BaseModel(SIGNAL_TYPE,std::move(name)
         ,{TypeEnum::IN_IO_RX
             ,TypeEnum::IN_IO_RX,TypeEnum::IN_IO_RX,TypeEnum::IN_IO_RX
             ,TypeEnum::IN_IO_RX,TypeEnum::IN_IO_RX,TypeEnum::IN_IO_RX

@@ -23,13 +23,17 @@ PlotView::PlotView(QWidget* parent) :
     initConnect();
 }
 PlotView* PlotView::m_plotView = nullptr;
-PlotView* PlotView::instance(QWidget *parent)
+PlotView* PlotView::instance(QWidget* parent)
 {
     if (m_plotView == nullptr)
     {
         m_plotView = new PlotView(parent);
     }
     return m_plotView;
+}
+PlotView::~PlotView()
+{
+    qInfo()<<"~PlotView";
 }
 void PlotView::expandAll() const {
 	_treeView->expandAll();
@@ -115,8 +119,10 @@ void PlotView::addSignalData(const IOAPP::SIGNALS& _signal)
     }
     node->plotData->getData()->add(QCPGraphData((_signal.time-zero)/1000.0, _signal.value));
 }
-void PlotView::addSignalData(const QList<IOAPP::SIGNALS>& _signals)
+void PlotView::_addSignalData(const QList<IOAPP::SIGNALS>& _signals)
 {
+    //qInfo() << QThread::currentThread();
+    //    qInfo()<<_signals.size();
     for (const auto& s : _signals)
     {
         addSignalData(s);
@@ -130,7 +136,9 @@ const char* PlotView::getSlot(int index) const
 {
    switch (index)
    {
-   case 1: return SLOT(addSignalData(const QList<IOAPP::SIGNALS>&));
+   case 1:
+       //qDebug()<<"SLOT(addSignalData(const QList<IOAPP::SIGNALS>&))";
+       return SLOT(_addSignalData(const QList<IOAPP::SIGNALS>&));
    default:return nullptr;
    }
 }

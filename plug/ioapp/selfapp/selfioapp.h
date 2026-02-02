@@ -25,6 +25,7 @@ private:
     mavlink_status_t status;
     const uint8_t sys_id = 1;
     const uint8_t comp_id = 1;
+    qint64 __time = 0;
 };
 
 

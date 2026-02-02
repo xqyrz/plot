@@ -4,13 +4,21 @@ add_compile_options(
         $<$<CXX_COMPILER_ID:MSVC>:/utf-8>
         $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-finput-charset=UTF-8>
 )
-
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O1")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O1")
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
-
+# 设置运行时路径
+if(WIN32)
+    # 添加 Qt DLL 目录到运行时路径
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LIBPATH:\"C:/Qt/5.15.2/msvc2019_64/bin\"")
+    
+    # 复制 Qt DLL 到输出目录（构建时自动复制）
+    # 根据需要添加其他 Qt DLL
+endif()
 
 if(BUILD_DEBUG_POSTFIX_D)
     set(CMAKE_DEBUG_POSTFIX "d")
@@ -76,13 +84,13 @@ find_package(Qt${QT_VERSION_MAJOR}  REQUIRED COMPONENTS Core Gui Widgets PrintSu
 # 添加子目录
 
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/plot ${CMAKE_CURRENT_SOURCE_DIR}/plug/io)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/plot ${CMAKE_CURRENT_SOURCE_DIR}/plug/io ${CMAKE_CURRENT_SOURCE_DIR}/QtPropertyBrowser)
 
 add_subdirectory(nodes)
 add_subdirectory(qwindowkit)
 add_subdirectory(elf)
 add_subdirectory(ads)
-
+add_subdirectory(QtPropertyBrowser)
 
 # 添加子目录
 add_subdirectory(plot)
