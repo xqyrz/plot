@@ -11,15 +11,16 @@
 class IOAPPInterface:public InterfaceBase
 {
 public:
+    IOAPPInterface(int _id=0 ):id(_id){};
     void getFrame(const IO::Frame&);
     virtual QList<IOAPP::SIGNALS> decode(const IO::Frame& data) = 0;
     virtual IO::Frame encode() = 0;
     const char* getSignal(int index) const override;
     const char* getSlot(int index) const override;
-    inline IOAPP::SIGNALS getSignalData(uint32_t id)
+    inline IOAPP::SIGNALS getSignalData()
     {
         IOAPP::SIGNALS signal;
-        signal.time = QDateTime::currentDateTime().toMSecsSinceEpoch();
+       // signal.time = QDateTime::currentDateTime().toMSecsSinceEpoch();
         signal.ID.res = 1;
         signal.ID.type = id;
 
@@ -36,6 +37,7 @@ protected:
         }
     };
     std::set<std::function<void(const  QList<IOAPP::SIGNALS>& )>,signalFunctionComparator> _signalCallback;
+    const uint32_t id;
 };
 inline void IOAPPInterface::getFrame(const IO::Frame& frame)
 {

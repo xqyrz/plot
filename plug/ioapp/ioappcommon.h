@@ -10,7 +10,7 @@ namespace IOAPP
 {
     enum {
         SELFIO_ID = 1,
-
+        VAFA_ID = 2,
     };
     struct SIGNALS {
         union {

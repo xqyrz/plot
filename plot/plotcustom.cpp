@@ -287,11 +287,11 @@ void PlotCustom::_initUI()
 {
     setBackground(QColor(234, 234, 234));
 
-    //setOpenGl(true, 2000);
+    setOpenGl(true, 4);
     setNotAntialiasedElements(QCP::aeAll);
     setNoAntialiasingOnDrag(true);
 
-    //    qInfo()<<"opengl:"<<this->openGl();
+    qInfo()<<"opengl:"<<this->openGl();
     _line = nullptr;
     _tracerMap.clear();
     plotLayout()->clear();

@@ -7,7 +7,7 @@
 
 
 SelfIOAPP::SelfIOAPP( QObject* parent): QObject(parent)
-,IOAPPInterface()
+,IOAPPInterface(IOAPP::SELFIO_ID)
 {
     addCallback(0,[this]( const QList<IOAPP::SIGNALS>& _signals)
     {
@@ -52,7 +52,7 @@ QList<IOAPP::SIGNALS>  SelfIOAPP::decode(const IO::Frame& frame)
                     mavlink_gyroscope_t sb;
                     mavlink_msg_gyroscope_decode(&rcv_msg, &sb);
                     //qDebug()  << QString("x:%1 y:%2 z:%3").arg(sb.ACC_X).arg(sb.ACC_Y).arg(sb.ACC_Z);
-                    auto sig=getSignalData(IOAPP::SELFIO_ID);
+                    auto sig=getSignalData();
                     fun(sig,msgId<<16|1,"GYRO_X", sb.GYRO_X);
                     list.append(sig);
 
@@ -68,7 +68,7 @@ QList<IOAPP::SIGNALS>  SelfIOAPP::decode(const IO::Frame& frame)
                     mavlink_accelerometer_t sb;
                     mavlink_msg_accelerometer_decode(&rcv_msg, &sb);
                     //qDebug()  << QString("x:%1 y:%2 z:%3").arg(sb.ACC_X).arg(sb.ACC_Y).arg(sb.ACC_Z);
-                    auto sig=getSignalData(IOAPP::SELFIO_ID);
+                    auto sig=getSignalData();
                     fun(sig,msgId<<16|1,"ACC_X", sb.ACC_X);
                     list.append(sig);
 
@@ -84,7 +84,7 @@ QList<IOAPP::SIGNALS>  SelfIOAPP::decode(const IO::Frame& frame)
                     mavlink_magnetometer_t sb;
                     mavlink_msg_magnetometer_decode(&rcv_msg, &sb);
                    // qDebug()  << QString("x:%1 y:%2 z:%3").arg(sb.MAG_X).arg(sb.MAG_Y).arg(sb.MAG_Z);
-                    auto sig=getSignalData(IOAPP::SELFIO_ID);
+                    auto sig=getSignalData();
                     fun(sig,msgId<<16|1,"MAG_X", sb.MAG_X);
                     list.append(sig);
 
@@ -100,7 +100,7 @@ QList<IOAPP::SIGNALS>  SelfIOAPP::decode(const IO::Frame& frame)
                     mavlink_tiltsensor_t sb;
                     mavlink_msg_tiltsensor_decode(&rcv_msg, &sb);
                     // qDebug()  << QString("x:%1 y:%2 z:%3").arg(sb.MAG_X).arg(sb.MAG_Y).arg(sb.MAG_Z);
-                    auto sig=getSignalData(IOAPP::SELFIO_ID);
+                    auto sig=getSignalData();
                     fun(sig,msgId<<16|1,"Tilt_X", sb.Tilt_X);
                     list.append(sig);
 
@@ -112,7 +112,7 @@ QList<IOAPP::SIGNALS>  SelfIOAPP::decode(const IO::Frame& frame)
                     mavlink_orientationsensor_t sb;
                     mavlink_msg_orientationsensor_decode(&rcv_msg, &sb);
                     // qDebug()  << QString("x:%1 y:%2 z:%3").arg(sb.MAG_X).arg(sb.MAG_Y).arg(sb.MAG_Z);
-                    auto sig=getSignalData(IOAPP::SELFIO_ID);
+                    auto sig=getSignalData();
                     fun(sig,msgId<<16|1,"Orientation", sb.Orientation);
                     list.append(sig);
                 }
@@ -121,7 +121,7 @@ QList<IOAPP::SIGNALS>  SelfIOAPP::decode(const IO::Frame& frame)
                     mavlink_lightsensor_t sb;
                     mavlink_msg_lightsensor_decode(&rcv_msg, &sb);
                     // qDebug()  << QString("x:%1 y:%2 z:%3").arg(sb.MAG_X).arg(sb.MAG_Y).arg(sb.MAG_Z);
-                    auto sig=getSignalData(IOAPP::SELFIO_ID);
+                    auto sig=getSignalData();
                     fun(sig,msgId<<16|1,"light", sb.light);
                     list.append(sig);
                 }

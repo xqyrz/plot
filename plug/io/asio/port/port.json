@@ -1,0 +1,8 @@
+{
+  "author" : "xqyr",
+  "date" : "2026/02/08",
+  "version" : "0.0.1",
+  "des" : "this is a port",
+  "Keys": ["APort"],
+  "Description": "APort IO plugin"
+}

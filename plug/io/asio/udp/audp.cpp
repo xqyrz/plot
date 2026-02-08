@@ -71,6 +71,7 @@ try {
 }
 
 bool AUdp::close() {
+    _socket->close();
     return false;
 }
 

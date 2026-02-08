@@ -1,0 +1,38 @@
+//
+// Created by 25137 on 26-2-7.
+//
+
+#ifndef APORT_H
+#define APORT_H
+
+#include "iointerface.h"
+#include "asio.hpp"
+
+class  APort:public QObject,public IOInterface{
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID IOInterface_Id FILE "port.json")
+    Q_INTERFACES(IOInterface)
+public:
+    explicit APort( QObject* parent = nullptr,IO::Config config=IO::Config());
+    ~APort() override;
+    void run() override;
+    bool open() override;
+    bool close() override;
+    int write(const IO::Frame&) override;
+    int write(const QList<IO::Frame>&) override;
+
+    signals:
+        void rx_frame(const IO::Frame&);
+public   slots:
+    void tx_frame(const IO::Frame& frame){write(frame);};
+private:
+    void do_read();
+private:
+    asio::io_context io_context;
+     std::unique_ptr<asio::serial_port> handle;
+    std::thread io_thread_;
+    std::array<char, 1024> recv_buffer_;
+};
+
+
+#endif //APORT_H
