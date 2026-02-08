@@ -133,7 +133,7 @@ void PlotCustom::_replot() {
 
     if (this->isVisible())
     {
-        if (upRang&&_xCheckBox) {
+        if (_xCheckBox) {
             foreach(auto rect, rects)
             {
                 auto graphs = rect->graphs();
