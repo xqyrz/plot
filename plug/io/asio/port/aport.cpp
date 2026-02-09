@@ -9,10 +9,12 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <iostream>
+#include <QtSerialPort/QSerialPortInfo>
+#include <utility>
 using namespace  asio;
 APort::APort(QObject* parent, IO::Config config)
     :QObject(parent),
-    IOInterface("aport",config),
+    IOInterface("aport",std::move(config)),
     handle(new serial_port(io_context))
 {
 
@@ -33,17 +35,107 @@ APort::~APort()
 {
 
 }
+
+// Windows 平台下获取串口
+std::vector<std::string> list_available_ports_windows() {
+    std::vector<std::string> comPorts;
+    HKEY hKey;
+    LONG result;
+
+    // 打开设备管理器中的COM端口注册表项
+    result = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
+        "HARDWARE\\DEVICEMAP\\SERIALCOMM",
+        0, KEY_READ, &hKey);
+
+    if (result == ERROR_SUCCESS) {
+        char valueName[256];
+        char portName[256];
+        DWORD valueNameSize, portNameSize, type;
+        DWORD index = 0;
+
+        while (true) {
+            valueNameSize = sizeof(valueName);
+            portNameSize = sizeof(portName);
+
+            result = RegEnumValue(hKey, index, valueName,
+                &valueNameSize, NULL, &type,
+                (LPBYTE)portName, &portNameSize);
+
+            if (result == ERROR_NO_MORE_ITEMS) {
+                break;
+            }
+
+            if (result == ERROR_SUCCESS && type == REG_SZ) {
+                comPorts.push_back(portName);
+            }
+
+            index++;
+        }
+
+        RegCloseKey(hKey);
+    }
+
+    return comPorts;
+}
+
+// Linux 平台下获取串口
+std::vector<std::string> list_available_ports_linux() {
+    std::vector<std::string> ports;
+#ifdef _WIN32
+#else
+
+    // 打开 /dev 目录
+    DIR* dir = opendir("/dev");
+    if (dir == nullptr) {
+        std::cerr << "Failed to open /dev directory!" << std::endl;
+        return ports;
+    }
+
+    struct dirent* entry;
+    while ((entry = readdir(dir)) != nullptr) {
+        std::string filename(entry->d_name);
+
+        // 串口设备通常以 tty 或 ttyUSB 开头
+        if (filename.find("tty") == 0 || filename.find("ttyUSB") == 0) {
+            std::string port_name = "/dev/" + filename;
+            ports.push_back(port_name);
+        }
+    }
+
+    closedir(dir);
+#endif
+    return ports;
+}
+
+// 跨平台扫描串口
+QStringList list_available_ports() {
+    QStringList ports;
+
+#ifdef _WIN32
+    // Windows 平台扫描串口
+   auto com = list_available_ports_windows();
+#else
+    // Linux/Unix 平台扫描串口
+    auto com = list_available_ports_linux();
+#endif
+    for (auto&var:com)
+    {
+        ports.append(QString::fromStdString(var));
+    }
+    return ports;
+}
+
 void APort::run()
 {
     io_thread_ = std::thread([this]() {
-try {
-    io_context.run();  // 阻塞直到所有工作完成或 stop() 被调用
-} catch (const std::exception& e) {
-    qWarning() << "Exception in io_context thread:" << e.what();
-} catch (...) {
-    qWarning() << "Unknown exception in io_context thread";
-}
-});
+    try {
+        io_context.run();  // 阻塞直到所有工作完成或 stop() 被调用
+    } catch (const std::exception& e) {
+        qWarning() << "Exception in io_context thread:" << e.what();
+    } catch (...) {
+        qWarning() << "Unknown exception in io_context thread";
+    }
+    });
 }
 bool APort::open()
 {
@@ -97,6 +189,26 @@ int APort::write(const QList<IO::Frame>& frames)
         write(frame);
     }
     return 0;
+}
+QList<std::tuple<QVariant::Type, QString, QVariant>> APort::showConfigDialog()
+{
+    QList<std::tuple<QVariant::Type,QString,QVariant>> temp;
+   // auto ports = QSerialPortInfo::availablePorts();
+    auto ports =list_available_ports();
+    auto obj = QJsonDocument::fromJson(config.ch.toUtf8()).object();
+    temp.append(std::make_tuple(QVariant::StringList,"COM",ports));
+    temp.append(std::make_tuple(QVariant::Int,"波特率",obj["baud"].toInt()));
+    temp.append(std::make_tuple(QVariant::Int,"数据位",obj["data"].toInt()));
+    QStringList stop;
+    stop<<"1"<<"1.5"<<"2";
+    temp.append(std::make_tuple(QVariant::StringList,"停止位",stop));
+    QStringList check;
+    check<<"NONE"<<"ODD"<<"EVEN"<<"MARK"<<"SPACE";
+    temp.append(std::make_tuple(QVariant::StringList,"校验位",check));
+    QStringList flow;
+    flow<<"NONE";
+    temp.append(std::make_tuple(QVariant::StringList,"流控位",flow));
+    return temp;
 }
 void APort::do_read()
 {

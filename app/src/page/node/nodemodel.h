@@ -88,10 +88,11 @@ class IOAPPModel:public BaseModel
 {
     using TypeEnum=QtNodes::NodeDataTypeEnum;
 public:
-    IOAPPModel(QString name):BaseModel(IOAPP_TYPE,std::move(name)
-        ,{TypeEnum::IN_IO_RX,TypeEnum::IN_APP_TX}
-        ,{TypeEnum::OUT_IO_TX,TypeEnum::OUT_APP_RX,TypeEnum::OUT_APP_SIGNAL}){};
-
+     IOAPPModel(QString name);
+    QWidget *embeddedWidget() override
+    {
+        return m_widget;
+    }
 private:
 };
 

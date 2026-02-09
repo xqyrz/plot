@@ -13,7 +13,7 @@
 #include <QtNodes/GraphicsView>
 #include <QtNodes/NodeData>
 #include <QtNodes/NodeDelegateModelRegistry>
-class IOInterface;
+class InterfaceBase;
 using namespace QtNodes;
 class NodeEditPage : public GraphicsView
 {
@@ -25,7 +25,7 @@ public:
 private:
     static std::shared_ptr<NodeDelegateModelRegistry> registerDataModels();
     void _sceneLoaded();
-    void showConfigDialog(IOInterface* obj);
+    void showConfigDialog(InterfaceBase* obj);
 private:
     std::shared_ptr<NodeDelegateModelRegistry> registry;
     DataFlowGraphModel* dataFlowGraphModel=nullptr;

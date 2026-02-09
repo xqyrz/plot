@@ -64,3 +64,15 @@ IOModel::IOModel(QString name):BaseModel(IO_TYPE,std::move(name)
     });
 };
 
+IOAPPModel::IOAPPModel(QString name):BaseModel(IOAPP_TYPE,std::move(name)
+   ,{TypeEnum::IN_IO_RX,TypeEnum::IN_APP_TX}
+   ,{TypeEnum::OUT_IO_TX,TypeEnum::OUT_APP_RX,TypeEnum::OUT_APP_SIGNAL})
+{
+    m_widget =( new QPushButton("配置"));
+    QObject::connect(qobject_cast<QPushButton*>(m_widget),&QPushButton::clicked,this,[this]()
+    {
+        emit configClicked(QPoint());
+       //Manage::showConfig(this);
+       // QMessageBox::information(nullptr,"IOModel","IOModel");
+    });
+}

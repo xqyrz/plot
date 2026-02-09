@@ -208,38 +208,54 @@ void NodeEditPage::_sceneLoaded()
         }
     }
 }
-#include "qtpropertybrowser.h"
-#include "qteditorfactory.h"
+/**
+ * 显示IO config
+ *
+ */
+#include "qtpropertymanager.h"
+#include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
-void NodeEditPage::showConfigDialog(IOInterface* obj)
+void NodeEditPage::showConfigDialog(InterfaceBase* obj)
 {
     QDialog d(this);
-    auto config = obj->getConfig();
+    auto config = obj->showConfigDialog();
     QtTreePropertyBrowser editor(&d);
+    QList<QtVariantProperty*> propertys;
+    auto manager = new QtVariantPropertyManager(&d);
+    for (auto & var:config)
+    {
 
-    auto ipManager = new QtStringPropertyManager();
-    auto ipProperty = ipManager->addProperty("IP");
-    auto ipFactory = new QtLineEditFactory();
-    ipManager->setValue(ipProperty, config.dev);
-    editor.setFactoryForManager(ipManager, ipFactory);
-    editor.addProperty(ipProperty);
+        QtVariantProperty* property;
+        if (std::get<0>(var) == QVariant::StringList)
+        {
+             property = manager->addProperty(QtVariantPropertyManager::enumTypeId(),std::get<1>(var));
+             //qDebug()<<std::get<2>(var);
+             property->setAttribute(QLatin1String("enumNames"),std::get<2>(var));
+             property->setValue(0);
+        }
+        else
+        {
+             property = manager->addProperty(std::get<0>(var),std::get<1>(var));
+             property->setValue(std::get<2>(var));
+        }
+        editor.addProperty(property);
+        propertys.append(property);
+    }
+    QtVariantEditorFactory *variantFactory = new QtVariantEditorFactory(&d);
 
-    auto portManager = new QtStringPropertyManager();
-    auto portProperty = portManager->addProperty("port");
-    auto portFactory = new QtLineEditFactory();
-    portManager->setValue(portProperty, config.ch);
-    editor.setFactoryForManager(portManager, portFactory);
-    editor.addProperty(portProperty);
-
+    editor.setFactoryForManager(manager, variantFactory);
+    editor.setPropertiesWithoutValueMarked(true);
+    editor.setRootIsDecorated(false);
     QHBoxLayout layout(&d);
     layout.addWidget(&editor);
 
     d.exec();
-    config.dev = ipProperty->valueText();
-    config.ch = portProperty->valueText();
-    obj->setConfig(config);
-    obj->open();
-    qDebug()<<ipProperty->valueText()<<portProperty->valueText();
+    for (int i = 0;i<config.size();i++)
+    {
+        std::get<2>(config[i]) = propertys.at(i)->value();
+    }
+    obj->setConfigDialog(config);
+    //obj->open();
 }
 
 NodeEditPage::NodeEditPage(QWidget* parent)
@@ -251,14 +267,18 @@ NodeEditPage::NodeEditPage(QWidget* parent)
     connect(dataFlowGraphModel,&DataFlowGraphModel::configClicked,this,[this](int index)
     {
             //TODO
-            auto obj =qobject_cast<IOInterface*>(Manage::getObj(index));
-        if (obj)
+        if (auto obj =qobject_cast<IOInterface*>(Manage::getObj(index)))
         {
             qInfo()<<"configClicked "<<index<<obj;
             auto config =obj->getConfig();
+
+            showConfigDialog(obj);
+        }
+        else  if (auto obj =qobject_cast<IOAPPInterface*>(Manage::getObj(index)))
+        {
+            qInfo()<<"IOAPPInterface configClicked "<<index<<obj;
              showConfigDialog(obj);
         }
-
     });
     // SignalObj d(SIGNALDATA::IO_RX);
     // SelfIOAPP b(nullptr);

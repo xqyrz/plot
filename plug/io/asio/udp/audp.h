@@ -21,6 +21,7 @@ public:
     bool close() override;
     int write(const IO::Frame&) override;
     int write(const QList<IO::Frame>&) override;
+     QList<std::tuple<QVariant::Type,QString,QVariant>> showConfigDialog() override;
 
 signals:
     void rx_frame(const IO::Frame&);

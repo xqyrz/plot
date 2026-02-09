@@ -89,7 +89,13 @@ int AUdp::write(const QList<IO::Frame>& frames)
     }
     return 0;
 }
-
+QList<std::tuple<QVariant::Type, QString, QVariant>> AUdp::showConfigDialog()
+{
+    QList<std::tuple<QVariant::Type,QString,QVariant>> temp;
+    temp.append(std::make_tuple(QVariant::String,"IP",config.dev));
+    temp.append(std::make_tuple(QVariant::Int,"Port",config.ch.toInt()));
+    return temp;
+}
 
 
 void AUdp::do_read() {

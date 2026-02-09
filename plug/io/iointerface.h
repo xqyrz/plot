@@ -131,10 +131,13 @@ inline const char* IOInterface::getSlot(int index) const
 {
     switch (index)
     {
-    case 0:return SLOT(tx_frame(const IO::Frame&));
-    default:return nullptr;
+    case 0:
+        return SLOT(tx_frame(const IO::Frame&));
+    default:
+        return nullptr;
     }
 }
+
 
 
 QT_BEGIN_NAMESPACE
