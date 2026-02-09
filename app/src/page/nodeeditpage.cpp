@@ -252,7 +252,12 @@ void NodeEditPage::showConfigDialog(InterfaceBase* obj)
     d.exec();
     for (int i = 0;i<config.size();i++)
     {
-        std::get<2>(config[i]) = propertys.at(i)->value();
+        if (std::get<0>(config[i]) == QVariant::StringList)
+        {
+            auto index = propertys.at(i)->value().toInt();
+            std::get<2>(config[i]) = propertys.at(i)->attributeValue("enumNames").toStringList().at(index);
+        }
+        else std::get<2>(config[i]) = propertys.at(i)->value();
     }
     obj->setConfigDialog(config);
     //obj->open();

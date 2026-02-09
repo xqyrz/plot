@@ -134,7 +134,7 @@ public:
             std::cout << logLevel[type] << " "
            << formattedMessage.info.toStdString()
            << formattedMessage.msg.toStdString()
-           << " \033[0m\n";
+           << " \033[0m"<<std::endl;
             logger.queue.enqueue(formattedMessage);
         }
         if (!logger.writeFuture.isRunning()) {

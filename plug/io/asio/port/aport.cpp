@@ -1,7 +1,9 @@
 ﻿//
 // Created by 25137 on 26-2-7.
 //
-
+#if _MSC_VER >= 1900
+#pragma execution_character_set("utf-8")
+#endif
 #include "aport.h"
 #include <QDebug>
 #include <QThread>
@@ -22,9 +24,9 @@ APort::APort(QObject* parent, IO::Config config)
     this->config.ch = R"({
         "baud":1152000,
         "data":8,
-        "stop":0,
-        "parity":0,
-        "flow":0
+        "stop":"1",
+        "parity":"NONE",
+        "flow":"NONE"
     })";
     addCallback(0,[this](const IO::Frame& frame)
     {
@@ -192,23 +194,76 @@ int APort::write(const QList<IO::Frame>& frames)
 }
 QList<std::tuple<QVariant::Type, QString, QVariant>> APort::showConfigDialog()
 {
-    QList<std::tuple<QVariant::Type,QString,QVariant>> temp;
-   // auto ports = QSerialPortInfo::availablePorts();
-    auto ports =list_available_ports();
+    QList<std::tuple<QVariant::Type, QString, QVariant>> temp;
+    // auto ports = QSerialPortInfo::availablePorts();
+    auto ports = list_available_ports();
     auto obj = QJsonDocument::fromJson(config.ch.toUtf8()).object();
-    temp.append(std::make_tuple(QVariant::StringList,"COM",ports));
-    temp.append(std::make_tuple(QVariant::Int,"波特率",obj["baud"].toInt()));
-    temp.append(std::make_tuple(QVariant::Int,"数据位",obj["data"].toInt()));
-    QStringList stop;
-    stop<<"1"<<"1.5"<<"2";
-    temp.append(std::make_tuple(QVariant::StringList,"停止位",stop));
-    QStringList check;
-    check<<"NONE"<<"ODD"<<"EVEN"<<"MARK"<<"SPACE";
-    temp.append(std::make_tuple(QVariant::StringList,"校验位",check));
-    QStringList flow;
-    flow<<"NONE";
-    temp.append(std::make_tuple(QVariant::StringList,"流控位",flow));
+    if (ports.contains(config.dev))
+    {
+        ports.removeOne(config.dev);
+        ports.insert(0,config.dev);
+    }
+    temp.append(std::make_tuple(QVariant::StringList, "COM", ports));
+    temp.append(std::make_tuple(QVariant::Int, "波特率", obj["baud"].toInt()));
+    temp.append(std::make_tuple(QVariant::Int, "数据位", obj["data"].toInt()));
+    auto _stop = stop;
+    if (_stop.contains(obj["stop"].toString()))
+    {
+        auto var = obj["stop"].toString();
+        _stop.removeOne(var);
+        _stop.insert(0,var);
+    }
+    temp.append(std::make_tuple(QVariant::StringList, "停止位", _stop));
+    auto _check = check;
+    if (_check.contains(obj["parity"].toString()))
+    {
+        auto var = obj["parity"].toString();
+        _check.removeOne(var);
+        _check.insert(0,var);
+    }
+    auto _flow = flow;
+    if (_flow.contains(obj["flow"].toString()))
+    {
+        auto var = obj["flow"].toString();
+        _flow.removeOne(var);
+        _flow.insert(0,var);
+    }
+    temp.append(std::make_tuple(QVariant::StringList, "校验位", _check));
+    temp.append(std::make_tuple(QVariant::StringList, "流控位", _flow));
     return temp;
+}
+void APort::setConfigDialog(const QList<std::tuple<QVariant::Type, QString, QVariant>>& tuples)
+{
+    auto obj = QJsonDocument::fromJson(config.ch.toUtf8()).object();
+    for (auto& t:tuples)
+    {
+        qDebug()<<std::get<0>(t)<<std::get<1>(t)<<std::get<2>(t);
+        if (std::get<1>(t) == "COM")
+        {
+            config.dev = std::get<2>(t).toString();
+        }
+        else  if (std::get<1>(t) == "波特率")
+        {
+            obj["baud"] =  std::get<2>(t).toInt();
+        }
+        else if (std::get<1>(t) == "数据位")
+        {
+            obj["data"] =  std::get<2>(t).toInt();
+        }
+        else if (std::get<1>(t) == "停止位")
+        {
+            obj["stop"] =  std::get<2>(t).toString();
+        }
+        else if (std::get<1>(t) == "校验位")
+        {
+            obj["parity"] =  std::get<2>(t).toString();
+        }
+        else if (std::get<1>(t) == "流控位")
+        {
+            obj["flow"] =  std::get<2>(t).toString();
+        }
+    }
+    config.ch = QJsonDocument(obj).toJson();
 }
 void APort::do_read()
 {
