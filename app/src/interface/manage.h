@@ -9,6 +9,7 @@
 #include "page/node/nodemodel.h"
 
 class BaseModel;
+class InterfaceBase;
 namespace ManageData
 {
     enum class  Type
@@ -36,6 +37,7 @@ protected:
 class Manage {
 public:
     static QObject* getObj(const int  index);
+    static InterfaceBase* getInterfaceBase(const int  index);
     static QObject* creatObj(const int index,QString type);
     static void showConfig(const int  index);
 };

@@ -12,9 +12,9 @@ class Session;
 using asio::ip::tcp;
 class  ATCPServer:public QObject,public IOInterface{
     Q_OBJECT
-    //    Q_PLUGIN_METADATA(IID IOInterface_Id)
-    Q_PLUGIN_METADATA(IID IOInterface_Id FILE "atcpserver.json")
     Q_INTERFACES(IOInterface)
+    Q_PLUGIN_METADATA(IID IOInterface_Id FILE "atcpserver.json")
+
 public:
     explicit ATCPServer(IO::Config config=IO::Config(), QObject* parent = nullptr);
     ~ATCPServer();

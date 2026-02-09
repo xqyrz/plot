@@ -215,33 +215,33 @@ void NodeEditPage::_sceneLoaded()
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
-void NodeEditPage::showConfigDialog(InterfaceBase* obj)
+void NodeEditPage::showConfigDialog(InterfaceBase* obj, int index)
 {
     QDialog d(this);
     auto config = obj->showConfigDialog();
     QtTreePropertyBrowser editor(&d);
     QList<QtVariantProperty*> propertys;
     auto manager = new QtVariantPropertyManager(&d);
-    for (auto & var:config)
+    for (auto& var : config)
     {
 
         QtVariantProperty* property;
         if (std::get<0>(var) == QVariant::StringList)
         {
-             property = manager->addProperty(QtVariantPropertyManager::enumTypeId(),std::get<1>(var));
-             //qDebug()<<std::get<2>(var);
-             property->setAttribute(QLatin1String("enumNames"),std::get<2>(var));
-             property->setValue(0);
+            property = manager->addProperty(QtVariantPropertyManager::enumTypeId(), std::get<1>(var));
+            // qDebug()<<std::get<2>(var);
+            property->setAttribute(QLatin1String("enumNames"), std::get<2>(var));
+            property->setValue(0);
         }
         else
         {
-             property = manager->addProperty(std::get<0>(var),std::get<1>(var));
-             property->setValue(std::get<2>(var));
+            property = manager->addProperty(std::get<0>(var), std::get<1>(var));
+            property->setValue(std::get<2>(var));
         }
         editor.addProperty(property);
         propertys.append(property);
     }
-    QtVariantEditorFactory *variantFactory = new QtVariantEditorFactory(&d);
+    QtVariantEditorFactory* variantFactory = new QtVariantEditorFactory(&d);
 
     editor.setFactoryForManager(manager, variantFactory);
     editor.setPropertiesWithoutValueMarked(true);
@@ -250,24 +250,167 @@ void NodeEditPage::showConfigDialog(InterfaceBase* obj)
     layout.addWidget(&editor);
 
     d.exec();
-    for (int i = 0;i<config.size();i++)
+    for (int i = 0; i < config.size(); i++)
     {
         if (std::get<0>(config[i]) == QVariant::StringList)
         {
             auto index = propertys.at(i)->value().toInt();
             std::get<2>(config[i]) = propertys.at(i)->attributeValue("enumNames").toStringList().at(index);
         }
-        else std::get<2>(config[i]) = propertys.at(i)->value();
+        else
+            std::get<2>(config[i]) = propertys.at(i)->value();
     }
     obj->setConfigDialog(config);
-    //obj->open();
+    _saveConfig(index,config);
+    // obj->open();
 }
+void NodeEditPage::_saveConfig(int index, const QList<std::tuple<QVariant::Type, QString, QVariant>>& config)
+{
+    QFile file(configPath);
 
+    // 1. 读取已有 JSON（不存在则创建）
+    QJsonObject root;
+    if (file.exists())
+    {
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+            return;
+
+        QJsonParseError error;
+        QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
+        file.close();
+
+        if (error.error != QJsonParseError::NoError)
+            return;
+
+        root = doc.object();
+    }
+
+    // 2. 取得 NodeEditPage 数组
+    QJsonArray nodeEditPage = root.value("NodeEditPage").toArray();
+
+    // 3. 构造新的 config 对象
+    QJsonObject obj;
+    obj["key"] = index;
+
+    QJsonArray array;
+    for (const auto& var : config)
+    {
+        QJsonObject temp;
+        temp["type"] = static_cast<int>(std::get<0>(var));
+        temp["name"] = std::get<1>(var);
+        temp["value"] = QJsonValue::fromVariant(std::get<2>(var));
+        array.append(temp);
+    }
+    obj["config"] = array;
+
+    // 4. key 唯一处理（存在则替换）
+    bool replaced = false;
+    for (int i = 0; i < nodeEditPage.size(); ++i)
+    {
+        QJsonObject item = nodeEditPage[i].toObject();
+        if (item.value("key").toInt() == index)
+        {
+            nodeEditPage[i] = obj;
+            replaced = true;
+            break;
+        }
+    }
+
+    if (!replaced)
+    {
+        nodeEditPage.append(obj);
+    }
+
+    root["NodeEditPage"] = nodeEditPage;
+
+    // 5. 写回文件
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
+        return;
+
+    file.write(QJsonDocument(root).toJson(QJsonDocument::Indented));
+    file.close();
+}
+QList<int> NodeEditPage::_allIndexes() const
+{
+    QList<int> indexes;
+
+    QFile file(configPath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        return indexes;
+    }
+
+    QJsonParseError error;
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
+    file.close();
+
+    if (error.error != QJsonParseError::NoError || !doc.isObject())
+    {
+        return indexes;
+    }
+
+    QJsonArray nodeEditPage = doc.object().value("NodeEditPage").toArray();
+
+    for (const QJsonValue& v : nodeEditPage)
+    {
+        QJsonObject obj = v.toObject();
+        if (obj.contains("key"))
+        {
+            indexes.append(obj.value("key").toInt());
+        }
+    }
+
+    return indexes;
+}
+QList<std::tuple<QVariant::Type, QString, QVariant>> NodeEditPage::_loadConfig(int index)
+{
+    QList<std::tuple<QVariant::Type, QString, QVariant>> result;
+
+    QFile file(configPath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return result;
+    }
+
+    QJsonParseError error;
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
+    file.close();
+
+    if (error.error != QJsonParseError::NoError || !doc.isObject()) {
+        return result;
+    }
+
+    QJsonArray nodeEditPage = doc.object().value("NodeEditPage").toArray();
+
+    // 查找 key
+    for (const QJsonValue& v : nodeEditPage) {
+        QJsonObject obj = v.toObject();
+        if (obj.value("key").toInt() != index)
+            continue;
+
+        QJsonArray cfgArray = obj.value("config").toArray();
+        for (const QJsonValue& c : cfgArray) {
+            QJsonObject temp = c.toObject();
+
+            QVariant::Type type =
+                static_cast<QVariant::Type>(temp.value("type").toInt());
+            QString name = temp.value("name").toString();
+            QVariant value = temp.value("value").toVariant();
+
+            result.append(std::make_tuple(type, name, value));
+        }
+        break; // key 唯一，找到即可退出
+    }
+
+    return result;
+}
 NodeEditPage::NodeEditPage(QWidget* parent)
     :GraphicsView(parent)
     ,registry( registerDataModels())
     ,dataFlowGraphModel(new DataFlowGraphModel(registry))
     ,scene(new DataFlowGraphicsScene(*dataFlowGraphModel))
+    ,configPath(QStandardPaths::writableLocation(
+                    QStandardPaths::AppConfigLocation
+                )+"/config.json")
 {
     connect(dataFlowGraphModel,&DataFlowGraphModel::configClicked,this,[this](int index)
     {
@@ -277,12 +420,12 @@ NodeEditPage::NodeEditPage(QWidget* parent)
             qInfo()<<"configClicked "<<index<<obj;
             auto config =obj->getConfig();
 
-            showConfigDialog(obj);
+            showConfigDialog(obj,index);
         }
         else  if (auto obj =qobject_cast<IOAPPInterface*>(Manage::getObj(index)))
         {
             qInfo()<<"IOAPPInterface configClicked "<<index<<obj;
-             showConfigDialog(obj);
+             showConfigDialog(obj,index);
         }
     });
     // SignalObj d(SIGNALDATA::IO_RX);
@@ -303,6 +446,15 @@ NodeEditPage::NodeEditPage(QWidget* parent)
         try
         {
             this->scene->load(this->scene->getDefaultConfigPath());
+            auto indexes = _allIndexes();
+            for (int index : indexes) {
+                auto cfg = _loadConfig(index);
+                auto obj = Manage::getInterfaceBase(index);
+                if (obj)
+                {
+                    obj->setConfigDialog(cfg);
+                }
+            }
         }
         catch (const std::logic_error& e) {
             QMessageBox::warning(this,"警告","节点配置文件加载失败："+QString(e.what()));

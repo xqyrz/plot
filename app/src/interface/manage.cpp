@@ -41,7 +41,32 @@ QObject* Manage::getObj(const int index)
     }
     else
     {
-        qWarning()<<"not find getObj index:"<<index;
+        qWarning() << "not find getObj index:" << index;
+    }
+    return obj;
+}
+InterfaceBase* Manage::getInterfaceBase(const int index)
+{
+    InterfaceBase* obj = nullptr;
+    if (IOInterfaceManage::instance()->hasIndex(index))
+    {
+        obj = qobject_cast<IOInterface*>(IOInterfaceManage::instance()->getObj(index));
+    }
+    else if (IOAPPInterfaceManage::instance()->hasIndex(index))
+    {
+        obj = qobject_cast<IOAPPInterface*>(IOAPPInterfaceManage::instance()->getObj(index));
+    }
+    else if (SignalManage::instance()->hasIndex(index))
+    {
+        //obj =qobject_cast<SignalManage*>(SignalManage::instance()->getObj(index));
+    }
+    else if (VIEWManage::instance()->hasIndex(index))
+    {
+       // obj =qobject_cast<V*>(VIEWManage::instance()->getObj(index));
+    }
+    else
+    {
+        qWarning() << "not find getObj index:" << index;
     }
     return obj;
 }

@@ -15,6 +15,8 @@ public:
     explicit VOFAAPP( QObject* parent = nullptr);
     QList<IOAPP::SIGNALS>  decode(const IO::Frame& data) override ;
     IO::Frame encode() override;
+     QList<std::tuple<QVariant::Type,QString,QVariant>> showConfigDialog() override;
+     void setConfigDialog(const QList<std::tuple<QVariant::Type,QString,QVariant>> &)override;
 signals:
    void hasSignal(const QList<IOAPP::SIGNALS>&);
 private slots:
@@ -25,6 +27,7 @@ private:
     qint64 __time = 0;
     QByteArray buffer;
     QTime _last;
+    QList<QString> sigNames;
 };
 
 

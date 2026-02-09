@@ -10,9 +10,10 @@
 using asio::ip::tcp;
 class ATCPClient:public QObject,public IOInterface{
     Q_OBJECT
+    Q_INTERFACES(IOInterface)
     //    Q_PLUGIN_METADATA(IID IOInterface_Id)
     Q_PLUGIN_METADATA(IID IOInterface_Id FILE "atcpclient.json")
-    Q_INTERFACES(IOInterface)
+
 public:
     explicit ATCPClient(IO::Config config=IO::Config(), QObject* parent = nullptr);
     ~ATCPClient() override;

@@ -13,8 +13,9 @@
 class  APort:public QObject,public IOInterface
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID IOInterface_Id FILE "port.json")
     Q_INTERFACES(IOInterface)
+    Q_PLUGIN_METADATA(IID IOInterface_Id FILE "port.json")
+
 public:
     explicit APort( QObject* parent = nullptr,IO::Config config=IO::Config());
     ~APort() override;
