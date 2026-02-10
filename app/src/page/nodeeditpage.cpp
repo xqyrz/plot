@@ -246,23 +246,46 @@ void NodeEditPage::showConfigDialog(InterfaceBase* obj, int index)
     editor.setFactoryForManager(manager, variantFactory);
     editor.setPropertiesWithoutValueMarked(true);
     editor.setRootIsDecorated(false);
-    QHBoxLayout layout(&d);
+    QVBoxLayout layout(&d);
     layout.addWidget(&editor);
+    auto fun = [&]()
+    {
+        for (int i = 0; i < config.size(); i++)
+        {
+            if (std::get<0>(config[i]) == QVariant::StringList)
+            {
+                auto index = propertys.at(i)->value().toInt();
+                std::get<2>(config[i]) = propertys.at(i)->attributeValue("enumNames").toStringList().at(index);
+            }
+            else
+                std::get<2>(config[i]) = propertys.at(i)->value();
+        }
+        obj->setConfigDialog(config);
+        _saveConfig(index,config);
+    };
+    if (auto io= static_cast<IOInterface*>(obj))
+    {
+        auto  vb=new QHBoxLayout(&d);
+        auto openBtn=new QPushButton("打开",&d);
+        auto closeBtn=new QPushButton("关闭",&d);
+        vb->addWidget(openBtn);
+        vb->addWidget(closeBtn);
+        layout.addLayout(vb);
+
+        connect(openBtn,&QPushButton::clicked,this,[&]()
+        {
+            fun();
+            io->open();
+        });
+        connect(closeBtn,&QPushButton::clicked,this,[&]()
+        {
+            fun();
+            io->close();
+        });
+    }
 
     d.exec();
-    for (int i = 0; i < config.size(); i++)
-    {
-        if (std::get<0>(config[i]) == QVariant::StringList)
-        {
-            auto index = propertys.at(i)->value().toInt();
-            std::get<2>(config[i]) = propertys.at(i)->attributeValue("enumNames").toStringList().at(index);
-        }
-        else
-            std::get<2>(config[i]) = propertys.at(i)->value();
-    }
-    obj->setConfigDialog(config);
-    _saveConfig(index,config);
-    // obj->open();
+    fun();
 }
 void NodeEditPage::_saveConfig(int index, const QList<std::tuple<QVariant::Type, QString, QVariant>>& config)
 {

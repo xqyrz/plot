@@ -22,7 +22,6 @@ VOFAAPP::VOFAAPP( QObject* parent): QObject(parent)
 
 QList<IOAPP::SIGNALS>  VOFAAPP::decode(const IO::Frame& frame)
 {
-
     int i = 0;
     QList<IOAPP::SIGNALS> list;
     auto time = QTime::currentTime();
@@ -52,7 +51,7 @@ QList<IOAPP::SIGNALS>  VOFAAPP::decode(const IO::Frame& frame)
                     s.name = sigNames.at(cnt).toStdString();
 
                     s.ID.id = cnt++;
-                   // qDebug()<<QString::fromStdString(s.name)<<s.value;
+                   //qDebug()<<QString::fromStdString(s.name)<<s.value;
                     list.append(s);
                 }
             }

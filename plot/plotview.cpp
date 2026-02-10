@@ -18,9 +18,14 @@ PlotView::PlotView(QWidget* parent) :
     _xSpinBox(new QSpinBox(this)), _xCheckBox(new QCheckBox(this)), _model(new PlotModel(this))
 {
     QSettings settings(PLOT::PLOT_COMPANY, PLOT::PLOT_PRODUCT);
-    plotType = (PLOT::PlotType)settings.value("plotType", PLOT::TYPE_oneXoneY).toInt();
+    plotType = (PLOT::PlotType)settings.value("Plot/plotType", PLOT::TYPE_oneXoneY).toInt();
     initUI();
     initConnect();
+    QTimer::singleShot(10,this,[this]()
+    {
+        QSettings settings(PLOT::PLOT_COMPANY, PLOT::PLOT_PRODUCT);
+       this->_xSpinBox->setValue(settings.value("Plot/_xSpinBox",100).toInt());
+    });
 }
 PlotView* PlotView::m_plotView = nullptr;
 PlotView* PlotView::instance(QWidget* parent)
@@ -89,7 +94,12 @@ void PlotView::initConnect()
 {
     connect(_modleComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &PlotView::setPlotType);
 
-    connect(_xSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), _graphView, &PlotCustom::setXInterval);
+    connect(_xSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this,[this](int value)
+    {
+        QSettings settings(PLOT::PLOT_COMPANY, PLOT::PLOT_PRODUCT);
+        settings.setValue("Plot/_xSpinBox",value);
+       _graphView->setXInterval(value);
+    });
     connect(_xCheckBox, QOverload<int>::of(&QCheckBox::stateChanged), _graphView, &PlotCustom::setXCheckBox);
 
     connect(this, &PlotView::plotTypeChanged, _graphView, &PlotCustom::setPlotType);

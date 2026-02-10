@@ -32,10 +32,20 @@ APort::APort(QObject* parent, IO::Config config)
     {
         emit rx_frame(frame);
     });
+
 }
 APort::~APort()
 {
+    // 2. 取消 / 关闭所有 asio 资源（串口、socket 等）
+    if (handle && handle->is_open())
+        handle->cancel();
 
+    // 3. 请求 io_context 退出
+    io_context.stop();
+
+    // 4. 等待线程结束
+    if (io_thread_.joinable())
+        io_thread_.join();
 }
 
 // Windows 平台下获取串口
@@ -137,11 +147,13 @@ void APort::run()
     } catch (...) {
         qWarning() << "Unknown exception in io_context thread";
     }
+        qInfo()<<"io_context thread end";
     });
 }
 bool APort::open()
 {
     try {
+        close();
         handle->open(config.dev.toStdString());
         QJsonObject obj = QJsonDocument::fromJson(config.ch.toUtf8()).object();
         if (!obj.isEmpty())
@@ -169,14 +181,22 @@ bool APort::open()
         }
     }
     catch (const std::exception& e) {
-       qWarning() << "open port fail: " << QString::fromUtf8(e.what());
+       qWarning() <<config.dev<<"open port fail: " << QString::fromLocal8Bit(e.what());
         std::cout<<e.what()<<std::endl;
     }
     return true;
 }
 bool APort::close()
 {
-    handle->close();
+    // 1. 先中断异步操作
+
+
+    // 2. 再关闭句柄
+    if (handle->is_open())
+    {
+        handle->cancel();
+        handle->close();
+    }
     return true;
 }
 int APort::write(const IO::Frame& frame)
@@ -282,11 +302,15 @@ void APort::do_read()
            // .arg(" ")
            // .arg(QString( frames.last().data.toHex(' ')))
            //  .arg(QString(frames.last().data));
-            this->_readReady(frames);
+           this->_readReady(frames);
         } else {
             // 出错或接收长度为 0
+            if (!handle->is_open())return;
             if (ec)
-                qWarning() << "Receive error: " <<QString::fromLocal8Bit(ec.message().c_str());
+            {
+                qWarning() << "Port Receive error: " <<QString::fromLocal8Bit(ec.message().c_str());
+                return;
+            }
         }
         // 继续监听下一个包
         do_read();

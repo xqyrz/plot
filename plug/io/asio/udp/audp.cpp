@@ -16,12 +16,20 @@ AUdp::AUdp(QObject *parent,IO::Config config )    :QObject(parent)
     {
         emit rx_frame(frame);
     });
+
 }
 
 AUdp::~AUdp() {
-   // qDebug()<<"xx AUDP";
-    // io_context.stop();
-    // io_thread_.join();
+    // 2. 取消 / 关闭所有 asio 资源（串口、socket 等）
+    if (_socket && _socket->is_open())
+        _socket->cancel();
+
+    // 3. 请求 io_context 退出
+    io_context.stop();
+
+    // 4. 等待线程结束
+    if (io_thread_.joinable())
+        io_thread_.join();
 }
 
 void AUdp::run() {
@@ -40,6 +48,7 @@ void AUdp::run() {
 bool AUdp::open() {
 
 try {
+    close();
         std::error_code ec;
     auto ep = udp::endpoint(
        // asio::ip::make_address("127.0.0.1"),
@@ -52,7 +61,7 @@ try {
         do_read();
         // 尝试连接
         //_socket->connect(endpoint, ec);
-        if (ec) {
+             if (ec) {
             qWarning() << "Failed to connect:" << QString::fromStdString(ec.message());
             return false;
         }
@@ -60,7 +69,9 @@ try {
         qDebug() << QString("Connected to local: %1:%2")// <==> remote: %3:%4")
         .arg(QString::fromStdString(_socket->local_endpoint().address().to_string()))
         .arg(_socket->local_endpoint().port());
+
         run();
+
     }
     catch (const std::exception& e) {
         qWarning() << "Exception in io_thread thread:" << QString::fromLocal8Bit(e.what())<<config.own_ch.toInt();
@@ -71,7 +82,11 @@ try {
 }
 
 bool AUdp::close() {
+    _socket->cancel();
+    if (_socket->is_open())
     _socket->close();
+    if(io_thread_.joinable())
+        io_thread_.join();
     return false;
 }
 
@@ -102,6 +117,11 @@ void AUdp::do_read() {
     _socket->async_receive_from(
         asio::buffer(recv_buffer_), endpoint,
         [this](std::error_code ec, std::size_t bytes_recvd) {
+            if (ec == asio::error::operation_aborted)
+            {
+               qInfo()<<"close "<<config.dev;
+                return;
+            }
             if (!ec && bytes_recvd > 0) {
                //  qDebug()<<QString("%1:%2 %3")
                // .arg(QString::fromLocal8Bit(endpoint.address().to_string().c_str()))
@@ -121,9 +141,10 @@ void AUdp::do_read() {
                 this->_readReady(frames);
             } else {
                 // 出错或接收长度为 0
-                if (ec)
-                    qWarning() << "Receive error: " <<QString::fromLocal8Bit(ec.message().c_str());
-            }
+
+                 if (ec)
+                        qWarning() << "Receive error: " <<QString::fromLocal8Bit(ec.message().c_str());
+                }
             // 继续监听下一个包
             do_read();
         });
