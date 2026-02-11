@@ -8,3 +8,4 @@ elf/elfio/examples
 elf/elfio/tests
 install/*
 cmake-build-debug-visual-studio
+.vscode

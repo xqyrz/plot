@@ -55,7 +55,7 @@ private:
 
     QPointer<PlotModel> _model;
     int plotType;
-    uint64_t zero;
+    double zero=0;
     static  PlotView* m_plotView;
 private:
     Q_PROPERTY(int plotType READ getPlotType WRITE setPlotType)

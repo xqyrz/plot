@@ -77,8 +77,8 @@ endif()
 set(PLOT_LIB plot${LIB_SUFF})
 message("CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}")
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets PrintSupport OpenGL)
-find_package(Qt${QT_VERSION_MAJOR}  REQUIRED COMPONENTS Core Gui Widgets PrintSupport OpenGL)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets PrintSupport OpenGL Quick QuickWidgets)
+find_package(Qt${QT_VERSION_MAJOR}  REQUIRED COMPONENTS Core Gui Widgets PrintSupport OpenGL Quick QuickWidgets)
 #message(STATUS "OpenGL include dir: ${OPENGL_INCLUDE_DIR}")
 #message(STATUS "OpenGL libraries : ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY}")
 # 添加子目录

@@ -34,6 +34,7 @@ public:
     virtual int write(const QList<IO::Frame>&) = 0;
     const char* getSignal(int index) const override;
     const char* getSlot(int index) const override;
+    IO::STATUS getStatus()const {return status;};
     int getReadCount() const { return rCount; }
     int getWriteCount() const { return wCount; }
     int getErrorCount() const { return eCount; }
@@ -78,6 +79,7 @@ public:
 
 protected:
     virtual void run() = 0;
+
     void _readReady(const QList<IO::Frame>& frames)
     {
         rCount += frames.size();
@@ -95,7 +97,7 @@ protected:
 
 protected:
     IO::Config config;
-
+    IO::STATUS status = IO::CLOSE_STATUS;
 private:
     QList<IO::Frame> rBuffer;
     QList<IO::Frame> wBuffer;
@@ -117,6 +119,7 @@ private:
         }
     };
     std::list<std::function<void(const IO::Frame&)>> _readReadyCallback;
+
 };
 inline const char* IOInterface::getSignal(int index) const
 {

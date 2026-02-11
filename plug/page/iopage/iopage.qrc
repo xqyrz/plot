@@ -1,0 +1,7 @@
+﻿<RCC>
+    <qresource prefix="/">
+        <file>iopage.qml</file>
+        <file>qml/ToolBar.qml</file>
+        <file>qml/tool/GroupBox.qml</file>
+    </qresource>
+</RCC>

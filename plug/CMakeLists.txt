@@ -29,5 +29,8 @@ add_subdirectory(io/jlink)
 add_subdirectory(ioapp/selfapp)
 add_subdirectory(ioapp/vofa)
 
+
+add_subdirectory(page/iopage)
+
 add_subdirectory(testplug)
 add_subdirectory(testmavlink)

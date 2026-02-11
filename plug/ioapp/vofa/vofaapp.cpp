@@ -22,6 +22,7 @@ VOFAAPP::VOFAAPP( QObject* parent): QObject(parent)
 
 QList<IOAPP::SIGNALS>  VOFAAPP::decode(const IO::Frame& frame)
 {
+    auto last = buffer;
     int i = 0;
     QList<IOAPP::SIGNALS> list;
     auto time = QTime::currentTime();
@@ -36,8 +37,12 @@ QList<IOAPP::SIGNALS>  VOFAAPP::decode(const IO::Frame& frame)
     while (i<frame.data.size())
     {
        //TODO
-        buffer.append(buf[i]);
-        if (buffer.back() == (char)('\n'))
+        double d = frame.time.toMSecsSinceEpoch();
+        if (buf[i] != '\n')
+        {
+            buffer.append(buf[i]);
+        }
+        else
         {
             if (buffer.contains(','))
             {
@@ -46,21 +51,21 @@ QList<IOAPP::SIGNALS>  VOFAAPP::decode(const IO::Frame& frame)
                 for (auto & sig:sigs)
                 {
                     auto s = getSignalData();
-                    s.time = frame.time.toMSecsSinceEpoch();
+                    s.time =d;
                     s.value = sig.toDouble();
                     s.name = sigNames.at(cnt).toStdString();
-
                     s.ID.id = cnt++;
                    //qDebug()<<QString::fromStdString(s.name)<<s.value;
                     list.append(s);
                 }
             }
-
+            d +=0.2;
             buffer.clear();
         }
         i++;
     }
     emit hasSignal(list);
+
     return list;
 }
 IO::Frame VOFAAPP::encode()

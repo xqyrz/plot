@@ -1,0 +1,61 @@
+﻿/* 基础样式：深色扁平化按钮 */
+QPushButton {
+    /* 基础属性 */
+    font-size: 12px;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px; /* 轻微圆角，保持扁平化 */
+    background-color: #2d2d2d; /* 深色背景 */
+    color: #f0f0f0; /* 浅色文字 */
+    padding: 8px 16px;
+}
+
+/* 鼠标悬停效果（通用） */
+QPushButton:hover {
+    background-color: #383838;
+}
+
+/* 鼠标按下效果（通用） */
+QPushButton:pressed {
+    background-color: #1e1e1e;
+}
+
+/* 禁用状态（通用） */
+QPushButton:disabled {
+    background-color: #252525;
+    color: #888888;
+}
+
+/* -------------------------- 设备状态样式 -------------------------- */
+/* 1. 设备打开 - 绿色状态 */
+QPushButton[deviceState="open"] {
+    background-color: #1e7e34; /* 深绿色，符合深色风格 */
+}
+QPushButton[deviceState="open"]:hover {
+    background-color: #218838; /* 悬停略亮 */
+}
+QPushButton[deviceState="open"]:pressed {
+    background-color: #155724; /* 按下更深 */
+}
+
+/* 2. 设备关闭 - 灰色状态 */
+QPushButton[deviceState="close"] {
+    background-color: #444444; /* 中灰色 */
+}
+QPushButton[deviceState="close"]:hover {
+    background-color: #4e4e4e; /* 悬停略亮 */
+}
+QPushButton[deviceState="close"]:pressed {
+    background-color: #383838; /* 按下更深 */
+}
+
+/* 3. 设备错误 - 红色状态 */
+QPushButton[deviceState="error"] {
+    background-color: #c82333; /* 深红色 */
+}
+QPushButton[deviceState="error"]:hover {
+    background-color: #dc3545; /* 悬停略亮 */
+}
+QPushButton[deviceState="error"]:pressed {
+    background-color: #a71d2a; /* 按下更深 */
+}

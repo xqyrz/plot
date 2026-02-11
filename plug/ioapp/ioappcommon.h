@@ -21,7 +21,7 @@ namespace IOAPP
             } ID;
             uint64_t id;
         };
-        uint64_t time;
+        double time;
         std::string name;
         std::string unit;
 

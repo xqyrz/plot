@@ -24,6 +24,11 @@ namespace IO{
         QDateTime time;
         QByteArray data;
     }Frame;
-
+    typedef enum
+    {
+        OPEN_STATUS,
+        CLOSE_STATUS,
+        FAIL_STATUS
+    }STATUS;
 }
 #endif //IOCOMMON_H

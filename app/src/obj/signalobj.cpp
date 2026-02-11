@@ -23,7 +23,7 @@ const char* SignalObj::getSlot(int index) const
 }
 void SignalObj::rx_frame(const IO::Frame& frame)
 {
-   // qInfo()<<frame.info.dev;
+    // qInfo()<<frame.data;
     emit _rx_frame(frame);
 }
 void SignalObj::hasSignal(const QList<IOAPP::SIGNALS>& _signals)

@@ -9,6 +9,8 @@ file(GLOB_RECURSE SRC_FILES
 )
 
 add_executable(${APP_NAME} ${SRC_FILES}
+        ../page/pagebase.cpp
+        ../page/pagebase.h
 )
 
 target_link_libraries(${APP_NAME}

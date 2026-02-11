@@ -182,8 +182,7 @@ void NodeEditPage::_sceneLoaded()
                             .arg(cid.outPortIndex)
                             .toStdString());
                 }
-
-                const bool ok = QObject::connect(out_obj, out_signal, in_obj, in_slot);
+                const bool ok = QObject::connect(out_obj, out_signal, in_obj, in_slot, Qt::UniqueConnection);
                 if (!ok)
                 {
                     dumpMeta(in_obj);

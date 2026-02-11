@@ -178,6 +178,7 @@ bool APort::open()
             qInfo()<<"open "<<config.dev<<" baud "<<baud<<" data "<<data<<" stop "<<stop<<" parity "<<parity<<" flow "<<flow;
             do_read();
             run();
+            status = IO::OPEN_STATUS;
         }
     }
     catch (const std::exception& e) {
@@ -190,7 +191,7 @@ bool APort::close()
 {
     // 1. 先中断异步操作
 
-
+    status = IO::CLOSE_STATUS;
     // 2. 再关闭句柄
     if (handle->is_open())
     {
