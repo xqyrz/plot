@@ -1,0 +1,4 @@
+﻿#pragma once
+#include "./MessageBus"
+#include "message.pb.h"
+Q_DECLARE_METATYPE(bus::IoConfig)

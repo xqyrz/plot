@@ -76,7 +76,9 @@ if (UNIX AND NOT APPLE)
     set(ads_SRCS linux/FloatingWidgetTitleBar.cpp ${ads_SRCS})
     set(ads_HEADERS linux/FloatingWidgetTitleBar.h ${ads_HEADERS}
             ../plug/interfacebase.cpp
-            ../plug/interfacebase.h)
+            ../plug/interfacebase.h
+            ../common/bus/MessageBus.
+            ../demo/sqlite/main.cpp)
 endif()
 
 set(library_name "qtadvanceddocking-qt${QT_VERSION_MAJOR}")

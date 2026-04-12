@@ -10,7 +10,7 @@ AUdp::AUdp(QObject *parent,IO::Config config )    :QObject(parent)
     ,_socket(new udp::socket(io_context))
     ,recv_buffer_()
 {
-    this->config.dev = "127.0.0.1";
+    this->config.dev = "0.0.0.0";
     this->config.ch = "6123";
     addCallback(0,[this](const IO::Frame& frame)
     {
@@ -48,7 +48,7 @@ void AUdp::run() {
 bool AUdp::open() {
 
 try {
-    close();
+    //close();
         std::error_code ec;
     auto ep = udp::endpoint(
        // asio::ip::make_address("127.0.0.1"),

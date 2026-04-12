@@ -8,6 +8,7 @@
 #include <QWidget>
 class QWidgetAction;
 class QComboBox;
+class IOView;
 namespace ads {
     class CDockManager;
     class CDockAreaWidget;
@@ -20,6 +21,13 @@ Q_OBJECT
 protected:
     void closeEvent(QCloseEvent* event) override;
 
+
+
+    void createPerspectiveUi();
+    void _InitPage();
+    ads::CDockAreaWidget* _addDock(QWidget* widget,QString name,ads::CDockAreaWidget* parent = nullptr);
+private slots:
+    void savePerspective();
 private:
     QAction* SavePerspectiveAction = nullptr;
     QWidgetAction* PerspectiveListAction = nullptr;
@@ -28,12 +36,7 @@ private:
     ads::CDockManager* DockManager;
     ads::CDockAreaWidget* StatusDockArea{};
     ads::CDockWidget* TimelineDockWidget{};
-
-    void createPerspectiveUi();
-    void _InitPage();
-    ads::CDockAreaWidget* _addDock(QWidget* widget,QString name,ads::CDockAreaWidget* parent = nullptr);
-private slots:
-    void savePerspective();
+    IOView* ioView{};
 };
 
 

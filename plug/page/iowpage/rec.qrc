@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/iowpage">
+        <file>rec/defalut.qss</file>
+        <file>rec/slider.png</file>
+    </qresource>
+</RCC>

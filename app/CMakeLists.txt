@@ -13,6 +13,8 @@ include_directories(${CMAKE_SOURCE_DIR}/shared ${CMAKE_SOURCE_DIR}/src )
 add_executable(${APP_NAME} ${SRC_FILES}
         src/interface/manage.cpp
         src/interface/manage.h
+        src/page/ioview.cpp
+        src/page/ioview.h
         #        src/page/node/nodemodel.cpp
 #        src/page/node/nodemodel.h
 #        src/page/node/nodedata.cpp
@@ -24,6 +26,7 @@ target_link_libraries(${APP_NAME}
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Gui
         Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::Sql
         Qt${QT_VERSION_MAJOR}::PrintSupport
         QWindowKit::Core
         QWindowKit::Widgets

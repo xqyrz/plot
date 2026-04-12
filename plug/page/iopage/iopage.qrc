@@ -3,5 +3,9 @@
         <file>iopage.qml</file>
         <file>qml/ToolBar.qml</file>
         <file>qml/tool/GroupBox.qml</file>
+        <file>XButton.qml</file>
+        <file>XTabButton.qml</file>
+        <file>qml/ToolPage.qml</file>
+        <file>qml/toolpage/QuickOderPage.qml</file>
     </qresource>
 </RCC>

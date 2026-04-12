@@ -4,12 +4,12 @@
 
 
 #include <QtWidgets/QApplication>
-#include "iopage.h"
+#include <iowpage.h>
 int main(int argc, char *argv[]) {
 
     QApplication a(argc, argv);
 
-    IOPage w;
+    IOWPage w;
     w.resize(800,600);
     w.show();
 

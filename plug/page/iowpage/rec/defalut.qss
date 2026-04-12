@@ -1,0 +1,7 @@
+﻿QGroupBox {
+    border: 1px solid #B0B0B0;
+}
+QSplitter {
+    background:#f0f0f0;
+    image: url(:/iowpage/rec/slider.png);
+}

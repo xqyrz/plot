@@ -1,0 +1,22 @@
+﻿syntax = "proto3";
+
+package bus;
+//    auto baud = obj.value("baud").toInt();
+//    auto data = obj.value("data").toInt();
+//    auto stop = obj.value("stop").toInt();
+//    auto parity = obj.value("parity").toInt();
+//    auto flow = obj.value("flow").toInt();
+
+message portCh{
+  int32 baud=1;
+  int32 data=2;
+  int32 stop=3;
+  int32 parity=4;
+  int32 flow=5;
+}
+message IoConfig{
+  string dev=1;//设备 ip
+  portCh ch=2;//通道
+  string own_dev=3; //自己
+  string own_ch=4;
+}

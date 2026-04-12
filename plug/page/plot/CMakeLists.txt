@@ -11,13 +11,13 @@ file(GLOB_RECURSE SRC_FILES
 )
 
 add_library(${PLOT_LIB} ${SRC_FILES}
-        ../plug/io/iointerface.h
-        ../plug/io/iocommon.h
-        ../plug/testplug/main.cpp)
+        ../../io/iointerface.h
+        ../../io/iocommon.h
+        ../../testplug/main.cpp)
 
 target_include_directories(${PLOT_LIB}
         PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}   # 头文件所在目录
+        .   # 头文件所在目录
 )
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     set(OPENGL_LIB OpenGL::GL OpenGL::GLU)

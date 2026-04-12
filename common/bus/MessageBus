@@ -1,0 +1,262 @@
+﻿#pragma once
+
+#include <QObject>
+#include <QVariant>
+#include <QHash>
+#include <QVector>
+#include <QReadWriteLock>
+#include <QPointer>
+#include <QMetaObject>
+#include <QRegularExpression>
+#include <functional>
+
+/*
+ * MessageBus.hpp
+ * 单进程 Qt 消息总线（类 MQTT + ROS2）
+ */
+
+class MessageBus : public QObject
+{
+    Q_OBJECT
+
+public:
+    using RawCallback = std::function<void(const QVariant&)>;
+
+    static MessageBus& instance()
+    {
+        static MessageBus bus;
+        return bus;
+    }
+
+    // =========================
+    // Subscribe
+    // =========================
+    void subscribe(const QString& topic,
+                   QObject* receiver,
+                   RawCallback cb,
+                   bool receiveRetain = true)
+    {
+        QWriteLocker locker(&m_lock);
+
+        Subscriber sub;
+        sub.receiver = receiver;
+        sub.callback = cb;
+        sub.topic = topic;
+        sub.regex = topicToRegex(topic);
+
+        m_subscribers.append(sub);
+
+        // 自动解绑
+        connect(receiver, &QObject::destroyed, this, [this, receiver]() {
+            unsubscribe(receiver);
+        });
+
+        // Retain 支持
+        if (receiveRetain)
+        {
+            for (auto it = m_lastMsg.begin(); it != m_lastMsg.end(); ++it)
+            {
+                if (sub.regex.match(it.key()).hasMatch())
+                {
+                    dispatch(sub, it.value());
+                }
+            }
+        }
+    }
+
+    void unsubscribe(QObject* receiver)
+    {
+        QWriteLocker locker(&m_lock);
+
+        m_subscribers.erase(
+            std::remove_if(m_subscribers.begin(), m_subscribers.end(),
+                           [receiver](const Subscriber& s) {
+                               return s.receiver == receiver;
+                           }),
+            m_subscribers.end());
+    }
+
+    // =========================
+    // Publish
+    // =========================
+    void publish(const QString& topic,
+                 const QVariant& msg,
+                 bool retain = false)
+    {
+        QVector<Subscriber> subsCopy;
+
+        {
+            QReadLocker locker(&m_lock);
+
+            for (const auto& sub : m_subscribers)
+            {
+                if (sub.regex.match(topic).hasMatch())
+                    subsCopy.append(sub);
+            }
+        }
+
+        // retain
+        if (retain)
+        {
+            QWriteLocker locker(&m_lock);
+            m_lastMsg[topic] = msg;
+        }
+
+        // 分发（锁外执行）
+        for (auto& sub : subsCopy)
+        {
+            dispatch(sub, msg);
+        }
+    }
+
+    // =========================
+    // Typed API
+    // =========================
+    template<typename T>
+    void publish(const QString& topic, const T& data, bool retain = false)
+    {
+        publish(topic, QVariant::fromValue(data), retain);
+    }
+
+    template<typename T>
+    void subscribe(const QString& topic,
+                   QObject* receiver,
+                   std::function<void(const T&)> cb,
+                   bool receiveRetain = true)
+    {
+        subscribe(topic, receiver,
+            [cb](const QVariant& v)
+            {
+                if (v.canConvert<T>())
+                    cb(v.value<T>());
+            },
+            receiveRetain);
+    }
+
+    // =========================
+    // Service（简易 RPC）
+    // =========================
+    using ServiceCallback = std::function<QVariant(const QVariant&)>;
+
+    void advertiseService(const QString& name,
+                          QObject* provider,
+                          ServiceCallback cb)
+    {
+        QWriteLocker locker(&m_lock);
+
+        Service srv;
+        srv.provider = provider;
+        srv.callback = cb;
+
+        m_services[name] = srv;
+
+        connect(provider, &QObject::destroyed, this, [this, name]() {
+            QWriteLocker locker(&m_lock);
+            m_services.remove(name);
+        });
+    }
+
+    QVariant callService(const QString& name, const QVariant& req)
+    {
+        QReadLocker locker(&m_lock);
+
+        if (!m_services.contains(name))
+            return {};
+
+        auto srv = m_services[name];
+
+        QVariant result;
+
+        // 同步调用（可改为异步）
+        QMetaObject::invokeMethod(
+            srv.provider,
+            [&]() {
+                result = srv.callback(req);
+            },
+            Qt::BlockingQueuedConnection
+        );
+
+        return result;
+    }
+
+    template<typename Req, typename Res>
+    Res callService(const QString& name, const Req& req)
+    {
+        QVariant res = callService(name, QVariant::fromValue(req));
+
+        if (res.canConvert<Res>())
+            return res.value<Res>();
+
+        return Res();
+    }
+
+private:
+    MessageBus() = default;
+
+    struct Subscriber
+    {
+        QPointer<QObject> receiver;
+        RawCallback callback;
+        QString topic;
+        QRegularExpression regex;
+    };
+
+    struct Service
+    {
+        QPointer<QObject> provider;
+        ServiceCallback callback;
+    };
+
+    QVector<Subscriber> m_subscribers;
+    QHash<QString, QVariant> m_lastMsg;
+    QHash<QString, Service> m_services;
+
+    QReadWriteLock m_lock;
+
+    // =========================
+    // 内部函数
+    // =========================
+    void dispatch(const Subscriber& sub, const QVariant& msg)
+    {
+        if (!sub.receiver)
+            return;
+
+        QMetaObject::invokeMethod(
+            sub.receiver,
+            [cb = sub.callback, msg]() {
+                cb(msg);
+            },
+            Qt::QueuedConnection
+        );
+    }
+
+    QRegularExpression topicToRegex(const QString& topic)
+    {
+        QString pattern = QRegularExpression::escape(topic);
+
+        // MQTT 风格通配符支持
+        pattern.replace("\\*", ".*");
+
+        return QRegularExpression("^" + pattern + "$");
+    }
+};
+
+
+// =========================
+// 全局便捷接口
+// =========================
+
+template<typename T>
+inline void bus_publish(const QString& topic, const T& data, bool retain = false)
+{
+    MessageBus::instance().publish<T>(topic, data, retain);
+}
+
+template<typename T>
+inline void bus_subscribe(const QString& topic,
+                          QObject* obj,
+                          std::function<void(const T&)> cb,
+                          bool receiveRetain = true)
+{
+    MessageBus::instance().subscribe<T>(topic, obj, cb, receiveRetain);
+}

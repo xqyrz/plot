@@ -3,23 +3,27 @@
 //
 
 #include "maindock.h"
-#include "DockManager.h"
-#include "DockAreaWidget.h"
-#include "DockWidget.h"
-
-#include <QWidgetAction>
 #include <QComboBox>
-#include <QLabel>
-#include <QTableWidget>
 #include <QInputDialog>
-#include <QVBoxLayout>
+#include <QLabel>
 #include <QTabWidget>
+#include <QTableWidget>
+#include <QVBoxLayout>
+#include <QWidgetAction>
+#include "DockAreaWidget.h"
+#include "DockManager.h"
+#include "DockWidget.h"
+#include "ioview.h"
 #include "plotview.h"
 
 
 #include "nodeeditpage.h"
 using namespace  ads;
- MainDock::MainDock(QWidget *parent):QWidget(parent) {
+ MainDock::MainDock(QWidget *parent):
+QWidget(parent)
+,ioView(new IOView(this))
+{
+     ioView->init();
  	setObjectName("mainDock");
 	ads::CDockManager::setConfigFlag( ads::CDockManager::DockAreaHasCloseButton, false );
 	ads::CDockManager::setConfigFlag( ads::CDockManager::AllTabsHaveCloseButton, true );
@@ -68,6 +72,8 @@ void MainDock::_InitPage()
     auto pre =  _addDock(w,"node");
      w = PlotView::instance(this);
     _addDock(w,"plot",pre);
+     _addDock(ioView,"iostream",pre);
+
     pre->setCurrentDockWidget(pre->dockWidget(0));
 }
 ads::CDockAreaWidget* MainDock::_addDock(QWidget* widget, QString name,ads::CDockAreaWidget* parent)

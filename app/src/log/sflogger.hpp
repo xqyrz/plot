@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <QtConcurrent/QtConcurrent>
 #include <QRegularExpression>
 #include <iostream>
@@ -74,7 +74,9 @@ public:
     inline static QElapsedTimer* getTimer() {return g_startupTimer;};
 
     static QString extractShortFunctionName(const QString& fullFunction) {
+    #if 1
         return fullFunction;
+    #else
         // 匹配 类名::函数名 的模式
         static QRegularExpression regex(R"((\w+::\w+))");
         QRegularExpressionMatch match = regex.match(fullFunction);
@@ -90,6 +92,7 @@ public:
         }
 
         return fullFunction;
+    #endif
     }
 
     static void customMessageHandler(QtMsgType type,

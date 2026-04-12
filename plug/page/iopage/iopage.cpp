@@ -5,6 +5,7 @@
 #include "iopage.h"
 #include <QQuickView>
 #include <QVBoxLayout>
+#include <QQuickItem>
 IOPage::IOPage(QWidget* parent)
     :QWidget(parent),
     PageBase()
@@ -12,7 +13,11 @@ IOPage::IOPage(QWidget* parent)
     qDebug()<<"hello world";
     QQuickView *view = new QQuickView();
   view->setSource(QUrl("qrc:/iopage.qml"));
-
+   auto root = view->rootObject();
+  if (root) {
+      // 设置属性，例如全局字体大小
+      root->setProperty("font.pointSize", 16);
+  }
     auto container = QWidget::createWindowContainer(view, this);
     qDebug()<< container;
     auto layout = new QVBoxLayout(this);

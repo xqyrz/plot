@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+﻿cmake_minimum_required(VERSION 3.16)
 project(plot VERSION 0.1 LANGUAGES CXX)
 add_compile_options(
         $<$<CXX_COMPILER_ID:MSVC>:/utf-8>
@@ -76,24 +76,37 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 set(PLOT_LIB plot${LIB_SUFF})
 message("CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}")
-
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets PrintSupport OpenGL Quick QuickWidgets)
-find_package(Qt${QT_VERSION_MAJOR}  REQUIRED COMPONENTS Core Gui Widgets PrintSupport OpenGL Quick QuickWidgets)
+set(Protobuf_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/common/bus/protoc")
+find_package(Protobuf REQUIRED)
+#if (Protobuf_FOUND)
+#    message(STATUS "Protobuf found: ${Protobuf_VERSION}")
+#    message(STATUS "Protobuf include dir: ${Protobuf_INCLUDE_DIRS}")
+#    message(STATUS "Protobuf library: ${Protobuf_LIBRARIES}")
+#    message(STATUS "Protoc path: ${Protobuf_PROTOC_EXECUTABLE}")
+#endif()
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets PrintSupport OpenGL Quick QuickWidgets Sql)
+find_package(Qt${QT_VERSION_MAJOR}  REQUIRED COMPONENTS Core Gui Widgets PrintSupport OpenGL Quick QuickWidgets Sql)
 #message(STATUS "OpenGL include dir: ${OPENGL_INCLUDE_DIR}")
 #message(STATUS "OpenGL libraries : ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY}")
 # 添加子目录
 
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/plot ${CMAKE_CURRENT_SOURCE_DIR}/plug/io ${CMAKE_CURRENT_SOURCE_DIR}/QtPropertyBrowser)
+include_directories(
+        ${CMAKE_CURRENT_SOURCE_DIR}/common
+        ${CMAKE_CURRENT_SOURCE_DIR}/common/bus/protoc/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/plug/page/plot
+        ${CMAKE_CURRENT_SOURCE_DIR}/plug/io
+        ${CMAKE_CURRENT_SOURCE_DIR}/QtPropertyBrowser
+)
 
 add_subdirectory(nodes)
 add_subdirectory(qwindowkit)
 add_subdirectory(elf)
 add_subdirectory(ads)
 add_subdirectory(QtPropertyBrowser)
-
+add_subdirectory(demo)
 # 添加子目录
-add_subdirectory(plot)
+add_subdirectory(plug/page/plot)
 add_subdirectory(plug)
 add_subdirectory(testplot)
 #
