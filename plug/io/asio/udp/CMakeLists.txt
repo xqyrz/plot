@@ -8,6 +8,8 @@ file(GLOB_RECURSE SRC_FILES
 )
 add_library(${AUDP_LIB} SHARED
         ${SRC_FILES}
+        ${BUS_PATH}/bus.h
+        ${BUS_PATH}/bus.cpp
 )
 target_compile_definitions(${AUDP_LIB} PRIVATE P_LIBRARY)
 MESSAGE("AUDP_LIB ${AUDP_LIB}")

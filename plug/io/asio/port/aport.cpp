@@ -296,6 +296,7 @@ void APort::do_read()
             frames.append(IO::Frame{
                 this->config,
                 QDateTime::currentDateTime(),
+                    IO::RT::RX,
                 QByteArray(recv_buffer_.data(),bytes_recvd)
             });
            //  qDebug()<<QString("%1:%2 %3 (%4)")

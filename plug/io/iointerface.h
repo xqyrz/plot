@@ -8,6 +8,7 @@
 #include <utility>
 #include <set>
 #include "../interfacebase.h"
+#include "bus/bus.h"
 #include "iocommon.h"
 #include <QDebug>
 #include <QtWidgets/QDialog>
@@ -76,7 +77,7 @@ public:
         }
     };
     void clearReadReadyCallback() { _readReadyCallback.clear(); };
-
+    void setBus(BUS* bus){m_bus =bus;};
 protected:
     virtual void run() = 0;
 
@@ -92,12 +93,14 @@ protected:
                 fun(frame);
             }
         }
+        if (m_bus) m_bus->readIO(rBuffer);
         rBuffer.clear();
     };
 
 protected:
     IO::Config config;
     IO::STATUS status = IO::CLOSE_STATUS;
+    BUS* m_bus = nullptr;
 private:
     QList<IO::Frame> rBuffer;
     QList<IO::Frame> wBuffer;

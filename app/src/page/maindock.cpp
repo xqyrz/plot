@@ -23,7 +23,6 @@ using namespace  ads;
 QWidget(parent)
 ,ioView(new IOView(this))
 {
-     ioView->init();
  	setObjectName("mainDock");
 	ads::CDockManager::setConfigFlag( ads::CDockManager::DockAreaHasCloseButton, false );
 	ads::CDockManager::setConfigFlag( ads::CDockManager::AllTabsHaveCloseButton, true );

@@ -7,15 +7,14 @@
 
 
 #include <QTableView>
-class QSqlTableModel;
+class IoFrameModel;
 class IOView:public QTableView {
 Q_OBJECT
 public:
     IOView(QWidget* parent = nullptr);
-    void init();
 private:
 
-    QSqlTableModel* model;
+    IoFrameModel* model;
 };
 
 

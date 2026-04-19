@@ -136,6 +136,7 @@ void AUdp::do_read() {
                         QString::number(remote_ep.port())
                     },
                     QDateTime::currentDateTime(),
+                    IO::RT::RX,
                     QByteArray(recv_buffer_.data(),bytes_recvd)
                 });
                 this->_readReady(frames);

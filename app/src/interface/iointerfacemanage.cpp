@@ -22,7 +22,10 @@ QString IOInterfaceManage::check(QString& var) const
 QObject* IOInterfaceManage::creatObj(const int  index, QString type)
 {
     QPluginLoader pluginLoader(check(type));
-    objs.insert(index, (pluginLoader.instance()));
+    auto obj = (pluginLoader.instance());
+    objs.insert(index, obj);
+    auto io = qobject_cast<IOInterface*>(obj);
+    io->setBus(BUS::interface());
     return objs.value(index);
 }
 

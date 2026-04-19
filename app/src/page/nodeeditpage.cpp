@@ -59,7 +59,10 @@ std::shared_ptr<NodeDelegateModelRegistry> NodeEditPage::registerDataModels()
             if (iid == IOInterface_Id)
             {
                 IOInterfaceManage::instance()->addPlug(info.absoluteFilePath());
-                auto creator = [className]() { return std::make_unique<IOModel>(className); };
+                auto creator = [className]()
+                {
+                    return std::make_unique<IOModel>(className);
+                };
                 ret->registerModel<IOModel>(std::move(creator), "IO");
             }
             else if (iid == IOAPPInterface_Id)
@@ -206,6 +209,7 @@ void NodeEditPage::_sceneLoaded()
             }
         }
     }
+
 }
 /**
  * 显示IO config

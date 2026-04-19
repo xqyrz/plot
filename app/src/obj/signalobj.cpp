@@ -21,12 +21,11 @@ const char* SignalObj::getSlot(int index) const
     default:return nullptr;
 }
 }
-#include "db/dbm.h"
+
 void SignalObj::rx_frame(const IO::Frame& frame)
 {
     QList< IO::Frame> f;
     f.append(frame);
-    DBM::instance()->addFrame(f);
     // qInfo()<<frame.data;
     emit _rx_frame(frame);
 }

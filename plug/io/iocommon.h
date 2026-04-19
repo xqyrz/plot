@@ -19,11 +19,18 @@ namespace IO{
         QString own_dev; //自己
         QString own_ch;
     }Config;
-    typedef struct {
+    enum class  RT
+    {
+        RX,
+        TX
+    };
+   class Frame{
+   public:
         Config  info;//发送设备的信息
         QDateTime time;
+        RT RT;
         QByteArray data;
-    }Frame;
+    };
     typedef enum
     {
         OPEN_STATUS,
@@ -31,4 +38,5 @@ namespace IO{
         FAIL_STATUS
     }STATUS;
 }
+Q_DECLARE_METATYPE(IO::Frame)
 #endif //IOCOMMON_H

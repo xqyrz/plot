@@ -15,6 +15,10 @@ add_executable(${APP_NAME} ${SRC_FILES}
         src/interface/manage.h
         src/page/ioview.cpp
         src/page/ioview.h
+        src/model/ioframemodel.cpp
+        src/model/ioframemodel.h
+        ${BUS_PATH}/bus.h
+        ${BUS_PATH}/bus.cpp
         #        src/page/node/nodemodel.cpp
 #        src/page/node/nodemodel.h
 #        src/page/node/nodedata.cpp

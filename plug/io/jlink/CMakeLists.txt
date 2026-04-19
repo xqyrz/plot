@@ -8,6 +8,8 @@ file(GLOB_RECURSE SRC_FILES
 )
 add_library(${JLINKARM} SHARED
         ${SRC_FILES}
+        ${BUS_PATH}/bus.h
+        ${BUS_PATH}/bus.cpp
 )
 
 target_include_directories(${JLINKARM}

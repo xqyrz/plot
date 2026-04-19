@@ -8,6 +8,8 @@ file(GLOB_RECURSE SRC_FILES
 )
 add_library(${APORT_LIB} SHARED
         ${SRC_FILES}
+        ${BUS_PATH}/bus.h
+        ${BUS_PATH}/bus.cpp
 )
 target_compile_definitions(${APORT_LIB} PRIVATE P_LIBRARY)
 MESSAGE("APORT_LIB ${APORT_LIB}")

@@ -202,6 +202,7 @@ void ATCPServer::do_accept() {
                                 QString::number(remote_ep.port())
                             },
                             QDateTime::currentDateTime(),
+                            IO::RT::RX,
                             QByteArray(data,length)
                         });
                         self->_readReady(frames);
