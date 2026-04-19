@@ -15,7 +15,7 @@
 #include <utility>
 using namespace  asio;
 APort::APort(QObject* parent, IO::Config config)
-    :QObject(parent),
+    :IOInterface_obj(parent),
     IOInterface("aport",std::move(config)),
     handle(new serial_port(io_context))
 {
@@ -178,7 +178,7 @@ bool APort::open()
             qInfo()<<"open "<<config.dev<<" baud "<<baud<<" data "<<data<<" stop "<<stop<<" parity "<<parity<<" flow "<<flow;
             do_read();
             run();
-            status = IO::OPEN_STATUS;
+            setStatus(IO::OPEN_STATUS);
         }
     }
     catch (const std::exception& e) {
@@ -190,8 +190,7 @@ bool APort::open()
 bool APort::close()
 {
     // 1. 先中断异步操作
-
-    status = IO::CLOSE_STATUS;
+    setStatus(IO::CLOSE_STATUS);
     // 2. 再关闭句柄
     if (handle->is_open())
     {

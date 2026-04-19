@@ -218,8 +218,10 @@ void NodeEditPage::_sceneLoaded()
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
-void NodeEditPage::showConfigDialog(InterfaceBase* obj, int index)
+void NodeEditPage::showConfigDialog(QObject* _obj, int index)
 {
+    auto obj = qobject_cast<IOInterface*>(_obj);
+    auto io_obj = (IOInterface_obj*)(_obj);
     QDialog d(this);
     auto config = obj->showConfigDialog();
     QtTreePropertyBrowser editor(&d);
@@ -263,17 +265,18 @@ void NodeEditPage::showConfigDialog(InterfaceBase* obj, int index)
             else
                 std::get<2>(config[i]) = propertys.at(i)->value();
         }
-        obj->setConfigDialog(config);
+      //  obj->setConfigDialog(config);
         _saveConfig(index,config);
     };
+    QHBoxLayout  vb;
     if (auto io= static_cast<IOInterface*>(obj))
     {
-        auto  vb=new QHBoxLayout(&d);
+
         auto openBtn=new QPushButton("打开",&d);
         auto closeBtn=new QPushButton("关闭",&d);
-        vb->addWidget(openBtn);
-        vb->addWidget(closeBtn);
-        layout.addLayout(vb);
+        vb.addWidget(openBtn);
+        vb.addWidget(closeBtn);
+        layout.addLayout(&vb);
 
         connect(openBtn,&QPushButton::clicked,this,[&]()
         {
@@ -286,7 +289,14 @@ void NodeEditPage::showConfigDialog(InterfaceBase* obj, int index)
             io->close();
         });
     }
-
+    d.adjustSize();
+    connect(io_obj,&IOInterface_obj::statusChanged,this,[&]()
+    {
+        if ( io_obj->status() == IO::OPEN_STATUS )
+        {
+            d.close();
+        }
+    });
     d.exec();
     fun();
 }
@@ -446,12 +456,12 @@ NodeEditPage::NodeEditPage(QWidget* parent)
             qInfo()<<"configClicked "<<index<<obj;
             auto config =obj->getConfig();
 
-            showConfigDialog(obj,index);
+            showConfigDialog(Manage::getObj(index),index);
         }
         else  if (auto obj =qobject_cast<IOAPPInterface*>(Manage::getObj(index)))
         {
             qInfo()<<"IOAPPInterface configClicked "<<index<<obj;
-             showConfigDialog(obj,index);
+             showConfigDialog(Manage::getObj(index),index);
         }
     });
     // SignalObj d(SIGNALDATA::IO_RX);

@@ -35,7 +35,6 @@ public:
     virtual int write(const QList<IO::Frame>&) = 0;
     const char* getSignal(int index) const override;
     const char* getSlot(int index) const override;
-    IO::STATUS getStatus()const {return status;};
     int getReadCount() const { return rCount; }
     int getWriteCount() const { return wCount; }
     int getErrorCount() const { return eCount; }
@@ -99,7 +98,7 @@ protected:
 
 protected:
     IO::Config config;
-    IO::STATUS status = IO::CLOSE_STATUS;
+
     BUS* m_bus = nullptr;
 private:
     QList<IO::Frame> rBuffer;
@@ -144,7 +143,23 @@ inline const char* IOInterface::getSlot(int index) const
     }
 }
 
-
+class IOInterface_obj:public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(int status READ status WRITE setStatus NOTIFY statusChanged)
+public:
+    IOInterface_obj(QObject* parent = nullptr) : QObject(parent){};
+    void setStatus(int _status)
+    {
+        m_status = ( IO::STATUS)_status;
+        emit statusChanged();
+    }
+    IO::STATUS status()const{return m_status;}
+signals:
+    void statusChanged();
+private:
+    IO::STATUS m_status = IO::CLOSE_STATUS;
+};
 
 QT_BEGIN_NAMESPACE
 #define IOInterface_Id "IO.Plugin.Base"

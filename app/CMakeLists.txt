@@ -19,11 +19,6 @@ add_executable(${APP_NAME} ${SRC_FILES}
         src/model/ioframemodel.h
         ${BUS_PATH}/bus.h
         ${BUS_PATH}/bus.cpp
-        #        src/page/node/nodemodel.cpp
-#        src/page/node/nodemodel.h
-#        src/page/node/nodedata.cpp
-#        src/page/node/nodedata.h
-#        src/log/sflogger.hpp
 )
 
 target_link_libraries(${APP_NAME}
@@ -38,6 +33,7 @@ target_link_libraries(${APP_NAME}
         QtNodes
         ${PLOT_LIB}
         QtPropertyBrower
+        ${IO_LIB}
 )
 target_include_directories(${APP_NAME}
         PUBLIC

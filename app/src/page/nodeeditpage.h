@@ -15,6 +15,7 @@
 #include <QtNodes/NodeDelegateModelRegistry>
 class InterfaceBase;
 using namespace QtNodes;
+class IOInterface_obj;
 class NodeEditPage : public GraphicsView
 {
     Q_OBJECT
@@ -25,7 +26,7 @@ public:
 private:
     static std::shared_ptr<NodeDelegateModelRegistry> registerDataModels();
     void _sceneLoaded();
-    void showConfigDialog(InterfaceBase* obj,int index);
+    void showConfigDialog(QObject* obj,int index);
     void _saveConfig(const int index,const QList<std::tuple<QVariant::Type,QString,QVariant>>& config);
     QList<int> _allIndexes() const;
     QList<std::tuple<QVariant::Type, QString, QVariant>> _loadConfig(int index);

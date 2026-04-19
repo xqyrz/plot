@@ -5,7 +5,7 @@
 #include "audp.h"
 #include <QDebug>
 #include <QThread>
-AUdp::AUdp(QObject *parent,IO::Config config )    :QObject(parent)
+AUdp::AUdp(QObject *parent,IO::Config config )    :IOInterface_obj(parent)
     ,IOInterface("aUdp",config)
     ,_socket(new udp::socket(io_context))
     ,recv_buffer_()
@@ -63,13 +63,14 @@ try {
         //_socket->connect(endpoint, ec);
              if (ec) {
             qWarning() << "Failed to connect:" << QString::fromStdString(ec.message());
+                 setStatus(IO::CLOSE_STATUS);
             return false;
         }
 
         qDebug() << QString("Connected to local: %1:%2")// <==> remote: %3:%4")
         .arg(QString::fromStdString(_socket->local_endpoint().address().to_string()))
         .arg(_socket->local_endpoint().port());
-
+        setStatus(IO::OPEN_STATUS);
         run();
 
     }
@@ -113,43 +114,41 @@ QList<std::tuple<QVariant::Type, QString, QVariant>> AUdp::showConfigDialog()
 }
 
 
-void AUdp::do_read() {
+void AUdp::do_read()
+{
     _socket->async_receive_from(
         asio::buffer(recv_buffer_), endpoint,
-        [this](std::error_code ec, std::size_t bytes_recvd) {
+        [this](std::error_code ec, std::size_t bytes_recvd)
+        {
             if (ec == asio::error::operation_aborted)
             {
-               qInfo()<<"close "<<config.dev;
+                qInfo() << "close " << config.dev;
                 return;
             }
-            if (!ec && bytes_recvd > 0) {
-               //  qDebug()<<QString("%1:%2 %3")
-               // .arg(QString::fromLocal8Bit(endpoint.address().to_string().c_str()))
-               // .arg(endpoint.port())
-               // .arg(QString( QByteArray(recv_buffer_.data(), bytes_recvd).toHex(' ')));
-               // qDebug() << QThread::currentThread();
+            if (!ec && bytes_recvd > 0)
+            {
+                //  qDebug()<<QString("%1:%2 %3")
+                // .arg(QString::fromLocal8Bit(endpoint.address().to_string().c_str()))
+                // .arg(endpoint.port())
+                // .arg(QString( QByteArray(recv_buffer_.data(), bytes_recvd).toHex(' ')));
+                // qDebug() << QThread::currentThread();
                 QList<IO::Frame> frames;
-                auto  remote_ep = endpoint;
+                auto remote_ep = endpoint;
                 frames.append(IO::Frame{
-                    {
-                        QString::fromStdString(remote_ep.address().to_string()),
-                        QString::number(remote_ep.port())
-                    },
+                    {QString::fromStdString(remote_ep.address().to_string()), QString::number(remote_ep.port())},
                     QDateTime::currentDateTime(),
                     IO::RT::RX,
-                    QByteArray(recv_buffer_.data(),bytes_recvd)
-                });
+                    QByteArray(recv_buffer_.data(), bytes_recvd)});
                 this->_readReady(frames);
-            } else {
+            }
+            else
+            {
                 // 出错或接收长度为 0
 
-                 if (ec)
-                        qWarning() << "Receive error: " <<QString::fromLocal8Bit(ec.message().c_str());
-                }
+                if (ec)
+                    qWarning() << "Receive error: " << QString::fromLocal8Bit(ec.message().c_str());
+            }
             // 继续监听下一个包
             do_read();
         });
-
 }
-
-

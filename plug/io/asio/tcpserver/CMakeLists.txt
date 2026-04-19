@@ -22,6 +22,7 @@ target_include_directories(${ATCPSERVER_LIB}
 
 target_link_libraries(${ATCPSERVER_LIB}
         Qt${QT_VERSION_MAJOR}::Core
+        ${IO_LIB}
 )
 if(WIN32)
     target_link_libraries(${ATCPSERVER_LIB} ws2_32 mswsock)

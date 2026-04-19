@@ -15,7 +15,4 @@ public:
     virtual QList<std::tuple<QVariant::Type,QString,QVariant>> showConfigDialog(){return {};};
     virtual void setConfigDialog(const QList<std::tuple<QVariant::Type,QString,QVariant>> &){};
 };
-
-
-
 #endif //INTERFACEBASE_H
