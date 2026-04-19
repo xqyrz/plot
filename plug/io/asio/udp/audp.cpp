@@ -83,9 +83,11 @@ try {
 }
 
 bool AUdp::close() {
-    _socket->cancel();
+    //_socket->cancel();
     if (_socket->is_open())
-    _socket->close();
+    {
+        _socket->close();
+    }
     if(io_thread_.joinable())
         io_thread_.join();
     return false;
