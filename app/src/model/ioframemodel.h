@@ -134,7 +134,9 @@ private:
         COL_OWN_CH,        // 本机通道
 
         COL_TR,            // 数据方向
+        COL_LEN,
         COL_DATA,          // 数据内容
+        COL_ASCII,
         COL_COUNT,          // 总列数
     };
     QList<Column> cols={
@@ -145,7 +147,9 @@ private:
         COL_OWN_CH,        // 本机通道
 
         COL_TR,            // 数据方向
+        COL_LEN,
         COL_DATA,          // 数据内容
+        COL_ASCII
      };
     QTimer m_timer;
 };

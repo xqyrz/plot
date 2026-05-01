@@ -109,12 +109,22 @@ void dumpMeta(const QObject* obj)
         }
     }
 }
-
+class connectClass{
+public:
+    QObject* in_obj;
+    QString in_slot;
+    QObject* out_obj;
+    QString out_signal;
+    bool operator==(const connectClass& other) const
+    {
+        return in_obj == other.in_obj && in_slot == other.in_slot && out_obj == other.out_obj && out_signal == other.out_signal;
+    }
+};
 void NodeEditPage::_sceneLoaded()
 {
     auto& model = scene->getGraphModel();
     auto allNodeIds = model.allNodeIds();
-
+    QList<connectClass> connectList;
     for (auto& var : allNodeIds)
     {
         auto type = model.nodeData(var, NodeRole::Type).toString();
@@ -185,27 +195,33 @@ void NodeEditPage::_sceneLoaded()
                             .arg(cid.outPortIndex)
                             .toStdString());
                 }
-                const bool ok = QObject::connect(out_obj, out_signal, in_obj, in_slot, Qt::UniqueConnection);
+
+               auto ok = QObject::connect(out_obj, out_signal, in_obj, in_slot, Qt::UniqueConnection);
                 if (!ok)
                 {
-                    dumpMeta(in_obj);
-                    dumpMeta(out_obj);
-                    throw std::runtime_error(
-                        QString("QObject::connect failed; inNodeId: %1 inPort: %2 outNodeId: %3 outPort: %4")
-                            .arg(cid.inNodeId)
-                            .arg(in_slot)
-                            .arg(cid.outNodeId)
-                            .arg(out_signal)
-                            .toStdString());
+                    if (!connectList.contains({out_obj, out_signal, in_obj, in_slot}))
+                    {
+                        // dumpMeta(in_obj);
+                        // dumpMeta(out_obj);
+                        throw std::runtime_error(
+                        QString("%1(%2) %3 <===connect==> %4(%5) %6")
+                                    .arg(out_obj->metaObject()->className())
+                                    .arg(reinterpret_cast<quintptr>(out_obj), 0, 16)
+                                    .arg(out_signal)
+                                    .arg(in_obj->metaObject()->className())
+                                    .arg(reinterpret_cast<quintptr>(in_obj), 0, 16)
+                                    .arg(in_slot).toStdString());
+                    }
                 }
                 else
                 {
+                    connectList.append({out_obj, out_signal, in_obj, in_slot});
                     qInfo()<<out_obj<<out_signal<<" <===connect==> "<<in_obj<<in_slot;
                 }
             }
             catch (const std::exception& e)
             {
-                qWarning() << "sceneLoaded:" << e.what();
+                qWarning()  << e.what();
             }
         }
     }
@@ -223,7 +239,8 @@ void NodeEditPage::showConfigDialog(QObject* _obj, int index)
     auto obj = qobject_cast<IOInterface*>(_obj);
     auto io_obj = (IOInterface_obj*)(_obj);
     QDialog d(this);
-    auto config = obj->showConfigDialog();
+    auto config = obj->getConfig();
+
     QtTreePropertyBrowser editor(&d);
     QList<QtVariantProperty*> propertys;
     auto manager = new QtVariantPropertyManager(&d);
@@ -265,7 +282,7 @@ void NodeEditPage::showConfigDialog(QObject* _obj, int index)
             else
                 std::get<2>(config[i]) = propertys.at(i)->value();
         }
-      //  obj->setConfigDialog(config);
+        obj->setConfig(config);
         _saveConfig(index,config);
     };
     QHBoxLayout  vb;
@@ -300,6 +317,11 @@ void NodeEditPage::showConfigDialog(QObject* _obj, int index)
     d.exec();
     fun();
 }
+/**
+ *a
+ * @param index
+ * @param config
+ */
 void NodeEditPage::_saveConfig(int index, const QList<std::tuple<QVariant::Type, QString, QVariant>>& config)
 {
     QFile file(configPath);
@@ -488,7 +510,7 @@ NodeEditPage::NodeEditPage(QWidget* parent)
                 auto obj = Manage::getInterfaceBase(index);
                 if (obj)
                 {
-                    obj->setConfigDialog(cfg);
+                    obj->setConfig(cfg);
                 }
             }
         }

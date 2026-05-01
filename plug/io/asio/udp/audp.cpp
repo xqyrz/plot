@@ -51,8 +51,7 @@ try {
     //close();
         std::error_code ec;
     auto ep = udp::endpoint(
-       // asio::ip::make_address("127.0.0.1"),
-        config.dev.size()?udp::v6():udp::v4(),
+        asio::ip::make_address(config.dev.toStdString()),
                         config.ch.toInt());
         _socket->open(ep.protocol());
         _socket->set_option(asio::socket_base::reuse_address(true));
@@ -107,7 +106,17 @@ int AUdp::write(const QList<IO::Frame>& frames)
     }
     return 0;
 }
-QList<std::tuple<QVariant::Type, QString, QVariant>> AUdp::showConfigDialog()
+void AUdp::setConfig(const QList<std::tuple<QVariant::Type, QString, QVariant>>& tuples)
+{
+    for (auto & var: tuples)
+    {
+        if (std::get<1>(var) == "IP")
+        config.dev = std::get<2>(var).toString();
+        else if (std::get<1>(var) == "Port")
+        config.ch = std::get<2>(var).toString();
+    }
+}
+QList<std::tuple<QVariant::Type, QString, QVariant>> AUdp::getConfig()
 {
     QList<std::tuple<QVariant::Type,QString,QVariant>> temp;
     temp.append(std::make_tuple(QVariant::String,"IP",config.dev));

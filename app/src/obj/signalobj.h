@@ -29,12 +29,12 @@ public:
      const char* getSignal(int index) const override;
      const char* getSlot(int index) const override;
 signals:
-     void _rx_frame(const IO::Frame&);
-     void _hasSignal(const QList<IOAPP::SIGNALS>&);
+     void sig_rx_frame(const IO::Frame&);
+     void sig_hasSignal(const QList<IOAPP::SIGNALS>&);
 
  public slots:
-     void rx_frame(const IO::Frame&);
-     void hasSignal(const QList<IOAPP::SIGNALS>&);
+     void slot_rx_frame(const IO::Frame&);
+     void slot_hasSignal(const QList<IOAPP::SIGNALS>&);
 private:
     QList<QObject*> in;
     QList<QObject*> out;

@@ -43,15 +43,8 @@ public:
 
     int getWriteBufferNum() const { return wBuffer.size(); }
 
-    IO::Config getConfig() const { return config; }
-    void setConfig(const IO::Config& config) { this->config = config; }
-    void setConfigDialog(QWidget* parent)
-    {
-        //TODO:写一个属性管理，显示，配置控件
-        QDialog d(parent);
-        QHBoxLayout layout(&d);
-
-    }
+    IO::Config _getConfig() const { return config; }
+    void _setConfig(const IO::Config& config) { this->config = config; }
 
     QString getName() const { return name; }
 

@@ -11,9 +11,10 @@ class IoFrameModel;
 class IOView:public QTableView {
 Q_OBJECT
 public:
-    IOView(QWidget* parent = nullptr);
+    static IOView* instance(QWidget* parent = nullptr);
 private:
-
+    IOView(QWidget* parent = nullptr);
+    ~IOView();
     IoFrameModel* model;
 };
 

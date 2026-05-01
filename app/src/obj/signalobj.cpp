@@ -8,29 +8,29 @@ const char* SignalObj::getSignal(int index) const
 {
     switch (type)
     {
-        case   IO_RX:return SIGNAL(_rx_frame(const IO::Frame&));
-        case APP_SIGNAL:return SIGNAL(_hasSignal(const QList<IOAPP::SIGNALS>&));
+        case   IO_RX:return SIGNAL(sig_rx_frame(const IO::Frame&));
+        case APP_SIGNAL:return SIGNAL(sig_hasSignal(const QList<IOAPP::SIGNALS>&));
         default:return nullptr;
     }
 }
 const char* SignalObj::getSlot(int index) const
 {
     switch (type){
-    case   IO_RX:return SLOT(rx_frame(const IO::Frame&));
-    case APP_SIGNAL:return SLOT(hasSignal(const QList<IOAPP::SIGNALS>&));
+    case   IO_RX:return SLOT(slot_rx_frame(const IO::Frame&));
+    case APP_SIGNAL:return SLOT(slot_hasSignal(const QList<IOAPP::SIGNALS>&));
     default:return nullptr;
 }
 }
 
-void SignalObj::rx_frame(const IO::Frame& frame)
+void SignalObj::slot_rx_frame(const IO::Frame& frame)
 {
     QList< IO::Frame> f;
     f.append(frame);
     // qInfo()<<frame.data;
-    emit _rx_frame(frame);
+    emit sig_rx_frame(frame);
 }
-void SignalObj::hasSignal(const QList<IOAPP::SIGNALS>& _signals)
+void SignalObj::slot_hasSignal(const QList<IOAPP::SIGNALS>& _signals)
 {
    // qInfo()<<_signals.size();
-    emit _hasSignal(_signals);
+    emit sig_hasSignal(_signals);
 }

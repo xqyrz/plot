@@ -74,7 +74,7 @@ IO::Frame VOFAAPP::encode()
 
     return frame;
 }
-QList<std::tuple<QVariant::Type, QString, QVariant>> VOFAAPP::showConfigDialog()
+QList<std::tuple<QVariant::Type, QString, QVariant>> VOFAAPP::getConfig()
 {
     QList<std::tuple<QVariant::Type, QString, QVariant>> temp;
     int i = 0;
@@ -85,14 +85,15 @@ QList<std::tuple<QVariant::Type, QString, QVariant>> VOFAAPP::showConfigDialog()
     }
     return temp;
 }
-void VOFAAPP::setConfigDialog(const QList<std::tuple<QVariant::Type, QString, QVariant>>& tuples)
+void VOFAAPP::setConfig(const QList<std::tuple<QVariant::Type, QString, QVariant>>& tuples)
 {
-    for (auto &var:tuples)
+    for (auto& var : tuples)
     {
-        auto index = std::get<1>(var).split('_').at(1).toInt()-1;
-        sigNames[index]= std::get<2>(var).toString();
+        auto index = std::get<1>(var).split('_').at(1).toInt() - 1;
+        sigNames[index] = std::get<2>(var).toString();
     }
 }
+
 void VOFAAPP::rx_frame(const IO::Frame& frame)
 {
     decode(frame);

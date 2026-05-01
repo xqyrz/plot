@@ -212,7 +212,7 @@ int APort::write(const QList<IO::Frame>& frames)
     }
     return 0;
 }
-QList<std::tuple<QVariant::Type, QString, QVariant>> APort::showConfigDialog()
+QList<std::tuple<QVariant::Type, QString, QVariant>> APort::getConfig()
 {
     QList<std::tuple<QVariant::Type, QString, QVariant>> temp;
     // auto ports = QSerialPortInfo::availablePorts();
@@ -252,7 +252,7 @@ QList<std::tuple<QVariant::Type, QString, QVariant>> APort::showConfigDialog()
     temp.append(std::make_tuple(QVariant::StringList, "流控位", _flow));
     return temp;
 }
-void APort::setConfigDialog(const QList<std::tuple<QVariant::Type, QString, QVariant>>& tuples)
+void APort::setConfig(const QList<std::tuple<QVariant::Type, QString, QVariant>>& tuples)
 {
     auto obj = QJsonDocument::fromJson(config.ch.toUtf8()).object();
     for (auto& t:tuples)

@@ -10,7 +10,8 @@ class VIEWManage: public QObject ,public ManageBase {
 public:
     enum VIEW_ENUM
     {
-        PLOT_VIEW
+        PLOT_VIEW,
+        IO_VIEW
     };
     static QMap<VIEW_ENUM,QString> VIEW_ENUM_DATA;
     static VIEWManage *instance(QObject* parent=nullptr);

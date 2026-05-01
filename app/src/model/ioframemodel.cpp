@@ -45,7 +45,9 @@ QVariant IoFrameModel::data(const QModelIndex &index, int role) const
         case COL_OWN_CH:   return cfg.own_ch;
         case COL_TR:       return frame.RT == IO::RT::RX?"RX":"TX";
         case COL_TIME:     return frame.time.toString("HH:mm:ss.zzz");
+        case COL_LEN:      return frame.data.size();
         case COL_DATA:     return QString::fromLatin1(frame.data.toHex(' ')).toUpper();; // 十六进制显示数据
+        case COL_ASCII:     return QString::fromLatin1(frame.data);
         default:           return QVariant();
         }
     }
@@ -64,7 +66,8 @@ QVariant IoFrameModel::data(const QModelIndex &index, int role) const
     // 对齐角色
     else if (role == Qt::TextAlignmentRole) {
         switch (cols.at(index.column())) {
-        case COL_DATA:       return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
+        case COL_DATA:
+        case COL_ASCII:       return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
         default:           return Qt::AlignCenter;
         }
         return Qt::AlignCenter;
@@ -89,7 +92,9 @@ QVariant IoFrameModel::headerData(int section, Qt::Orientation orientation, int 
             case COL_OWN_CH:   return "本机通道";
             case COL_TIME:     return "时间";
             case COL_TR:       return "方向";
+            case COL_LEN:      return "长度";
             case COL_DATA:     return "数据(HEX)";
+            case COL_ASCII:     return "字符串";
             default:           return QVariant();
             }
         }
@@ -201,5 +206,5 @@ void IoFrameModel::_addFrame(const IO::Frame& frame)
     m_indexByCh[chIndex].push_back(row);
     m_indexByOwnDev[ownDevIndex].push_back(row);
     m_indexByOwnCh[ownChIndex].push_back(row);
-   if (!m_timer.isActive()) m_timer.start(10);
+   if (!m_timer.isActive()) m_timer.start(50);
 }

@@ -4,7 +4,11 @@
 
 #include "viewmanage.h"
 #include "plotview.h"
-QMap<VIEWManage::VIEW_ENUM, QString> VIEWManage::VIEW_ENUM_DATA = {{VIEWManage::PLOT_VIEW, "Plot"}};
+#include "page/ioview.h"
+QMap<VIEWManage::VIEW_ENUM, QString> VIEWManage::VIEW_ENUM_DATA = {
+    {VIEWManage::PLOT_VIEW, "Plot"},
+    {VIEWManage::IO_VIEW, "IO"}
+};
 VIEWManage* VIEWManage::m_viewManage =nullptr;
 VIEWManage* VIEWManage::instance(QObject* parent)
 {
@@ -25,6 +29,9 @@ QObject* VIEWManage::creatObj(const int  index, QString type)
     {
     case PLOT_VIEW:
         objs.insert(index, PlotView::instance());
+        return objs.value(index);
+    case IO_VIEW:
+        objs.insert(index, IOView::instance());
         return objs.value(index);
     default:
         return nullptr;

@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
                 if (className == "ATCPServer")
                 {
                     tcpServer = qobject_cast<IOInterface*>(plugin);
-                    tcpServer->setConfig(IO::Config{"127.0.0.1","1234"});
+                    tcpServer->_setConfig(IO::Config{"127.0.0.1","1234"});
                   //  tcpServer->open();
                 }
                 // else if (className == "ATCPClient") {
@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
                 // }
                 else if (className == "AUdp") {
                     udp = (plugin);
-                     qobject_cast<IOInterface*>(udp)->setConfig(IO::Config{""
+                     qobject_cast<IOInterface*>(udp)->_setConfig(IO::Config{""
                         ,"6123"
                     });
                     qobject_cast<IOInterface*>(udp)->open();

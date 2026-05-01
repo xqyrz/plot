@@ -21,7 +21,6 @@
 using namespace  ads;
  MainDock::MainDock(QWidget *parent):
 QWidget(parent)
-,ioView(new IOView(this))
 {
  	setObjectName("mainDock");
 	ads::CDockManager::setConfigFlag( ads::CDockManager::DockAreaHasCloseButton, false );
@@ -65,12 +64,14 @@ void MainDock::createPerspectiveUi()
     // ui->toolBar->addAction(PerspectiveListAction);
     // ui->toolBar->addAction(SavePerspectiveAction);
 }
+
 void MainDock::_InitPage()
 {
      QWidget* w = new NodeEditPage(this);
     auto pre =  _addDock(w,"node");
-     w = PlotView::instance(this);
-    _addDock(w,"plot",pre);
+    auto  plot = PlotView::instance(this);
+     ioView = IOView::instance(this);
+    _addDock(plot,"plot",pre);
      _addDock(ioView,"iostream",pre);
 
     pre->setCurrentDockWidget(pre->dockWidget(0));
