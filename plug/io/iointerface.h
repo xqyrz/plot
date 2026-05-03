@@ -13,7 +13,7 @@
 #include <QDebug>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QHBoxLayout>
-class IOInterface:public InterfaceBase
+class  IOInterface:public InterfaceBase
 {
 public:
     enum
@@ -69,7 +69,6 @@ public:
         }
     };
     void clearReadReadyCallback() { _readReadyCallback.clear(); };
-    void setBus(BUS* bus){m_bus =bus;};
 protected:
     virtual void run() = 0;
 
@@ -85,14 +84,12 @@ protected:
                 fun(frame);
             }
         }
-        if (m_bus) m_bus->readIO(rBuffer);
         rBuffer.clear();
     };
 
 protected:
     IO::Config config;
 
-    BUS* m_bus = nullptr;
 private:
     QList<IO::Frame> rBuffer;
     QList<IO::Frame> wBuffer;

@@ -30,7 +30,6 @@ add_dependencies(${APP_NAME} ${ATCPSERVER_LIB})
 add_dependencies(${APP_NAME} ${SELFIOAPP_LIB})
 add_dependencies(${APP_NAME} ${ATCLIENT_LIB})
 add_dependencies(${APP_NAME} ${AUDP_LIB})
-add_dependencies(${APP_NAME} ${PLOT_LIB})
 add_dependencies(${APP_NAME} ${JLINKARM})
 
 install(TARGETS ${APP_NAME}

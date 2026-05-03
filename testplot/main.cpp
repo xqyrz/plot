@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
 
-    auto w =PlotView::instance(nullptr);
+    auto w =new PlotView(nullptr);
     w->resize(800, 600);
 
 

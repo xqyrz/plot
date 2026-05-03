@@ -13,11 +13,11 @@
 #include "DockAreaWidget.h"
 #include "DockManager.h"
 #include "DockWidget.h"
-#include "ioview.h"
 #include "plotview.h"
 
 
 #include "nodeeditpage.h"
+#include "interface/viewmanage.h"
 using namespace  ads;
  MainDock::MainDock(QWidget *parent):
 QWidget(parent)
@@ -69,11 +69,10 @@ void MainDock::_InitPage()
 {
      QWidget* w = new NodeEditPage(this);
     auto pre =  _addDock(w,"node");
-    auto  plot = PlotView::instance(this);
-     ioView = IOView::instance(this);
-    _addDock(plot,"plot",pre);
-     _addDock(ioView,"iostream",pre);
-
+    for (auto & var:VIEWManage::instance()->getObjs())
+    {
+        _addDock(qobject_cast<QWidget*>(var),var->metaObject()->className(),pre);
+    }
     pre->setCurrentDockWidget(pre->dockWidget(0));
 }
 ads::CDockAreaWidget* MainDock::_addDock(QWidget* widget, QString name,ads::CDockAreaWidget* parent)

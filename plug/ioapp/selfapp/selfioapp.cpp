@@ -151,5 +151,6 @@ IO::Frame SelfIOAPP::encode()
 }
 void SelfIOAPP::rx_frame(const IO::Frame& frame)
 {
+    emit sig_app_rx(frame);
     decode(frame);
 }

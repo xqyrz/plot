@@ -7,12 +7,13 @@ file(GLOB_RECURSE SRC_FILES
 
 
 )
-#add_library(${IOPAGE} SHARED
-#        ${SRC_FILES}
-#)
-add_executable(${IOPAGE}
-                ${SRC_FILES}
+add_library(${IOPAGE} SHARED
+        ${SRC_FILES}
 )
+#add_executable(${IOPAGE}
+#                ${SRC_FILES}
+#               main.c
+#)
 target_include_directories(${IOPAGE}
         PUBLIC
         ${IO_PATH}

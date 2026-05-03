@@ -74,7 +74,7 @@ endif()
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(LIB_SUFF d)
 endif()
-set(PLOT_LIB plot${LIB_SUFF})
+
 message("CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}")
 set(Protobuf_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/common/bus/protoc")
 find_package(Protobuf REQUIRED)
@@ -106,8 +106,7 @@ add_subdirectory(ads)
 add_subdirectory(QtPropertyBrowser)
 add_subdirectory(demo)
 # 添加子目录
-add_subdirectory(plug/page/plot)
 add_subdirectory(plug)
-add_subdirectory(testplot)
+#add_subdirectory(testplot)
 #
 add_subdirectory(app)

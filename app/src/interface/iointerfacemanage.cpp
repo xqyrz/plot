@@ -25,7 +25,6 @@ QObject* IOInterfaceManage::creatObj(const int  index, QString type)
     auto obj = (pluginLoader.instance());
     objs.insert(index, obj);
     auto io = qobject_cast<IOInterface*>(obj);
-    io->setBus(BUS::interface());
     return objs.value(index);
 }
 

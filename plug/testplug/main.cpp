@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
         tcpClient->write(frame);
     });
 
-    auto w = PlotView::instance(nullptr);
+    auto w = new PlotView(nullptr);
     w->resize(800, 600);
 
     w->expandAll();

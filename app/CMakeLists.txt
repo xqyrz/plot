@@ -13,12 +13,9 @@ include_directories(${CMAKE_SOURCE_DIR}/shared ${CMAKE_SOURCE_DIR}/src )
 add_executable(${APP_NAME} ${SRC_FILES}
         src/interface/manage.cpp
         src/interface/manage.h
-        src/page/ioview.cpp
-        src/page/ioview.h
-        src/model/ioframemodel.cpp
-        src/model/ioframemodel.h
         ${BUS_PATH}/bus.h
         ${BUS_PATH}/bus.cpp
+        ../plug/io/iointerface.h
 )
 
 target_link_libraries(${APP_NAME}
@@ -31,7 +28,6 @@ target_link_libraries(${APP_NAME}
         QWindowKit::Widgets
         qtadvanceddocking-qt${QT_VERSION_MAJOR}
         QtNodes
-        ${PLOT_LIB}
         QtPropertyBrower
         ${IO_LIB}
 )

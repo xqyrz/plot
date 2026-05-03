@@ -36,7 +36,6 @@ private:
     ads::CDockManager* DockManager;
     ads::CDockAreaWidget* StatusDockArea{};
     ads::CDockWidget* TimelineDockWidget{};
-    IOView* ioView{};
 };
 
 

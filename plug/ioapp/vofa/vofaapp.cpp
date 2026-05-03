@@ -96,5 +96,6 @@ void VOFAAPP::setConfig(const QList<std::tuple<QVariant::Type, QString, QVariant
 
 void VOFAAPP::rx_frame(const IO::Frame& frame)
 {
+    emit sig_app_rx(frame);
     decode(frame);
 }

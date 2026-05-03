@@ -1,6 +1,6 @@
 ﻿#include "IoFrameModel.h"
-#include <QDebug>
 #include <QColor>
+#include <QDebug>
 using namespace IO;
 IoFrameModel::IoFrameModel(QObject *parent)
     : QAbstractTableModel(parent)

@@ -26,7 +26,8 @@
 #include "shared/widgetframe/windowbutton.h"
 
 #include "src/page/maindock.h"
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
+{
     setAttribute(Qt::WA_DontCreateNativeAncestors);
 
     installWindowAgent();
@@ -117,9 +118,8 @@ void MainWindow::installWindowAgent() {
         file->addAction(new QAction(tr("Open(&O)"), menuBar));
         file->addSeparator();
 
-        auto edit = new QMenu(tr("Edit(&E)"), menuBar);
-        edit->addAction(new QAction(tr("Undo(&U)"), menuBar));
-        edit->addAction(new QAction(tr("Redo(&R)"), menuBar));
+        auto page = new QMenu(tr("Page(&P)"), menuBar);
+
 
         // Theme action
         auto darkAction = new QAction(tr("Enable dark theme"), menuBar);
@@ -246,7 +246,7 @@ void MainWindow::installWindowAgent() {
 #endif
 
         menuBar->addMenu(file);
-        menuBar->addMenu(edit);
+        menuBar->addMenu(page);
         menuBar->addMenu(settings);
         return menuBar;
     }();

@@ -257,7 +257,7 @@ void APort::setConfig(const QList<std::tuple<QVariant::Type, QString, QVariant>>
     auto obj = QJsonDocument::fromJson(config.ch.toUtf8()).object();
     for (auto& t:tuples)
     {
-        qDebug()<<std::get<0>(t)<<std::get<1>(t)<<std::get<2>(t);
+       // qDebug()<<std::get<0>(t)<<std::get<1>(t)<<std::get<2>(t);
         if (std::get<1>(t) == "COM")
         {
             config.dev = std::get<2>(t).toString();

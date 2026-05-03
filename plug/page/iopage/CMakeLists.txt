@@ -29,5 +29,5 @@ target_link_libraries(${IOPAGE}
 install(TARGETS ${IOPAGE}
         ARCHIVE DESTINATION lib     # 静态库 (.a / .lib)
         LIBRARY DESTINATION lib     # 共享库 (.so / .dll)
-        RUNTIME DESTINATION plugins
+        RUNTIME DESTINATION bin
 )

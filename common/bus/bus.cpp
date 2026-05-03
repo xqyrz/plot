@@ -3,4 +3,3 @@
 //
 
 #include "bus.h"
- BUS* BUS::bus=nullptr;

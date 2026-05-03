@@ -13,8 +13,16 @@ public:
         PLOT_VIEW,
         IO_VIEW
     };
-    static QMap<VIEW_ENUM,QString> VIEW_ENUM_DATA;
+    static QMap<VIEW_ENUM,BaseModel> VIEW_ENUM_DATA;
     static VIEWManage *instance(QObject* parent=nullptr);
+    int addPlug(const QString& plugPath)
+    {
+        if (plugs.contains(plugPath)) return false;
+        plugs.append(plugPath);
+        return true;
+    }
+    static bool hasType(const QString &type);
+    static BaseModel creatType(const QString &type);
     QString check(QString& var)const override;
     QObject* creatObj(const int  index,QString type) override;
     bool hasIndex(const int  index)const override;

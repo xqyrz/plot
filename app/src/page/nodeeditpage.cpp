@@ -11,6 +11,7 @@
 
 #include "../plug/io/iointerface.h"
 #include "../plug/ioapp/ioappinterface.h"
+#include "../plug/page/pagebase.h"
 #include "interface/ioappinterfacemanage.h"
 #include "interface/iointerfacemanage.h"
 #include "interface/viewmanage.h"
@@ -21,20 +22,18 @@
 std::shared_ptr<NodeDelegateModelRegistry> NodeEditPage::registerDataModels()
 {
     auto ret = std::make_shared<NodeDelegateModelRegistry>();
-
-    ret->registerModel<ViewModel>(std::move(
-        []() { return std::make_unique<ViewModel>(VIEWManage::VIEW_ENUM_DATA.value(VIEWManage::PLOT_VIEW)); }));
-
-    ret->registerModel<AppSignalModel>(std::move([]() { return std::make_unique<AppSignalModel>(
-       SIGNALDATA::SIGNALS_ENUM_DATA.value(SIGNALDATA::APP_SIGNAL)
-        ); }),
-                                       "MANAGE");
-
-    ret->registerModel<AppRxModel>(std::move(
-        []() { return std::make_unique<AppRxModel>(
-        SIGNALDATA::SIGNALS_ENUM_DATA.value(SIGNALDATA::IO_RX)
-            ); })
-        , "MANAGE");
+    for (auto& var : VIEWManage::VIEW_ENUM_DATA)
+    {
+        ret->registerModel<BaseModel>(
+            [var]() {
+                return std::make_unique<BaseModel>(var);
+            }
+        );
+    }
+    for (auto & var:SIGNALDATA::SIGNALS_ENUM_DATA)
+    {
+        ret->registerModel<PortModel>(std::move([var]() { return std::make_unique<PortModel>(var); }),"MANAGE");
+    }
 
     QDir dir(QCoreApplication::applicationDirPath());
     dir.cdUp();
@@ -44,6 +43,11 @@ std::shared_ptr<NodeDelegateModelRegistry> NodeEditPage::registerDataModels()
     QDir path = QDir(plugins);
     foreach (QFileInfo info, path.entryInfoList(QDir::Files | QDir::NoDotAndDotDot))
     {
+#ifdef QT_DEBUG
+        if (!info.absoluteFilePath().contains("d.dll"))continue;
+#else
+        if (info.absoluteFilePath().contains("d.dll"))continue;
+#endif
         QPluginLoader pluginLoader(info.absoluteFilePath());
         if (auto plugin = pluginLoader.instance())
         {
@@ -71,11 +75,17 @@ std::shared_ptr<NodeDelegateModelRegistry> NodeEditPage::registerDataModels()
                 auto creator = [className]() { return std::make_unique<IOAPPModel>(className); };
                 ret->registerModel<IOAPPModel>(std::move(creator), "IOAPP");
             }
+            else if (iid == PageBase_Id)
+            {
+                VIEWManage::instance()->addPlug(info.absoluteFilePath());
+               auto creator = [className](){ return std::make_unique<BaseModel>(VIEWManage::creatType(className));};
+                ret->registerModel<IOAPPModel>(std::move(creator), "View");
+            }
             //plugin->deleteLater();
         }
         else
         {
-            qInfo() << pluginLoader.errorString();
+            qWarning() << pluginLoader.errorString();
         }
     }
 
@@ -128,7 +138,7 @@ void NodeEditPage::_sceneLoaded()
     for (auto& var : allNodeIds)
     {
         auto type = model.nodeData(var, NodeRole::Type).toString();
-        if (VIEWManage::VIEW_ENUM_DATA.values().contains(type)) // 管理
+        if (VIEWManage::hasType(type)) // 管理
         {
             VIEWManage::instance()->creatObj(var, type);
         }
@@ -164,8 +174,8 @@ void NodeEditPage::_sceneLoaded()
                 if (!in_obj || !out_obj)
                 {
                     throw std::runtime_error(QString("connection skipped because obj is null; inNodeId=%1 outNodeId=%2")
-                                                 .arg(cid.inNodeId)
-                                                 .arg(cid.outNodeId)
+                                                 .arg(in_obj?in_obj->metaObject()->className():model.nodeData(cid.inNodeId,NodeRole::Type).toString())
+                                                 .arg(out_obj?out_obj->metaObject()->className():QString::number(cid.outNodeId))
                                                  .toStdString());
                 }
 
@@ -176,8 +186,8 @@ void NodeEditPage::_sceneLoaded()
                     throw std::runtime_error(
                         QString("%1: connection skipped because obj is not InterfaceBase; inNodeId=%2 outNodeId=%3")
                             .arg(in_base ? "out" : "in")
-                            .arg(cid.inNodeId)
-                            .arg(cid.outNodeId)
+                            .arg(in_obj?in_obj->metaObject()->className():QString::number(cid.inNodeId))
+                            .arg(out_obj?out_obj->metaObject()->className():QString::number(cid.outNodeId))
                             .toStdString());
                 }
 
@@ -189,9 +199,9 @@ void NodeEditPage::_sceneLoaded()
                         QString(
                             "%1: connection skipped because  is null; inNodeId=%2 inPort=%3 outNodeId=%4 outPort=%5")
                             .arg(in_slot ? "out signal" : "in slot")
-                            .arg(cid.inNodeId)
+                            .arg(in_obj?in_obj->metaObject()->className():QString::number(cid.inNodeId))
                             .arg(cid.inPortIndex)
-                            .arg(cid.outNodeId)
+                            .arg(out_obj?out_obj->metaObject()->className():QString::number(cid.outNodeId))
                             .arg(cid.outPortIndex)
                             .toStdString());
                 }
@@ -500,7 +510,6 @@ NodeEditPage::NodeEditPage(QWidget* parent)
   this->setScene(scene);
 
     connect(scene,&DataFlowGraphicsScene::sceneLoaded, this,&NodeEditPage::_sceneLoaded);
-    QTimer::singleShot(1,[this](){
         try
         {
             this->scene->load(this->scene->getDefaultConfigPath());
@@ -518,5 +527,4 @@ NodeEditPage::NodeEditPage(QWidget* parent)
             QMessageBox::warning(this,"警告","节点配置文件加载失败："+QString(e.what()));
            qWarning() << e.what();
         }
-    });
 }

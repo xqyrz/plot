@@ -9,8 +9,6 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
-#include <bus/MessageBus>
-#include <bus/bus>
 IOWPage::IOWPage(QWidget *parent) :
     QWidget(parent), ui(new Ui::IOWPage) {
 
@@ -27,9 +25,6 @@ IOWPage::IOWPage(QWidget *parent) :
     ui->clearR->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     ui->clearT->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
-    bus_subscribe<bus::IoConfig>("robot/*", this, [](const bus::IoConfig& p){
-    qDebug() << p.ch().baud();
-    });
 }
 
 IOWPage::~IOWPage() {
@@ -38,15 +33,34 @@ IOWPage::~IOWPage() {
 
 void IOWPage::on_devOpen_clicked()
 {
-    if(fun){
+    if (fun)
+    {
         QJsonObject obj;
-        obj[KEY]=CONFIG_KEY;
+        obj[KEY] = CONFIG_KEY;
         QJsonObject data;
-        data["port"]=ui->port->currentText();
-        //data["baud"]=
+        data["port"] = ui->port->currentText();
+        // data["baud"]=
     }
-    else{
-        qWarning()<<"not set callback";
+    else
+    {
+        qWarning() << "not set callback";
+    }
+}
+void IOWPage::slot_rx(const IO::Frame& frame)
+{
+    ui->tableIO->addRow(frame);
+}
+const char* IOWPage::getSignal(int index) const {
+
+
+return nullptr;
+}
+
+const char* IOWPage::getSlot(int index) const {
+    switch (index)
+    {
+    case 0:return SLOT(slot_rx(const IO::Frame&));break;
+    default:return nullptr;
     }
 }
 

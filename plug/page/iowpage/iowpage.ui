@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1168</width>
+    <width>1107</width>
     <height>910</height>
    </rect>
   </property>
@@ -974,7 +974,12 @@ color:red;
             </widget>
            </item>
            <item>
-            <widget class="QTextBrowser" name="textBrowser"/>
+            <widget class="QStackedWidget" name="stackedWidget">
+             <widget class="IOView" name="tableIO">
+              <layout class="QVBoxLayout" name="verticalLayout_4"/>
+             </widget>
+             <widget class="QWidget" name="page_2"/>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -1071,7 +1076,8 @@ color:red;
              <string>清除</string>
             </property>
             <property name="icon">
-             <iconset theme="QIcon::ThemeIcon::GoUp"/>
+             <iconset theme="QIcon::ThemeIcon::GoUp">
+              <normaloff>.</normaloff>.</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -1110,7 +1116,8 @@ color:red;
              <string>清除</string>
             </property>
             <property name="icon">
-             <iconset theme="QIcon::ThemeIcon::GoDown"/>
+             <iconset theme="QIcon::ThemeIcon::GoDown">
+              <normaloff>.</normaloff>.</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -1207,6 +1214,14 @@ background-color:#F0F0F0;
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>IOView</class>
+   <extends>QWidget</extends>
+   <header>ioview.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

@@ -53,6 +53,7 @@ inline void IOAPPInterface::getFrame(const IO::Frame& frame)
 inline const char* IOAPPInterface::getSignal(int index) const {
     switch (index)
 {
+    case 1: return SIGNAL(sig_app_rx(const IO::Frame&));
     case 2: return SIGNAL(hasSignal(const QList<IOAPP::SIGNALS>&));
     default: return nullptr;
 } }

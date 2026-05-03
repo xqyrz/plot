@@ -169,7 +169,7 @@ bool DataFlowGraphicsScene::load(QString fileName)
 {
     if (!QFileInfo::exists(fileName))
         return false;
-
+    qDebug()<<"load config "<<fileName;
     QFile file(fileName);
 
     if (!file.open(QIODevice::ReadOnly))

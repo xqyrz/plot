@@ -28,14 +28,14 @@ PlotView::PlotView(QWidget* parent) :
     });
 }
 PlotView* PlotView::m_plotView = nullptr;
-PlotView* PlotView::instance(QWidget* parent)
+/*PlotView* PlotView::instance(QWidget* parent)
 {
     if (m_plotView == nullptr)
     {
         m_plotView = new PlotView(parent);
     }
     return m_plotView;
-}
+}*/
 PlotView::~PlotView()
 {
     qInfo()<<"~PlotView";

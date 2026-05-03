@@ -28,6 +28,7 @@ public:
     virtual QObject* creatObj(const int index,QString type)=0;
     virtual bool hasIndex(const int  index)const=0;
      QObject* getObj(const int  index)const {return objs.value(index);}
+    QMap<  int ,QObject*> getObjs(){return objs;};
 protected:
     ManageData::Type type=ManageData::Type::Default;
     QMap<  int ,QObject*> objs;

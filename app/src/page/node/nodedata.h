@@ -9,6 +9,8 @@
 #include <QMetaEnum>
 #include <QMap>
 namespace QtNodes {
+
+
 class NodeDataTypeEnum:public QObject {
   Q_OBJECT
 public:

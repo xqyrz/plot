@@ -12,12 +12,11 @@ class QQuickView;
 class IOPage : public QWidget, public PageBase
 {
     Q_OBJECT
+    Q_INTERFACES(PageBase)
 public:
     IOPage(QWidget* parent = nullptr);
 private:
     QQuickView *view;
 };
-
-
 
 #endif //IOPAGE_H

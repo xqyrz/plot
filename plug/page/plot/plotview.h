@@ -10,6 +10,7 @@
 #include "qcustomplot/qcustomplot.h"
 #include "plotcommon.h"
 #include "../plug/interfacebase.h"
+#include "../pagebase.h"
 class QHBoxLayout;
 class QCheckBox;
 class QComboBox;
@@ -19,11 +20,13 @@ class PlotTree;
 class PlotCustom;
 class PlotModel;
 class TreeNode;
-class  PlotView  : public QWidget,public InterfaceBase
+class  PlotView  : public QWidget,public PageBase
 {
     Q_OBJECT
+    Q_INTERFACES(PageBase)
+    Q_PLUGIN_METADATA(IID PageBase_Id FILE "plot.json")
 public:
-    static PlotView *instance(QWidget *parent=nullptr);
+    explicit PlotView(QWidget *parent=nullptr);
     ~PlotView() override;
     void expandAll()const;
     int getPlotType() const{return plotType;}
@@ -32,7 +35,7 @@ public:
      const char* getSignal(int index) const;
      const char* getSlot(int index) const;
 private:
-    explicit PlotView(QWidget *parent=nullptr);
+
     void initUI();
     void initConnect();
 public slots:

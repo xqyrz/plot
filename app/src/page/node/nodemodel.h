@@ -13,14 +13,13 @@
 #include <memory>
 #include <utility>
 #include "nodedata.h"
-#include "interface/manage.h"
+#include "obj/signalobj.h"
 using QtNodes::NodeData;
 using QtNodes::NodeDataType;
 using QtNodes::NodeDelegateModel;
 using QtNodes::PortIndex;
 using QtNodes::PortType;
 
-;
 class BaseModel : public NodeDelegateModel
 {
 Q_OBJECT
@@ -33,6 +32,7 @@ public:
         SIGNAL_TYPE
       }NodeTye;
     Q_ENUM(NodeTye);
+
   BaseModel():NodeDelegateModel(),m_type(DEFAULT_TYPE){};
   BaseModel(NodeTye type,QString _name,QList<QtNodes::NodeDataTypeEnum::InputType> _in,QList<QtNodes::NodeDataTypeEnum::OutputType> _out);
 
@@ -40,7 +40,36 @@ public:
     {
         if (m_widget)m_widget->deleteLater();
     }
+    BaseModel(const BaseModel &other):m_type(other.m_type),m_name(other.m_name),m_caption(other.m_caption),in(other.in),out(other.out){
 
+    }
+    BaseModel( BaseModel &&other):m_type(other.m_type),m_name(other.m_name),m_caption(other.m_caption),in(other.in),out(other.out){
+
+    }
+    BaseModel& operator=(BaseModel&& other)
+    {
+        if (this != &other)
+        {
+            m_type = other.m_type;
+            m_name = std::move(other.m_name);
+            m_caption = std::move(other.m_caption);
+            in = std::move(other.in);
+            out = std::move(other.out);
+        }
+        return *this;
+    }
+    BaseModel& operator=(const BaseModel& other)
+    {
+        if (this != &other)
+        {
+            m_type = other.m_type;
+            m_name = std::move(other.m_name);
+            m_caption = std::move(other.m_caption);
+            in = std::move(other.in);
+            out = std::move(other.out);
+        }
+        return *this;
+    }
 public:
     QString caption() const override { return m_caption; }
 
@@ -96,42 +125,45 @@ public:
 private:
 };
 
-class ViewModel:public BaseModel
-{
+class PortModel:public BaseModel{
     using TypeEnum=QtNodes::NodeDataTypeEnum;
 public:
-    ViewModel(QString name):BaseModel(VIEW_TYPE,std::move(name)
-        ,{TypeEnum::IN_APP_RX,TypeEnum::IN_APP_SIGNAL}
-        ,{TypeEnum::OUT_APP_TX}){};
-private:
-};
-
-
-class AppSignalModel:public BaseModel
-{
-    using TypeEnum=QtNodes::NodeDataTypeEnum;
-public:
-    AppSignalModel(QString name):BaseModel(SIGNAL_TYPE,std::move(name)
-        ,{TypeEnum::IN_APP_SIGNAL
+    PortModel(QString name):BaseModel()
+    {
+        this->m_type = SIGNAL_TYPE;
+        this->m_name = name;
+        this->m_caption = name;
+        auto key =SIGNALDATA::SIGNALS_ENUM_DATA.key(name);
+        switch (key)
+        {
+            case SIGNALDATA::IO_RX:
+            this->in = {TypeEnum::IN_IO_RX
+            ,TypeEnum::IN_IO_RX,TypeEnum::IN_IO_RX,TypeEnum::IN_IO_RX
+            ,TypeEnum::IN_IO_RX,TypeEnum::IN_IO_RX,TypeEnum::IN_IO_RX
+            ,TypeEnum::IN_IO_RX,TypeEnum::IN_IO_RX,TypeEnum::IN_IO_RX
+            };
+            this->out = {TypeEnum::OUT_IO_RX};
+            break;
+            case SIGNALDATA::APP_SIGNAL:
+            this->in={TypeEnum::IN_APP_SIGNAL
             ,TypeEnum::IN_APP_SIGNAL,TypeEnum::IN_APP_SIGNAL,TypeEnum::IN_APP_SIGNAL
             ,TypeEnum::IN_APP_SIGNAL,TypeEnum::IN_APP_SIGNAL,TypeEnum::IN_APP_SIGNAL
             ,TypeEnum::IN_APP_SIGNAL,TypeEnum::IN_APP_SIGNAL,TypeEnum::IN_APP_SIGNAL
+            };
+            this->out = {TypeEnum::OUT_APP_SIGNAL};
+            break;
+            case SIGNALDATA::APP_RX:
+            this->in = {TypeEnum::IN_APP_RX
+            ,TypeEnum::IN_APP_RX,TypeEnum::IN_APP_RX,TypeEnum::IN_APP_RX
+            ,TypeEnum::IN_APP_RX,TypeEnum::IN_APP_RX,TypeEnum::IN_APP_RX
+            ,TypeEnum::IN_APP_RX,TypeEnum::IN_APP_RX,TypeEnum::IN_APP_RX
+            };
+            this->out = {TypeEnum::OUT_APP_RX};
+            break;
         }
-        ,{TypeEnum::OUT_APP_SIGNAL}){};
+    };
 private:
 };
 
-class AppRxModel:public BaseModel
-{
-    using TypeEnum=QtNodes::NodeDataTypeEnum;
-public:
-    AppRxModel(QString name):BaseModel(SIGNAL_TYPE,std::move(name)
-        ,{TypeEnum::IN_IO_RX
-            ,TypeEnum::IN_IO_RX,TypeEnum::IN_IO_RX,TypeEnum::IN_IO_RX
-            ,TypeEnum::IN_IO_RX,TypeEnum::IN_IO_RX,TypeEnum::IN_IO_RX
-            ,TypeEnum::IN_IO_RX,TypeEnum::IN_IO_RX,TypeEnum::IN_IO_RX
-        }
-        ,{TypeEnum::OUT_IO_RX}){};
-private:
-};
+
 #endif //NODEMODEL_H

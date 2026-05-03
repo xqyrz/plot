@@ -18,6 +18,7 @@ public:
     IO::Frame encode() override;
 signals:
    void hasSignal(const QList<IOAPP::SIGNALS>&);
+    void sig_app_rx(const IO::Frame&);
 private slots:
     void rx_frame(const IO::Frame&);
 private:
