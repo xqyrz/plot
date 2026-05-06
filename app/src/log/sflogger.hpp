@@ -73,9 +73,13 @@ public:
 
     inline static QElapsedTimer* getTimer() {return g_startupTimer;};
 
-    static QString extractShortFunctionName(const QString& fullFunction) {
+    inline static QString extractShortFunctionName(const QString& fullFunction) {
     #if 1
-        return fullFunction;
+        QRegularExpression re(R"(([\w:~]+)\s*\()");
+        auto match = re.match(fullFunction);
+        if (match.hasMatch())
+            return match.captured(1);
+        else return fullFunction;
     #else
         // 匹配 类名::函数名 的模式
         static QRegularExpression regex(R"((\w+::\w+))");

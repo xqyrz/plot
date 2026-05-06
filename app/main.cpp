@@ -18,17 +18,16 @@ int main(int argc, char *argv[]) {
     qputenv("QT_QPA_DISABLE_REDIRECTION_SURFACE", "1");
     SfLogger::instance("APP");
     qRegisterMetaType<QList<IO::Frame>>("QList<IO::Frame>");
+
+
     qInstallMessageHandler(SfLogger::customMessageHandler);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
-        Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
-#endif
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-#endif
 
     QCoreApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
+    // 1. 全局缩放使能
+    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    // 2. 适配非整数倍缩放
+    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
     QApplication a(argc, argv);
 
     MainWindow w;
