@@ -3,9 +3,9 @@
 build
 /.vs
 plug/io/asio/asio
-elf/elfio/doc
-elf/elfio/examples
-elf/elfio/tests
+lib/elf/elfio/doc
+lib/elf/elfio/examples
+lib/elf/elfio/tests
 install/*
 cmake-build-debug-visual-studio
 .vscode

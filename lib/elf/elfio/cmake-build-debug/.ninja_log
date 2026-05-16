@@ -1,0 +1,6 @@
+# ninja log v6
+4	80	7831831119665102	examples/test/CMakeFiles/test.dir/main.c.obj	a51042c6b7ab4d02
+4	406	7831831348863743	build.ninja	a53806f7a4810055
+3	80	7831831337027922	examples/test/CMakeFiles/test.dir/main.cpp.obj	fcd1920203565e1b
+4	1258	7831832114467841	examples/test/CMakeFiles/test.dir/main.cpp.obj	fcd1920203565e1b
+1259	1633	7831832127023311	examples/test/test.exe	a266dce9ae5b04b1

@@ -96,14 +96,15 @@ include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}/common/bus/protoc/include
         ${CMAKE_CURRENT_SOURCE_DIR}/plug/page/plot
         ${CMAKE_CURRENT_SOURCE_DIR}/plug/io
-        ${CMAKE_CURRENT_SOURCE_DIR}/QtPropertyBrowser
+        lib/QtPropertyBrowser
 )
 
-add_subdirectory(nodes)
-add_subdirectory(qwindowkit)
-add_subdirectory(elf)
-add_subdirectory(ads)
-add_subdirectory(QtPropertyBrowser)
+add_subdirectory(lib/nodes)
+add_subdirectory(lib/qwindowkit)
+add_subdirectory(lib/elf)
+add_subdirectory(lib/ads)
+add_subdirectory(lib/QtPropertyBrowser)
+add_subdirectory(lib/qwtplot3d)
 add_subdirectory(demo)
 # 添加子目录
 add_subdirectory(plug)
