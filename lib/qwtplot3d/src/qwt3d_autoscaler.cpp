@@ -1,35 +1,42 @@
-#include "qwt3d_helper.h"
-#include "qwt3d_autoscaler.h"
+#include "qwt3d_helper.h" 
+#include "qwt3d_autoscaler.h" 
 
 using namespace Qwt3D;
 
-namespace {
-
-double floorExt(int &exponent, double x, std::vector<double> &sortedmantissi)
+namespace
 {
-    if (x == 0.0) {
+
+double floorExt( int& exponent, double x, std::vector<double>& sortedmantissi)
+{
+    if (x == 0.0)
+    {
         exponent = 0;
         return 0.0;
     }
-
+    
     double sign = (x > 0) ? 1.0 : -1.0;
     double lx = log10(fabs(x));
     exponent = (int)floor(lx);
 
     double fr = pow(10.0, lx - exponent);
-    if (fr >= 10.0) {
+    if (fr >= 10.0)
+    {
         fr = 1.0;
         ++exponent;
-    } else {
-        for (int i = (int)sortedmantissi.size() - 1; i >= 0; --i) {
-            if (fr >= sortedmantissi[i]) {
+    }
+    else
+    {
+        for (int i=(int)sortedmantissi.size()-1; i>=0;--i)
+        {
+            if (fr>=sortedmantissi[i])
+            {
                 fr = sortedmantissi[i];
                 break;
             }
         }
     }
     return sign * fr;
-}
+} 
 
 /*
   \brief Find the largest value out of {1,2,5}*10^n with an integer number n
@@ -38,7 +45,7 @@ double floorExt(int &exponent, double x, std::vector<double> &sortedmantissi)
   \param x Input value
   \return Mantissa
 */
-[[maybe_unused]] double floor125(int &exponent, double x)
+double floor125( int& exponent, double x)
 {
     std::vector<double> m(2);
     m[0] = 1;
@@ -49,24 +56,26 @@ double floorExt(int &exponent, double x, std::vector<double> &sortedmantissi)
 
 } // anon ns
 
+
 //! Initializes with an {1,2,5} sequence of mantissas
 LinearAutoScaler::LinearAutoScaler()
 {
-    init(0, 1, 1);
+    init(0,1,1);
     mantissi_ = std::vector<double>(3);
     mantissi_[0] = 1;
     mantissi_[1] = 2;
     mantissi_[2] = 5;
 }
-//! Initialize with interval [0,1] and one requested interval
+//! Initialize with interval [0,1] and one requested interval 
 /*!
-val mantisse A increasing ordered vector of values representing
-mantisse values between 1 and 9.
+\param mantisse A increasing ordered vector of values representing 
+mantisse values between 1 and 9. 
 */
-LinearAutoScaler::LinearAutoScaler(std::vector<double> &mantisse)
+LinearAutoScaler::LinearAutoScaler(std::vector<double>& mantisse)
 {
-    init(0, 1, 1);
-    if (mantisse.empty()) {
+    init(0,1,1);
+    if (mantisse.empty())
+    {
         mantissi_ = std::vector<double>(3);
         mantissi_[0] = 1;
         mantissi_[1] = 2;
@@ -76,9 +85,10 @@ LinearAutoScaler::LinearAutoScaler(std::vector<double> &mantisse)
     mantissi_ = mantisse;
 }
 
+
 //! Initialize with interval [start,stop] and number of requested intervals
 /**
-        Switchs start and stop, if stop < start and sets intervals = 1 if ivals < 1
+    Switchs start and stop, if stop < start and sets intervals = 1 if ivals < 1
 */
 void LinearAutoScaler::init(double start, double stop, int ivals)
 {
@@ -86,7 +96,8 @@ void LinearAutoScaler::init(double start, double stop, int ivals)
     stop_ = stop;
     intervals_ = ivals;
 
-    if (start_ > stop_) {
+    if (start_ > stop_)
+    {
         double tmp = start_;
         start_ = stop_;
         stop_ = tmp;
@@ -101,7 +112,7 @@ void LinearAutoScaler::init(double start, double stop, int ivals)
 \verbatim
 |_______|____________ _ _ _ _  _____|_____________|________________
 
-0     m*10^n                      start         anchor := c*m*10^n
+0     m*10^n                      start         anchor := c*m*10^n	     
 
 c 'minimal' (anchor-start < m*10^n)
 \endverbatim
@@ -109,7 +120,7 @@ c 'minimal' (anchor-start < m*10^n)
 double LinearAutoScaler::anchorvalue(double start, double m, int n)
 {
     double stepval = m * pow(10.0, n);
-    return stepval * ceil(start / stepval);
+    return  stepval * ceil(start / stepval);
 }
 
 /*!
@@ -127,10 +138,9 @@ double LinearAutoScaler::anchorvalue(double start, double m, int n)
 c 'minimal' (anchor-start < m*10^n)
 \endverbatim
 */
-int LinearAutoScaler::segments(int &l_intervals, int &r_intervals, double start, double stop,
-                               double anchor, double m, int n)
+int LinearAutoScaler::segments(int& l_intervals, int& r_intervals, double start, double stop, double anchor, double m, int n)
 {
-    double val = m * pow(10.0, n);
+    double val =  m * pow(10.0, n);
     double delta = (stop - anchor) / val;
 
     r_intervals = (int)floor(delta); // right side intervals
@@ -142,23 +152,24 @@ int LinearAutoScaler::segments(int &l_intervals, int &r_intervals, double start,
     return r_intervals + l_intervals;
 }
 
+
 /*!
-        \brief Does the actual scaling
-        \return Number of intervals after rescaling. This will in the most cases differ
-        from the requested interval number!  Always >0.
-        \param a Start value after scaling (always >= start)
-        \param b Stop value after scaling  (always <= stop)
+    \brief Does the actual scaling
+    \return Number of intervals after rescaling. This will in the most cases differ
+    from the requested interval number!  Always >0.
+    \param a Start value after scaling (always >= start)
+    \param b Stop value after scaling  (always <= stop)
   \param start Start value
   \param stop Stop value
   \param ivals Requested intervals
   \return Number of intervals after autoscaling
 
-        If the given interval has zero length the function returns the current
-        interval number and a and b remain unchanged.
+    If the given interval has zero length the function returns the current
+    interval number and a and b remain unchanged.
 */
-int LinearAutoScaler::execute(double &a, double &b, double start, double stop, int ivals)
+int LinearAutoScaler::execute(double& a, double& b, double start, double stop, int ivals)
 {
-    init(start, stop, ivals);
+    init(start,stop,ivals);
 
     double delta = stop_ - start_;
 
@@ -175,9 +186,10 @@ int LinearAutoScaler::execute(double &a, double &b, double start, double stop, i
     double anchor = anchorvalue(start_, c, n);
     int ival = segments(l_ival, r_ival, start_, stop_, anchor, c, n);
 
-    if (ival >= intervals_) {
-        a = anchor - l_ival * c * pow(10.0, n);
-        b = anchor + r_ival * c * pow(10.0, n);
+    if (ival >= intervals_)
+    {
+        a = anchor - l_ival * c * pow(10.0,n);
+        b = anchor + r_ival * c * pow(10.0,n);
         intervals_ = ival;
         return intervals_;
     }
@@ -187,7 +199,8 @@ int LinearAutoScaler::execute(double &a, double &b, double start, double stop, i
     double prev_c;
     int prev_n;
 
-    while (1) {
+    while(1)
+    {
         prev_c = c;
         prev_n = n;
         prev_anchor = anchor;
@@ -195,13 +208,19 @@ int LinearAutoScaler::execute(double &a, double &b, double start, double stop, i
         prev_l_ival = l_ival;
         prev_r_ival = r_ival;
 
-        if (int(c) == 1) {
+
+        if (int(c) == 1)
+        {
             c = mantissi_.back();
             --n;
-        } else {
-            for (size_t i = mantissi_.size() - 1; i > 0; --i) {
-                if (int(c) == mantissi_[i]) {
-                    c = mantissi_[i - 1];
+        }
+        else
+        {
+            for (unsigned int i=mantissi_.size()-1; i>0; --i)
+            {
+                if (int(c) == mantissi_[i])
+                {
+                    c = mantissi_[i-1];
                     break;
                 }
             }
@@ -213,8 +232,10 @@ int LinearAutoScaler::execute(double &a, double &b, double start, double stop, i
         int prev_diff = intervals_ - prev_ival;
         int actual_diff = ival - intervals_;
 
-        if (prev_diff >= 0 && actual_diff >= 0) {
-            if (prev_diff < actual_diff) {
+        if (prev_diff >= 0 && actual_diff >= 0)
+        {
+            if (prev_diff < actual_diff)
+            {
                 c = prev_c;
                 n = prev_n;
                 anchor = prev_anchor;
@@ -222,8 +243,8 @@ int LinearAutoScaler::execute(double &a, double &b, double start, double stop, i
                 l_ival = prev_l_ival;
                 r_ival = prev_r_ival;
             }
-            a = anchor - l_ival * c * pow(10.0, n);
-            b = anchor + r_ival * c * pow(10.0, n);
+            a = anchor - l_ival * c * pow(10.0,n);
+            b = anchor + r_ival * c * pow(10.0,n);
             intervals_ = ival;
             break;
         }

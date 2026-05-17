@@ -90,9 +90,10 @@ find_package(Qt${QT_VERSION_MAJOR}  REQUIRED COMPONENTS Core Gui Widgets PrintSu
 #message(STATUS "OpenGL libraries : ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY}")
 # 添加子目录
 set(BUS_PATH "${CMAKE_CURRENT_SOURCE_DIR}/common/bus")
-
+message("CMAKE_CURRENT_SOURCE_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/install/include")
 include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}/common
+        ${CMAKE_CURRENT_SOURCE_DIR}/install/include
         ${CMAKE_CURRENT_SOURCE_DIR}/common/bus/protoc/include
         ${CMAKE_CURRENT_SOURCE_DIR}/plug/page/plot
         ${CMAKE_CURRENT_SOURCE_DIR}/plug/io

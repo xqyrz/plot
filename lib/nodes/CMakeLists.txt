@@ -162,7 +162,7 @@ install(TARGETS QtNodes
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-install(DIRECTORY include
+install(DIRECTORY include/
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 install(EXPORT QtNodesTargets

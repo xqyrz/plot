@@ -29,9 +29,3 @@ add_executable( mesh2 WIN32
   )
 
 target_link_libraries( mesh2 qwtplot3d )
-
-install(TARGETS mesh2
-        ARCHIVE DESTINATION bin     # 静态库 (.a / .lib)
-        LIBRARY DESTINATION bin     # 共享库 (.so / .dll)
-        RUNTIME DESTINATION bin
-)

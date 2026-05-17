@@ -4,27 +4,15 @@ using namespace std;
 using namespace Qwt3D;
 
 /**
-Initializes with dataNormals()==false, NOFLOOR, resolution() == 1
+Initializes with dataNormals()==false //todo
 */
-SurfacePlot::SurfacePlot(QWidget *parent) : Plot3D(parent)
+SurfacePlot::SurfacePlot( QWidget * parent )
+    : Plot3D( parent )
 {
+    floorstyle_ = NOFLOOR;
     datanormals_p = false;
     normalLength_p = 0.02;
     normalQuality_p = 3;
-
-    resolution_p = 1;
-    actualDataG_ = new GridData();
-    actualDataC_ = new CellData();
-
-    actualData_p = actualDataG_;
-
-    floorstyle_ = NOFLOOR;
-}
-
-SurfacePlot::~SurfacePlot()
-{
-    delete actualDataG_;
-    delete actualDataC_;
 }
 
 void SurfacePlot::showNormals(bool b)
@@ -37,7 +25,7 @@ Values < 0 or > 1 are ignored
 */
 void SurfacePlot::setNormalLength(double val)
 {
-    if (val < 0 || val > 1)
+    if (val<0 || val>1)
         return;
     normalLength_p = val;
 }
@@ -47,126 +35,82 @@ Values < 3 are ignored
 */
 void SurfacePlot::setNormalQuality(int val)
 {
-    if (val < 3)
+    if (val<3)
         return;
     normalQuality_p = val;
 }
 
-/**
-        Calculates the smallest x-y-z parallelepiped enclosing the data.
-        It can be accessed by hull();
-*/
-void SurfacePlot::calculateHull()
+void SurfacePlot::drawIntersection(const Qwt3D::TripleVector& intersection, Qwt3D::RGBA col)
 {
-    if (actualData_p->empty())
-        return;
-    setHull(actualData_p->hull());
-}
-
-/*!
-  Sets data resolution (res == 1 original resolution) and updates widget
-        If res < 1, the function does nothing
-*/
-void SurfacePlot::setResolution(int res)
-{
-    if (!actualData_p || actualData_p->datatype == Qwt3D::POLYGON)
+    if (intersection.empty())
         return;
 
-    if ((resolution_p == res) || res < 1)
-        return;
+    glColor4d(col.r, col.g, col.b, col.a);
+    if (intersection.size()>2)
+    {
+        glBegin(GL_LINE_STRIP);
+        for (unsigned dd = 0; dd!=intersection.size(); ++dd)
+        {
+            glVertex3d(intersection[dd].x, intersection[dd].y, intersection[0].z);
+        }
+        glEnd();
+        glBegin(GL_POINTS);
+        glVertex3d(intersection[0].x,intersection[0].y,intersection[0].z);
+        glEnd();
+    }
+    else if (intersection.size() == 2)
+    {
+        glBegin(GL_LINES);
+        glVertex3d(intersection[0].x,intersection[0].y,intersection[0].z);
+        glVertex3d(intersection[1].x,intersection[1].y,intersection[0].z);
 
-    resolution_p = res;
-    updateNormals();
-    updateData();
-    if (initializedGL())
-        update();
-
-    emit resolutionChanged(res);
+        // small pixel gap problem (see OpenGL spec.)
+        glVertex3d(intersection[1].x,intersection[1].y,intersection[0].z);
+        glVertex3d(intersection[0].x,intersection[0].y,intersection[0].z);
+        glEnd();
+    }
 }
 
 void SurfacePlot::updateNormals()
 {
+    makeCurrent();
     SaveGlDeleteLists(displaylists_p[NormalObject], 1);
 
-    if ((plotStyle() == NOPLOT && !normals()) || !actualData_p)
+    if (plotStyle() == NOPLOT && !normals())
         return;
 
     displaylists_p[NormalObject] = glGenLists(1);
     glNewList(displaylists_p[NormalObject], GL_COMPILE);
-
-    if (actualData_p->datatype == Qwt3D::POLYGON)
-        createNormalsC();
-    else if (actualData_p->datatype == Qwt3D::GRID)
-        createNormalsG();
-
+    for (unsigned k=0; k!=plotlets_p.size(); ++k)
+    {
+        createNormals(plotlets_p[k]);
+    }
     glEndList();
 }
 
-void SurfacePlot::createData()
+void SurfacePlot::createFloorOpenGlData()
 {
-    if (!actualData_p)
-        return;
-    if (actualData_p->datatype == Qwt3D::POLYGON)
-        createDataC();
-    else if (actualData_p->datatype == Qwt3D::GRID)
-        createDataG();
-}
-
-void SurfacePlot::createFloorData()
-{
-    if (!actualData_p)
-        return;
-    if (actualData_p->datatype == Qwt3D::POLYGON)
-        createFloorDataC();
-    else if (actualData_p->datatype == Qwt3D::GRID)
-        createFloorDataG();
-}
-
-/**
-        The returned value is not affected by resolution(). The pair gives (columns,rows) for grid
-data , (number of cells,1) for free formed data (datatype() == POLYGON) and (0,0) else
-*/
-pair<int, int> SurfacePlot::facets() const
-{
-    if (!hasData())
-        return pair<int, int>(0, 0);
-
-    if (actualData_p->datatype == Qwt3D::POLYGON)
-        return pair<int, int>(int(actualDataC_->cells.size()), 1);
-    else if (actualData_p->datatype == Qwt3D::GRID)
-        return pair<int, int>(actualDataG_->columns(), actualDataG_->rows());
-    else
-        return pair<int, int>(0, 0);
-}
-
-void SurfacePlot::createPoints()
-{
-    Dot pt;
-    createEnrichment(pt);
-}
-
-void SurfacePlot::createEnrichment(Enrichment &p)
-{
-    if (!actualData_p)
-        return;
-
-    // todo future work
-    if (p.type() != Enrichment::VERTEXENRICHMENT)
-        return;
-
-    p.assign(*this);
-    p.drawBegin();
-
-    VertexEnrichment *ve = (VertexEnrichment *)&p;
-    if (actualData_p->datatype == Qwt3D::POLYGON) {
-        for (unsigned i = 0; i != actualDataC_->normals.size(); ++i)
-            ve->draw(actualDataC_->nodes[i]);
-    } else if (actualData_p->datatype == Qwt3D::GRID) {
-        int step = resolution();
-        for (int i = 0; i <= actualDataG_->columns() - step; i += step)
-            for (int j = 0; j <= actualDataG_->rows() - step; j += step)
-                ve->draw(Triple(actualDataG_->vertices[i][j][0], actualDataG_->vertices[i][j][1],
-                                actualDataG_->vertices[i][j][2]));
+    for (unsigned k=0; k!=plotlets_p.size(); ++k)
+    {
+        switch (floorStyle())
+        {
+        case FLOORDATA:
+            this->data2Floor(plotlets_p[k]);
+            break;
+        case FLOORISO:
+            this->isolines2Floor(plotlets_p[k]);
+            break;
+        default:
+            break;
+        }
     }
-    p.drawEnd();
+}
+
+bool SurfacePlot::removePlotlet(unsigned idx)
+{
+    if (!Plot3D::removePlotlet(idx))
+        return false;
+
+    updateData();
+    return true;
 }

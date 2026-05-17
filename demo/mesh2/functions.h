@@ -2,8 +2,8 @@
 #define __EXAMPLE_H__
 
 #include <math.h>
-#include "qwt3d_parametricsurface.h"
-#include "qwt3d_function.h"
+#include "qwtplot3d/qwt3d_parametricsurface.h"
+#include "qwtplot3d/qwt3d_function.h"
 
 using namespace Qwt3D;
 

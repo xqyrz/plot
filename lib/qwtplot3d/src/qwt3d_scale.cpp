@@ -3,7 +3,9 @@
 using namespace Qwt3D;
 
 Scale::Scale()
-    : start_p(0.), stop_p(0.), majorintervals_p(0), minorintervals_p(0), mstart_p(0.), mstop_p(0.)
+    : start_p(0.), stop_p(0.),
+      majorintervals_p(0), minorintervals_p(0),
+      mstart_p(0.), mstop_p(0.)
 {
 }
 
@@ -17,7 +19,8 @@ an empty QString else.
 */
 QString Scale::ticLabel(unsigned int idx) const
 {
-    if (idx < majors_p.size()) {
+    if (idx<majors_p.size())
+    {
         return QString::number(majors_p[idx]);
     }
     return QString("");
@@ -26,7 +29,8 @@ QString Scale::ticLabel(unsigned int idx) const
 //! Sets start and stop value for the scale;
 void Scale::setLimits(double start, double stop)
 {
-    if (start < stop) {
+    if (start < stop)
+    {
         start_p = start;
         stop_p = stop;
         return;
@@ -38,7 +42,8 @@ void Scale::setLimits(double start, double stop)
 //! Sets value of first major tic
 void Scale::setMajorLimits(double start, double stop)
 {
-    if (start < stop) {
+    if (start < stop)
+    {
         mstart_p = start;
         mstop_p = stop;
         return;
@@ -57,7 +62,7 @@ void Scale::setMajorLimits(double start, double stop)
 
   The default implementation sets a=start, b=stop and returns ivals.
 */
-int Scale::autoscale(double &a, double &b, double start, double stop, int ivals)
+int Scale::autoscale(double& a, double& b, double start, double stop, int ivals)
 {
     a = start;
     b = stop;
@@ -65,13 +70,14 @@ int Scale::autoscale(double &a, double &b, double start, double stop, int ivals)
 }
 
 /***************************
- *
- * linear scales
- *
- ***************************/
+*
+* linear scales
+*
+***************************/
+
 
 //! Applies LinearAutoScaler::execute()
-int LinearScale::autoscale(double &a, double &b, double start, double stop, int ivals)
+int LinearScale::autoscale(double& a, double& b, double start, double stop, int ivals)
 {
     return autoscaler_p.execute(a, b, start, stop, ivals);
 }
@@ -82,10 +88,10 @@ void LinearScale::calculate()
     majors_p.clear();
     minors_p.clear();
 
-    double interval = mstop_p - mstart_p;
+    double interval = mstop_p-mstart_p;
 
     double runningval;
-    int i = 0;
+    int i=0;
 
     // majors
 
@@ -96,18 +102,20 @@ void LinearScale::calculate()
     majors_p.push_back(mstart_p);
 
     // remaining tics
-    for (i = 1; i <= majorintervals_p; ++i) {
+    for (i = 1; i <= majorintervals_p; ++i)
+    {
         double t = double(i) / majorintervals_p;
         runningval = mstart_p + t * interval;
-        if (runningval > stop_p)
+        if (runningval>stop_p)
             break;
-        if (isPracticallyZero(mstart_p, -t * interval)) // prevent rounding errors near 0
+        if (isPracticallyZero(mstart_p, -t*interval)) // prevent rounding errors near 0
             runningval = 0.0;
         majors_p.push_back(runningval);
     }
-    majorintervals_p = static_cast<int>(majors_p.size());
+    majorintervals_p = majors_p.size();
     if (majorintervals_p)
         --majorintervals_p;
+
 
     // minors
 
@@ -120,12 +128,13 @@ void LinearScale::calculate()
     // start_p      mstart_p
     //  |_____________|_____ _ _ _
 
-    double step = (majors_p[1] - majors_p[0]) / minorintervals_p;
+    double step = (majors_p[1]-majors_p[0]) / minorintervals_p;
     if (isPracticallyZero(step))
         return;
 
-    runningval = mstart_p - step;
-    while (runningval > start_p) {
+    runningval = mstart_p-step;
+    while (runningval>start_p)
+    {
         minors_p.push_back(runningval);
         runningval -= step;
     }
@@ -133,9 +142,11 @@ void LinearScale::calculate()
     //       mstart_p            mstop_p
     //  ________|_____ _ _ _ _ _ ___|__________
 
-    for (i = 0; i != majorintervals_p; ++i) {
+    for (i=0; i!=majorintervals_p; ++i)
+    {
         runningval = majors_p[i] + step;
-        for (int j = 0; j != minorintervals_p; ++j) {
+        for (int j=0; j!=minorintervals_p; ++j)
+        {
             minors_p.push_back(runningval);
             runningval += step;
         }
@@ -145,34 +156,36 @@ void LinearScale::calculate()
     // _ _ _|_____________|
 
     runningval = mstop_p + step;
-    while (runningval < stop_p) {
+    while (runningval<stop_p)
+    {
         minors_p.push_back(runningval);
         runningval += step;
     }
 }
 
-void LogScale::setupCounter(double &k, int &step)
+void LogScale::setupCounter(double& k, int& step)
 {
-    switch (minorintervals_p) {
+    switch(minorintervals_p)
+    {
     case 9:
-        k = 9;
-        step = 1;
+        k=9;
+        step=1;
         break;
     case 5:
-        k = 8;
-        step = 2;
+        k=8;
+        step=2;
         break;
     case 3:
-        k = 5;
-        step = 3;
+        k=5;
+        step=3;
         break;
     case 2:
-        k = 5;
-        step = 5;
+        k=5;
+        step=5;
         break;
     default:
-        k = 9;
-        step = 1;
+        k=9;
+        step=1;
     }
 }
 
@@ -192,24 +205,26 @@ void LogScale::calculate()
     if (stop_p > DBL_MAX_10_EXP)
         stop_p = DBL_MAX_10_EXP;
 
-    double interval = stop_p - start_p;
-    if (interval <= 0)
+    double interval = stop_p-start_p;
+    if (interval<=0)
         return;
 
     double runningval = floor(start_p);
-    while (runningval <= stop_p) {
-        if (runningval >= start_p)
+    while(runningval<=stop_p)
+    {
+        if (runningval>=start_p)
             majors_p.push_back(runningval);
         ++runningval;
     }
-    majorintervals_p = static_cast<int>(majors_p.size());
+    majorintervals_p = majors_p.size();
     if (majorintervals_p)
         --majorintervals_p;
 
-    if (majors_p.size() < 1) // not even a single major tic
+    if (majors_p.size()<1) // not even a single major tic
     {
         return;
     }
+
 
     // minors
 
@@ -218,40 +233,46 @@ void LogScale::calculate()
 
     double k;
     int step;
-    setupCounter(k, step);
-    runningval = log10(k) + (majors_p[0] - 1);
-    while (runningval > start_p && k > 1) {
+    setupCounter(k,step);
+    runningval = log10(k)+(majors_p[0]-1);
+    while (runningval>start_p && k>1)
+    {
         minors_p.push_back(runningval);
-        k -= step;
-        runningval = log10(k) + (majors_p[0] - 1);
+        k -=step;
+        runningval = log10(k)+(majors_p[0]-1);
     }
 
     //       mstart_p            mstop_p
     //  ________|_____ _ _ _ _ _ ___|__________
 
-    for (int i = 0; i != majorintervals_p; ++i) {
-        setupCounter(k, step);
-        runningval = log10(k) + (majors_p[i]);
-        while (k > 1) {
+    for (int i=0; i!=majorintervals_p; ++i)
+    {
+        setupCounter(k,step);
+        runningval = log10(k)+(majors_p[i]);
+        while (k>1)
+        {
             minors_p.push_back(runningval);
-            k -= step;
-            runningval = log10(k) + (majors_p[i]);
+            k-=step;
+            runningval = log10(k)+(majors_p[i]);
         }
     }
 
     //    mstop_p       stop_p
     // _ _ _|_____________|
 
-    setupCounter(k, step);
-    runningval = log10(k) + (majors_p.back());
-    do {
-        k -= step;
-        runningval = log10(k) + (majors_p.back());
-    } while (runningval >= stop_p);
-    while (k > 1) {
+    setupCounter(k,step);
+    runningval = log10(k)+(majors_p.back());
+    do
+    {
+        k-=step;
+        runningval = log10(k)+(majors_p.back());
+    }
+    while(runningval>=stop_p);
+    while (k>1)
+    {
         minors_p.push_back(runningval);
-        k -= step;
-        runningval = log10(k) + (majors_p.back());
+        k-=step;
+        runningval = log10(k)+(majors_p.back());
     }
 }
 
@@ -274,7 +295,8 @@ LogScale::LogScale()
 //! Returns a power of 10 associated to the major value at index idx.
 QString LogScale::ticLabel(unsigned int idx) const
 {
-    if (idx < majors_p.size()) {
+    if (idx<majors_p.size())
+    {
         double val = majors_p[idx];
         return QString::number(pow(double(10), val));
     }
