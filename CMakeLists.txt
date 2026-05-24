@@ -4,8 +4,7 @@ add_compile_options(
         $<$<CXX_COMPILER_ID:MSVC>:/utf-8>
         $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-finput-charset=UTF-8>
 )
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O1")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O1")
+
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_AUTOMOC ON)
@@ -100,15 +99,18 @@ include_directories(
         lib/QtPropertyBrowser
 )
 
+add_subdirectory(demo)
 add_subdirectory(lib/nodes)
 add_subdirectory(lib/qwindowkit)
 add_subdirectory(lib/elf)
 add_subdirectory(lib/ads)
 add_subdirectory(lib/QtPropertyBrowser)
 add_subdirectory(lib/qwtplot3d)
-add_subdirectory(demo)
+
 # 添加子目录
 add_subdirectory(plug)
 #add_subdirectory(testplot)
 #
+
+
 add_subdirectory(app)

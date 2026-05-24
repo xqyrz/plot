@@ -6,11 +6,8 @@ add_executable(testplot3d WIN32
         glwidget.h
 )
 # message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}/lib")
-target_link_directories(testplot3d PRIVATE
-     ${CMAKE_INSTALL_PREFIX}/lib
-)
-set(qwtplot3d_DIR "F:/plot/install/lib/cmake/qwtplot3d")
-find_package(qwtplot3d REQUIRED)
+#set(qwtplot3d_DIR "F:/plot/install/lib/cmake/qwtplot3d")
+#find_package(qwtplot3d REQUIRED)
 find_package(OpenGL REQUIRED)
 target_link_libraries(testplot3d
         Qt${QT_VERSION_MAJOR}::Core

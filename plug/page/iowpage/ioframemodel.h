@@ -56,7 +56,7 @@ public:
     // 插入一帧数据
     void appendFrame(const IO::Frame &frame);
     template<typename T>
-    void appendFrame(const T& frames)
+    void appendFrames(const T& frames)
     {
         if (frames.empty()) return;
 
@@ -152,6 +152,8 @@ private:
         COL_ASCII
      };
     QTimer m_timer;
+    IO::Frame frames[999];
+    int cnt = 0;
 };
 
 #endif // IOFRAMEMODEL_H

@@ -9,6 +9,16 @@ IoFrameModel::IoFrameModel(QObject *parent)
     m_frames.reserve(9999);
     connect(&m_timer,&QTimer::timeout,this,[=]()
     {
+        // 1. 获取即将插入的行号
+        int newRow = static_cast<int>(m_frames.size());
+        // 2. 通知Model开始插入行
+        beginInsertRows(QModelIndex(), newRow, newRow+cnt-1);
+        for (int i =0;i<cnt;i++)
+        {
+            _addFrame(frames[i]);
+        }
+        endInsertRows();
+        cnt = 0;
         emit scrollToBottom();
     });
 }
@@ -46,8 +56,8 @@ QVariant IoFrameModel::data(const QModelIndex &index, int role) const
         case COL_TR:       return frame.RT == IO::RT::RX?"RX":"TX";
         case COL_TIME:     return frame.time.toString("HH:mm:ss.zzz");
         case COL_LEN:      return frame.data.size();
-        case COL_DATA:     return QString::fromLatin1(frame.data.toHex(' ')).toUpper();; // 十六进制显示数据
-        case COL_ASCII:     return QString::fromLatin1(frame.data);
+        case COL_DATA:     return QString::fromUtf8(frame.data.toHex(' ')).toUpper();; // 十六进制显示数据
+        case COL_ASCII:     return QString::fromUtf8(frame.data,frame.data.size());
         default:           return QVariant();
         }
     }
@@ -105,15 +115,10 @@ QVariant IoFrameModel::headerData(int section, Qt::Orientation orientation, int 
 // ==================== 数据插入：自动维护所有索引 ====================
 void IoFrameModel::appendFrame(const Frame &frame)
 {
-    // 1. 获取即将插入的行号
-    int newRow = static_cast<int>(m_frames.size());
+    frames[cnt] = frame;
+    cnt++;
+    if (!m_timer.isActive()) m_timer.start(50);
 
-    // 2. 通知Model开始插入行
-    beginInsertRows(QModelIndex(), newRow, newRow);
-
-    _addFrame(frame);
-    // 5. 通知Model插入完成
-    endInsertRows();
 }
 
 // ==================== 清空数据和索引 ====================
@@ -206,5 +211,5 @@ void IoFrameModel::_addFrame(const IO::Frame& frame)
     m_indexByCh[chIndex].push_back(row);
     m_indexByOwnDev[ownDevIndex].push_back(row);
     m_indexByOwnCh[ownChIndex].push_back(row);
-   if (!m_timer.isActive()) m_timer.start(50);
+
 }

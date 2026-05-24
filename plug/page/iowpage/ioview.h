@@ -9,6 +9,7 @@
 #include <QTableView>
 #include "ioframemodel.h"
 class IoFrameModel;
+class IOInterface;
 class IOView:public QTableView {
 Q_OBJECT
 public:
@@ -20,6 +21,9 @@ private:
 
     ~IOView();
     IoFrameModel* model;
+
+    bool update =true;
+    QList<IOInterface*> ios;
 };
 
 

@@ -14,7 +14,7 @@ find_package(Qt5 COMPONENTS Gui REQUIRED)
 
 file(GLOB SOURCES "src/*.cpp" "include/*.h")
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
-
+add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_link_libraries(${PROJECT_NAME} Qt5::Core)
 target_link_libraries(${PROJECT_NAME} Qt5::Gui)
@@ -62,3 +62,4 @@ install(FILES
         ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
         DESTINATION ${INSTALL_CONFIGDIR}
 )
+
