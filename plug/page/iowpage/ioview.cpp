@@ -17,7 +17,7 @@ IOView* IOView::instance(QWidget* parent)
 }
 IOView::IOView(QWidget* parent) : QTableView(parent), model(new IoFrameModel(this))
 {
-
+    setWordWrap(true);
    // this->viewport()->setAttribute(Qt::WA_OpaquePaintEvent);
    // this->viewport()->setAttribute(Qt::WA_NoSystemBackground);
    // this->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
@@ -30,12 +30,12 @@ IOView::IOView(QWidget* parent) : QTableView(parent), model(new IoFrameModel(thi
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this,&QWidget::customContextMenuRequested,this,[=](const QPoint& pos){
         QMenu menu(this);
-       auto Updata =  menu.addAction(update?"Stop":"Updata");
+       auto a =  menu.addAction(updateFlag()?"Stop":"Updata");
        auto action = menu.exec(mapToGlobal(pos));
-        if (action ==Updata)
+        if (action ==a)
         {
-            update =!update;
-            if (update)
+           setUpdateFlag(!m_update);
+            if (m_update)
             {
                 connect(model, &IoFrameModel::scrollToBottom, this, &IOView::scrollToBottom,Qt::UniqueConnection);
             }

@@ -13,7 +13,7 @@
 QT_BEGIN_NAMESPACE
 namespace Ui { class IOWPage; }
 QT_END_NAMESPACE
-
+class IOInterface;
 class IOWPage : public QWidget,public PageBase {
 Q_OBJECT
     Q_INTERFACES(PageBase)
@@ -26,12 +26,14 @@ private slots:
     void on_devOpen_clicked();
 public slots:
     void  slot_rx(const IO::Frame&);
+    void setIOobjs(const QList<IOInterface*>&);
 public:
     const char* getSignal(int index) const override ;
     const char* getSlot(int index) const override ;
 private:
     Ui::IOWPage *ui;
     std::function<void(QJsonObject&)> fun;
+    QList<IOInterface*> ioObjs;
 };
 
 

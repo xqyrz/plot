@@ -19,6 +19,7 @@ target_include_directories(${VOFA_APP}
 
 target_link_libraries(${VOFA_APP}
         Qt${QT_VERSION_MAJOR}::Core
+        mdb::mdb
 )
 
 install(TARGETS ${VOFA_APP}

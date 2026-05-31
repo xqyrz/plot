@@ -29,6 +29,7 @@ target_link_libraries(${PLOT_LIB}
         Qt${QT_VERSION_MAJOR}::PrintSupport
         Qt${QT_VERSION_MAJOR}::OpenGL
         ${OPENGL_LIB}
+        mdb::mdb
 )
 
 

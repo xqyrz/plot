@@ -22,6 +22,7 @@ target_include_directories(${SELFIOAPP_LIB}
 
 target_link_libraries(${SELFIOAPP_LIB}
         Qt${QT_VERSION_MAJOR}::Core
+        mdb::mdb
 )
 
 install(TARGETS ${SELFIOAPP_LIB}

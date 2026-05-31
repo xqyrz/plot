@@ -29,6 +29,7 @@ target_link_libraries(${APP_NAME}
         qtadvanceddocking-qt${QT_VERSION_MAJOR}
         QtNodes
         QtPropertyBrower
+        mdb::mdb
         ${IO_LIB}
 )
 target_include_directories(${APP_NAME}

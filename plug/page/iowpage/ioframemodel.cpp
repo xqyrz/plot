@@ -56,8 +56,8 @@ QVariant IoFrameModel::data(const QModelIndex &index, int role) const
         case COL_TR:       return frame.RT == IO::RT::RX?"RX":"TX";
         case COL_TIME:     return frame.time.toString("HH:mm:ss.zzz");
         case COL_LEN:      return frame.data.size();
-        case COL_DATA:     return QString::fromUtf8(frame.data.toHex(' ')).toUpper();; // 十六进制显示数据
-        case COL_ASCII:     return QString::fromUtf8(frame.data,frame.data.size());
+        case COL_DATA:     return QString::fromLocal8Bit(frame.data.toHex(' ')).toUpper();; // 十六进制显示数据
+        case COL_ASCII:     return frame.data;//QString::fromLocal8Bit(frame.data,frame.data.size()).replace("\n","\\n");//TODO
         default:           return QVariant();
         }
     }

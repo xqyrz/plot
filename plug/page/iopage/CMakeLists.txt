@@ -22,6 +22,7 @@ target_link_libraries(${IOPAGE}
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Quick
         Qt${QT_VERSION_MAJOR}::QuickWidgets
+        mdb::mdb
 )
 #if(WIN32)
 #    target_link_libraries(${JLINKARM} ws2_32 mswsock)

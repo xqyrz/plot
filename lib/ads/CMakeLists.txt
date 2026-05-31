@@ -80,7 +80,9 @@ if (UNIX AND NOT APPLE)
             ../common/bus/MessageBus.
             ../../demo/sqlite/main.cpp
             ../../common/bus/bus.cpp
-            ../../common/bus/bus.h)
+            ../../common/bus/bus.h
+            ../db/mdb.cpp
+            ../db/mdb.h)
 endif()
 
 set(library_name "qtadvanceddocking-qt${QT_VERSION_MAJOR}")

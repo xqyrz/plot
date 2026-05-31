@@ -12,17 +12,23 @@ class IoFrameModel;
 class IOInterface;
 class IOView:public QTableView {
 Q_OBJECT
+    Q_PROPERTY(bool updateFlag READ updateFlag WRITE setUpdateFlag NOTIFY updateFlagChanged)
 public:
     static IOView* instance(QWidget* parent = nullptr);
     IOView(QWidget* parent = nullptr);
 public:
     void addRow(const IO::Frame& frame);
+    bool updateFlag() const{return m_update;};
+public slots:
+    void setUpdateFlag(bool flag){m_update = flag;emit updateFlagChanged(m_update);};
+signals:
+    void updateFlagChanged(bool update);
 private:
 
     ~IOView();
     IoFrameModel* model;
 
-    bool update =true;
+    bool m_update =true;
     QList<IOInterface*> ios;
 };
 

@@ -15,6 +15,7 @@ add_executable(${APP_NAME} ${SRC_FILES}
 
 target_link_libraries(${APP_NAME}
         Qt${QT_VERSION_MAJOR}::Core
+        mdb::mdb
 )
 
 target_compile_definitions(${APP_NAME}

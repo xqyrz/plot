@@ -26,6 +26,8 @@
 #include "shared/widgetframe/windowbutton.h"
 
 #include "src/page/maindock.h"
+#include "mdb/mdb.h"
+#include "iointerface.h"
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     setAttribute(Qt::WA_DontCreateNativeAncestors);
@@ -354,4 +356,23 @@ void MainWindow::loadStyleSheet(Theme theme) {
         centralWidget()->setStyleSheet(QString::fromUtf8(qss.readAll()));
         Q_EMIT themeChanged();
     }
+
+    QTimer::singleShot(100, this, [this, theme]() {
+       auto objs = MDB::instance()->get(InterfaceBase::keyStr(InterfaceBase::IOOBJS));
+        QList<IOInterface*> ios;
+        for (auto& var:objs)
+        {
+           auto obj=reinterpret_cast<InterfaceBase*>(var.toULongLong());
+
+            if (obj->getType() == InterfaceBase::IOInterfaceEnum)
+            {
+                ios.append(static_cast<IOInterface*>(obj));
+            }
+        }
+        for (auto& var:objs)
+        {
+            auto obj=reinterpret_cast<InterfaceBase*>(var.toULongLong());
+            obj->fun(InterfaceBase::keyStr(IOInterface::IOOBJS),&ios);
+        }
+    });
 }

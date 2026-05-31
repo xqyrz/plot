@@ -22,6 +22,7 @@ target_include_directories(${ATCLIENT_LIB}
 
 target_link_libraries(${ATCLIENT_LIB}
         Qt${QT_VERSION_MAJOR}::Core
+        mdb::mdb
         ${IO_LIB}
 )
 if(WIN32)

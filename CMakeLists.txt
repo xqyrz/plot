@@ -107,10 +107,14 @@ add_subdirectory(lib/ads)
 add_subdirectory(lib/QtPropertyBrowser)
 add_subdirectory(lib/qwtplot3d)
 add_subdirectory(lib/nng)
+add_subdirectory(lib/mdb)
+
 # 添加子目录
 add_subdirectory(plug)
-#add_subdirectory(testplot)
-#
-
 
 add_subdirectory(app)
+
+#add_custom_target(install_all
+#        COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target install
+#        DEPENDS mdb plug app
+#)

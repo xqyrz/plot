@@ -22,6 +22,7 @@ target_include_directories(${ATCPSERVER_LIB}
 
 target_link_libraries(${ATCPSERVER_LIB}
         Qt${QT_VERSION_MAJOR}::Core
+        mdb::mdb
         ${IO_LIB}
 )
 if(WIN32)

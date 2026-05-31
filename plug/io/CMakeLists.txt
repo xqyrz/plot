@@ -6,6 +6,7 @@ add_library(${IO_LIB} STATIC
 
 target_link_libraries(${IO_LIB}
         Qt${QT_VERSION_MAJOR}::Core
+        mdb::mdb
 )
 if(WIN32)
     target_link_libraries(${IO_LIB} ws2_32 mswsock)

@@ -20,8 +20,10 @@ public:
     {
         O_RX = 0
     };
-    explicit IOInterface(const QString& name, IO::Config con) : config(std::move(con)), name(name)
+    explicit IOInterface(const QString& name, IO::Config con) : config(std::move(con))
     {
+        m_type = IOInterfaceEnum;
+        m_name = name;
         qRegisterMetaType<IO::Frame>("IO::Frame");
         qRegisterMetaType<IO::Frame>("const IO::Frame&");
         qRegisterMetaType<IO::Frame>("const QList<IOAPP::SIGNALS>");
@@ -46,7 +48,7 @@ public:
     IO::Config _getConfig() const { return config; }
     void _setConfig(const IO::Config& config) { this->config = config; }
 
-    QString getName() const { return name; }
+
 
     QList<IO::Frame> readALL()
     {
@@ -100,7 +102,6 @@ private:
     uint wSzie = 0;
     uint eSzie = 0;
 
-    const QString name;
     struct readFunctionComparator
     {
         bool operator()(const std::function<void(const IO::Frame&)>& lhs,
