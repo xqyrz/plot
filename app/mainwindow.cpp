@@ -26,7 +26,7 @@
 #include "shared/widgetframe/windowbutton.h"
 
 #include "src/page/maindock.h"
-#include "mdb/mdb.h"
+#include "mdb.h"
 #include "iointerface.h"
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {

@@ -88,7 +88,7 @@ void IOWPage::setIOobjs(const QList<IOInterface*>& _objs){
     ui->ioobj->clear();
     for (auto & var:ioObjs)
     {
-        ui->ioobj->addItem(var->getName());
+        ui->ioobj->addItem(var->getName(),reinterpret_cast<qlonglong>(var));
     }
 }
 
