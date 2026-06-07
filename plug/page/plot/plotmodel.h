@@ -77,7 +77,7 @@ private:
 signals:
         void chekStatusChanged(QSharedPointer<PlotData>& data);
 public slots:
-    TreeNode* add_plotData(const uint64_t id, QSharedPointer<QCPGraphDataContainer>& data,const QString plot_name = "plot");
+    TreeNode* add_plotData(const uint64_t id, QSharedPointer<QCPGraphDataContainer>& data,const QString plot_name = "plot",int group = 0);
 
 private:
     const QStringList _header = {"","名称","数据","频率"};

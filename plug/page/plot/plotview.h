@@ -39,7 +39,7 @@ private:
     void initUI();
     void initConnect();
 public slots:
-    TreeNode* add_plotData( uint64_t id, QSharedPointer<QCPGraphDataContainer>& data, const QString plot_name = "plot");
+    TreeNode* add_plotData( uint64_t id, QSharedPointer<QCPGraphDataContainer>& data, const QString plot_name = "plot",int group = 0);
     void setCurrentPlot(int type,const QCPLayerable * item);
     void enupRang();
     void _addSignalData(const QList<IOAPP::SIGNALS>& _signals);

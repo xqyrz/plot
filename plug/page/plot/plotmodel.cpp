@@ -12,10 +12,11 @@ PlotModel::PlotModel(QObject* parent)
 {
     m_rootNode = new TreeNode(TreeNode::RootNode, "root");
     m_rootNode->append(new TreeNode(TreeNode::GroupNode, "组1"));
+    m_rootNode->append(new TreeNode(TreeNode::GroupNode, "freq"));
 }
 
 
-TreeNode* PlotModel::add_plotData(const uint64_t id,QSharedPointer<QCPGraphDataContainer>& data, const QString plot_name ) {
+TreeNode* PlotModel::add_plotData(const uint64_t id,QSharedPointer<QCPGraphDataContainer>& data, const QString plot_name,int group ) {
     for (auto const& var : *m_rootNode) {
         for(auto const& var2 : *var) {
             if(var2->plotData->getData() == data) {
@@ -29,7 +30,7 @@ TreeNode* PlotModel::add_plotData(const uint64_t id,QSharedPointer<QCPGraphDataC
    // if (newRow)beginInsertRows(QModelIndex(), newRow, newRow);
     auto plotData = new PlotData(id,data,QColor(PLOT::color[size()%16]),plot_name,"",this);
     auto node = new TreeNode(plotData,plot_name);
-    m_rootNode->at(0)->append(node);
+    m_rootNode->at(group)->append(node);
    // if (newRow)endInsertRows(); // 通知视图：插入结束
     qDebug() << "PlotModel add "<<QString::number(id, 16) <<plot_name;
     return node;

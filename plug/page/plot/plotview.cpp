@@ -122,7 +122,7 @@ void PlotView::addSignalData(const IOAPP::SIGNALS& _signal)
         //         Q_ARG(QString, QString::fromStdString(_signal.name))
         //     );
         this->add_plotData(_signal.id,d, QString::fromStdString(_signal.name));
-        this->add_plotData(_signal.id|2,d2, QString::fromStdString(_signal.name)+"_feq");
+        this->add_plotData(_signal.id|2,d2, QString::fromStdString(_signal.name)+"_feq",1);
         node = _model->getNode(_signal.id);
         if (!node) {
             qCritical() << "add_plotData failed:" << QString::fromStdString(_signal.name);
@@ -161,9 +161,9 @@ const char* PlotView::getSlot(int index) const
    }
 }
 
-TreeNode* PlotView::add_plotData( uint64_t id, QSharedPointer<QCPGraphDataContainer> &data, const QString plot_name) {
+TreeNode* PlotView::add_plotData( uint64_t id, QSharedPointer<QCPGraphDataContainer> &data, const QString plot_name,int group) {
 
-	auto node =_model->add_plotData(id,data,plot_name);
+	auto node =_model->add_plotData(id,data,plot_name,group);
 	_treeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	_graphView->resetUI(_model);
 	return node;
