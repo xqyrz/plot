@@ -6,4 +6,5 @@
 
 PlotTree::PlotTree(QWidget *parent):
 QTreeView(parent){
+    setMinimumWidth(200);
 }

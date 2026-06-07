@@ -14,6 +14,7 @@ public:
     ~PlotData() override = default;
 
     QString getName() const{return name;};
+    double getFreq() const;
     QString getUnits() const{return units;};
     QString getShowData()const;
     QColor getColor() const{return color;};
@@ -32,6 +33,7 @@ private:
     QString name;//名字
     QString units;//单位
     QColor color;//颜色
+    double freq=-1;
     const uint64_t id = 0;
     bool  visible=true;
 };

@@ -112,15 +112,17 @@ void PlotView::addSignalData(const IOAPP::SIGNALS& _signal)
     auto node = _model->getNode(_signal.id);
     if (!node) {
         auto d = QSharedPointer<QCPGraphDataContainer>::create();
-        QMetaObject::invokeMethod(
-                this,
-                "add_plotData", // 必须是 QObject slots 函数
-                Qt::AutoConnection, // TODO:线程安全
-                Q_ARG(uint64_t, _signal.id),
-                Q_ARG(QSharedPointer<QCPGraphDataContainer>&, d),
-                Q_ARG(QString, QString::fromStdString(_signal.name))
-            );
-        //this->add_plotData(_signal.id,d, QString::fromStdString(_signal.name));
+        auto d2 = QSharedPointer<QCPGraphDataContainer>::create();
+        // QMetaObject::invokeMethod(
+        //         this,
+        //         "add_plotData", // 必须是 QObject slots 函数
+        //         Qt::AutoConnection, // TODO:线程安全
+        //         Q_ARG(uint64_t, _signal.id),
+        //         Q_ARG(QSharedPointer<QCPGraphDataContainer>&, d),
+        //         Q_ARG(QString, QString::fromStdString(_signal.name))
+        //     );
+        this->add_plotData(_signal.id,d, QString::fromStdString(_signal.name));
+        this->add_plotData(_signal.id|2,d2, QString::fromStdString(_signal.name)+"_feq");
         node = _model->getNode(_signal.id);
         if (!node) {
             qCritical() << "add_plotData failed:" << QString::fromStdString(_signal.name);
@@ -128,6 +130,12 @@ void PlotView::addSignalData(const IOAPP::SIGNALS& _signal)
         }
     }
     node->plotData->getData()->add(QCPGraphData((_signal.time-zero)/1000.0, _signal.value));
+    _model->getNode(_signal.id|2)->plotData->getData()->add(
+        QCPGraphData((
+            _signal.time-zero)/1000.0
+            ,node->plotData->getFreq()
+            )
+        );
 }
 void PlotView::_addSignalData(const QList<IOAPP::SIGNALS>& _signals)
 {
@@ -153,7 +161,7 @@ const char* PlotView::getSlot(int index) const
    }
 }
 
-TreeNode* PlotView::add_plotData( uint64_t id, QSharedPointer<QCPGraphDataContainer> &data, QString plot_name) {
+TreeNode* PlotView::add_plotData( uint64_t id, QSharedPointer<QCPGraphDataContainer> &data, const QString plot_name) {
 
 	auto node =_model->add_plotData(id,data,plot_name);
 	_treeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);

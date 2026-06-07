@@ -15,7 +15,7 @@ PlotModel::PlotModel(QObject* parent)
 }
 
 
-TreeNode* PlotModel::add_plotData(const uint64_t id,QSharedPointer<QCPGraphDataContainer>& data, QString plot_name ) {
+TreeNode* PlotModel::add_plotData(const uint64_t id,QSharedPointer<QCPGraphDataContainer>& data, const QString plot_name ) {
     for (auto const& var : *m_rootNode) {
         for(auto const& var2 : *var) {
             if(var2->plotData->getData() == data) {
@@ -124,6 +124,7 @@ QVariant PlotModel::data(const QModelIndex& index, int role) const
             case 0:return QVariant();
             case 1:return item->plotData->getName();
             case 2:return  item->plotData->getShowData();
+            case 3:return item->plotData->getFreq();
             default:QVariant();
            }
         case Qt::CheckStateRole: {

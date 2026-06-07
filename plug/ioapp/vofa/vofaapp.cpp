@@ -48,10 +48,16 @@ QList<IOAPP::SIGNALS>  VOFAAPP::decode(const IO::Frame& frame)
             {
                 auto sigs = buffer.split(',');
                 int cnt =0;
+                if (last_time>d)
+                {
+                   // qDebug().noquote()<< QLocale::c().toString(last_time, 'f', 15)<<"<"<<QLocale::c().toString(d, 'f', 15);
+                }
                 for (auto & sig:sigs)
                 {
                     auto s = getSignalData();
-                    s.time =d;
+
+                    s.time =(last_time<d)?d:last_time+0.5;
+                    last_time = s.time;
                     s.value = sig.toDouble();
                     s.name = sigNames.at(cnt).toStdString();
                     s.ID.id = cnt++;
@@ -63,6 +69,12 @@ QList<IOAPP::SIGNALS>  VOFAAPP::decode(const IO::Frame& frame)
             buffer.clear();
         }
         i++;
+    }
+    for (auto& var:list)
+    {
+        //TODO:first contions
+        var.dTime = var.time - sigTimes.value(var.id);
+        sigTimes[var.id] = var.time;
     }
     emit hasSignal(list);
 

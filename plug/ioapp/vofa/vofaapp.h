@@ -30,6 +30,8 @@ private:
     QByteArray buffer;
     QTime _last;
     QList<QString> sigNames;
+    double last_time=-1;
+    QMap<uint64_t,double> sigTimes;
 };
 
 

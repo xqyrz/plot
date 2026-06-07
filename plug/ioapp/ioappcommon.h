@@ -22,6 +22,7 @@ namespace IOAPP
             uint64_t id;
         };
         double time;
+        double dTime;
         std::string name;
         std::string unit;
 
@@ -30,6 +31,5 @@ namespace IOAPP
         // 构造函数初始化
         SIGNALS() : ID{0,0,0},time(0) {}
     };
-
 }
 #endif //PLOT_IOAPPCOMMON_H

@@ -298,11 +298,11 @@ void APort::do_read()
                     IO::RT::RX,
                 QByteArray(recv_buffer_.data(),bytes_recvd)
             });
-            qDebug().noquote()<< QString("%1:%2 %3")
+            /*qDebug().noquote()<< QString("%1:%2 %3")
                .arg(config.dev)
                .arg(" ")
               // .arg(QString( frames.last().data.toHex(' ')))
-                .arg(QString::fromLocal8Bit(frames.last().data,frames.last().data.size()));
+                .arg(QString::fromLocal8Bit(frames.last().data,frames.last().data.size()));*/
            this->_readReady(frames);
         } else {
             // 出错或接收长度为 0
