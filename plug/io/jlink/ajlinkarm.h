@@ -3,6 +3,8 @@
 #include "iointerface.h"
 #include <array>
 #include "jlinkarm.h"
+class JlinkARM;
+class QTimer;
 class AJLinkArm :public QObject, public IOInterface
 {
     Q_OBJECT
@@ -24,4 +26,6 @@ private:
     void do_read();
 private:
     std::array<char, 1024> recv_buffer_;
+    JlinkARM* _handle;
+    QTimer* timer;
 };

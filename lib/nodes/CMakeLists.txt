@@ -63,7 +63,6 @@ set(HPP_HEADER_FILES
         include/QtNodes/internal/DefaultVerticalNodeGeometry.hpp
         include/QtNodes/internal/NodeConnectionInteraction.hpp
         include/QtNodes/internal/UndoCommands.hpp
-        ../../app/main.cpp
 )
 
 

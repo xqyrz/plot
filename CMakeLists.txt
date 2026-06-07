@@ -99,7 +99,7 @@ include_directories(
         lib/QtPropertyBrowser
 )
 
-add_subdirectory(demo)
+
 add_subdirectory(lib/nodes)
 add_subdirectory(lib/qwindowkit)
 add_subdirectory(lib/elf)
@@ -112,6 +112,7 @@ add_subdirectory(lib/mdb)
 # 添加子目录
 add_subdirectory(plug)
 
+add_subdirectory(demo)
 add_subdirectory(app)
 
 #add_custom_target(install_all
