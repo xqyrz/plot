@@ -102,7 +102,7 @@ include_directories(
 
 add_subdirectory(lib/nodes)
 add_subdirectory(lib/qwindowkit)
-add_subdirectory(lib/elf)
+add_subdirectory(lib/elfio)
 add_subdirectory(lib/ads)
 add_subdirectory(lib/QtPropertyBrowser)
 add_subdirectory(lib/qwtplot3d)
