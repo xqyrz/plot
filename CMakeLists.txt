@@ -108,7 +108,7 @@ add_subdirectory(lib/QtPropertyBrowser)
 add_subdirectory(lib/qwtplot3d)
 add_subdirectory(lib/nng)
 add_subdirectory(lib/mdb)
-
+add_subdirectory(lib/hex)
 # 添加子目录
 add_subdirectory(plug)
 
