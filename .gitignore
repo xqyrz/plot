@@ -10,3 +10,4 @@ install/*
 cmake-build-debug-visual-studio
 .vscode
 common/bus/protoc/
+*.pdb

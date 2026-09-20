@@ -1,5 +1,5 @@
 #include <iostream>
-#include <binfile/binfile.h>
+#include <binfile.h>
 
 int main()
 {

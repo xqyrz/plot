@@ -1,8 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.16)
 
 project(binfile VERSION 0.1 LANGUAGES CXX)
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/srecord)
+
 # add_subdirectory(srecord)
 file(GLOB_RECURSE SRC_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
@@ -17,6 +16,23 @@ file(GLOB_RECURSE LIB_SRECORD_SRC "srecord/*.cc")
 file(GLOB_RECURSE LIB_SRECORD_HDR "srecord/*.h")
 add_library(${PROJECT_NAME} SHARED ${SRC_FILES} ${LIB_SRECORD_SRC} ${LIB_SRECORD_HDR})
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+
+# srecord 的 config.h 生成到构建目录；源码 srecord 目录不能加入 include 路径，
+# 因为其中的 string.h 会遮蔽 MSVC 标准库 <string.h>，导致标准库头文件解析崩溃
+# （C7568 assumed function template 'tuple' / C2065 等）。
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/srecord)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/srecord/config.h
+               ${CMAKE_CURRENT_BINARY_DIR}/srecord/config.h COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/srecord/patchlevel.h
+               ${CMAKE_CURRENT_BINARY_DIR}/srecord/patchlevel.h COPYONLY)
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR}
+        ${CMAKE_CURRENT_BINARY_DIR}/srecord
+)
+
+
+
 target_compile_definitions(${PROJECT_NAME} PRIVATE HEX_MYLIB_EXPORTS)
 target_link_libraries(${PROJECT_NAME}
         PRIVATE
@@ -25,12 +41,10 @@ target_link_libraries(${PROJECT_NAME}
 target_compile_definitions(${PROJECT_NAME}
         PRIVATE MDB_LIBRARY
 )
-target_include_directories(${PROJECT_NAME}
-        PUBLIC
+target_include_directories(${PROJECT_NAME} PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-        $<INSTALL_INTERFACE:include>
+        $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
 )
-
 ######################### Installation Stuff ###########################\
 include(GNUInstallDirs)
 set(INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})

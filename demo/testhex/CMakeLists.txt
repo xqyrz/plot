@@ -6,7 +6,7 @@ file(GLOB_RECURSE SRC_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/*.ui"
         "${CMAKE_CURRENT_SOURCE_DIR}/*.qrc"
 )
-find_package(binfile REQUIRED)
+
 add_executable(${PROJECT_NAME} ${SRC_FILES})
 target_link_libraries(${PROJECT_NAME}
         PRIVATE
@@ -18,5 +18,5 @@ target_compile_definitions(${PROJECT_NAME}
 )
 target_include_directories(${PROJECT_NAME}
         PUBLIC
-        {CMAKE_INSTALL_PREFIX}/include
+        ${CMAKE_INSTALL_PREFIX}/include
 )

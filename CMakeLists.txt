@@ -1,5 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.16)
 project(plot VERSION 0.1 LANGUAGES CXX)
+set(CMAKE_NO_SYSTEM_FROM_IMPORTED TRUE)
 add_compile_options(
         $<$<CXX_COMPILER_ID:MSVC>:/utf-8>
         $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-finput-charset=UTF-8>

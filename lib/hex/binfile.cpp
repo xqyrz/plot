@@ -26,7 +26,7 @@ bool BinFile::load(std::string filePath)
 
 bool BinFile::_load(std::string filename)
 {
-
+    std::cout<<"load hex file:"<<filename<<std::endl;
     static  char ansy_app[] = "BinFile";
 	int argc = 0;
     argc = 3;
