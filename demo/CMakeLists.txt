@@ -1,6 +1,7 @@
 ﻿add_subdirectory(sqlite)
 add_subdirectory(jlinkTest)
 add_subdirectory(testhex)
+add_subdirectory(elftest)
 #add_subdirectory(mesh2)
 #add_subdirectory(testplot3d)
 #add_subdirectory(testplot)

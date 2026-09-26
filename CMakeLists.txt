@@ -103,13 +103,13 @@ include_directories(
 
 add_subdirectory(lib/nodes)
 add_subdirectory(lib/qwindowkit)
-add_subdirectory(lib/elfio)
 add_subdirectory(lib/ads)
 add_subdirectory(lib/QtPropertyBrowser)
 add_subdirectory(lib/qwtplot3d)
 add_subdirectory(lib/nng)
 add_subdirectory(lib/mdb)
 add_subdirectory(lib/hex)
+add_subdirectory(lib/warf)
 # 添加子目录
 add_subdirectory(plug)
 
