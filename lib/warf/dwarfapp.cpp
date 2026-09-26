@@ -401,7 +401,64 @@ uint64_t decodeGlobalAddress(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Error* err)
     return addr;
 }
 
-// ---------- 主遍历 ----------
+// ===== 源文件路径解析（基于 CU 源文件表）=====
+// libdwarf 0.9.0：dwarf_srcfiles(cuDie,&files,&count) 取该 CU 源文件表；
+// DW_AT_decl_file 从 1 开始，files[] 为 0 基。Keil 的变量定义 DIE 常不发 decl_file，
+// 此时退用编译单元源文件作为"变量定义文件"。
+
+struct CuInfo
+{
+    Dwarf_Off  start;                // CU 根 DIE 偏移
+    Dwarf_Off  end;                  // 下一个 CU 头偏移（本 CU 的 DIE 范围上界）
+    std::vector<std::string> files;  // 该 CU 的源文件表
+    std::string cuName;              // DW_AT_name（.c 源文件名）
+    std::string compDir;             // DW_AT_comp_dir
+};
+
+// 定位某个 DIE 偏移所属的 CU
+const CuInfo* cuForOffset(const std::vector<CuInfo>& cus, Dwarf_Off off)
+{
+    for (const auto& cu : cus) {
+        if (off >= cu.start && off < cu.end) {
+            return &cu;
+        }
+    }
+    return nullptr;
+}
+
+// 用 DIE 的 DW_AT_decl_file 在该 CU 文件表里查源文件名
+std::string fileFromDecl(const CuInfo* cu, Dwarf_Debug dbg, Dwarf_Die die,
+                         Dwarf_Error* err)
+{
+    if (!cu || cu->files.empty()) {
+        return std::string();
+    }
+    Dwarf_Unsigned fidx = 0;
+    if (!getUIntAttr(dbg, die, DW_AT_decl_file, &fidx, err)) {
+        return std::string();
+    }
+    if (fidx < 1 || fidx > cu->files.size()) {
+        return std::string();
+    }
+    return cu->files[static_cast<size_t>(fidx) - 1];
+}
+
+// 变量定义所在文件：优先 DW_AT_decl_file；Keil 常不发，退用编译单元源文件
+std::string variableFile(const CuInfo* cu, Dwarf_Debug dbg, Dwarf_Die die,
+                         Dwarf_Error* err)
+{
+    std::string f = fileFromDecl(cu, dbg, die, err);
+    if (!f.empty()) {
+        return f;
+    }
+    if (cu && !cu->cuName.empty()) {
+        return cu->compDir.empty() ? cu->cuName
+                                   : cu->compDir + "/" + cu->cuName;
+    }
+    return std::string();
+}
+
+// ---------- 主遍历（两遍：先枚举 CU 建文件表，再收集变量）----------
 
 void collectGlobalVariables(Dwarf_Debug dbg, std::vector<GlobalVariableInfo>& out)
 {
@@ -409,26 +466,64 @@ void collectGlobalVariables(Dwarf_Debug dbg, std::vector<GlobalVariableInfo>& ou
     std::vector<GlobalVariableInfo> tmp;      // 原始结果
     std::map<std::string, size_t> nameIndex;  // 去重：同名保留有地址的
 
-    Dwarf_Unsigned cuHeaderLen = 0, typeOffset = 0, nextCu = 0;
-    Dwarf_Off abbrevOffset = 0;
-    Dwarf_Half version = 0, addressSize = 0, lengthSize = 0;
-    Dwarf_Half extensionSize = 0, headerCuType = 0;
+    // 第一遍：枚举全部 CU，记录偏移范围 + 源文件表 + 编译单元名
+    std::vector<CuInfo> cus;
+    {
+        Dwarf_Unsigned cuHeaderLen = 0, typeOffset = 0, nextCu = 0;
+        Dwarf_Off abbrevOffset = 0;
+        Dwarf_Half version = 0, addressSize = 0, lengthSize = 0;
+        Dwarf_Half extensionSize = 0, headerCuType = 0;
+        while (true) {
+            int rc = dwarf_next_cu_header_d(dbg, IS_INFO, &cuHeaderLen, &version,
+                                            &abbrevOffset, &addressSize, &lengthSize,
+                                            &extensionSize, nullptr, &typeOffset,
+                                            &nextCu, &headerCuType, &err);
+            if (rc == DW_DLV_ERROR || rc == DW_DLV_NO_ENTRY) {
+                break;
+            }
+            Dwarf_Die cuDie = nullptr;
+            rc = dwarf_siblingof_b(dbg, nullptr, IS_INFO, &cuDie, &err);
+            if (rc != DW_DLV_OK || !cuDie) {
+                continue;
+            }
 
-    while (true) {
-        int rc = dwarf_next_cu_header_d(dbg, IS_INFO, &cuHeaderLen, &version,
-                                        &abbrevOffset, &addressSize, &lengthSize,
-                                        &extensionSize, nullptr, &typeOffset,
-                                        &nextCu, &headerCuType, &err);
-        if (rc == DW_DLV_ERROR || rc == DW_DLV_NO_ENTRY) {
-            break;
+            CuInfo ci;
+            Dwarf_Off off = 0;
+            if (dwarf_dieoffset(cuDie, &off, &err) == DW_DLV_OK) {
+                ci.start = off;
+            }
+            ci.end = nextCu;
+            char* cn = nullptr;
+            if (dwarf_diename(cuDie, &cn, &err) == DW_DLV_OK && cn) {
+                ci.cuName = cn;
+                dwarf_dealloc(dbg, cn, DW_DLA_STRING);
+            }
+            ci.compDir = attrString(dbg, cuDie, DW_AT_comp_dir, &err);
+
+            char** files = nullptr;
+            Dwarf_Signed fileCount = 0;
+            if (dwarf_srcfiles(cuDie, &files, &fileCount, &err) == DW_DLV_OK
+                && files && fileCount > 0) {
+                for (Dwarf_Signed i = 0; i < fileCount; ++i) {
+                    if (files[i]) {
+                        ci.files.push_back(files[i]);
+                    }
+                }
+                dwarf_dealloc(dbg, files, DW_DLA_LIST);
+            }
+            cus.push_back(std::move(ci));
+            dwarf_dealloc(dbg, cuDie, DW_DLA_DIE);
         }
+    }
 
+    // 第二遍：按记录的各 CU 收集全局变量（所有 CU 文件表已就绪，
+    // 跨 CU 的类型引用也能用其所属 CU 的表解析）
+    for (const auto& cu : cus) {
         Dwarf_Die cuDie = nullptr;
-        rc = dwarf_siblingof_b(dbg, nullptr, IS_INFO, &cuDie, &err);
-        if (rc != DW_DLV_OK || !cuDie) {
+        if (dwarf_offdie_b(dbg, cu.start, IS_INFO, &cuDie, &err) != DW_DLV_OK
+            || !cuDie) {
             continue;
         }
-
         Dwarf_Die die = nullptr;
         int rc2 = dwarf_child(cuDie, &die, &err);
         while (rc2 == DW_DLV_OK && die) {
@@ -450,10 +545,17 @@ void collectGlobalVariables(Dwarf_Debug dbg, std::vector<GlobalVariableInfo>& ou
                         GlobalVariableInfo v;
                         v.name       = name;
                         v.type       = topTypeName(dbg, die, &err);
+                        v.filePath   = variableFile(&cu, dbg, die, &err);
                         {
                             Dwarf_Die td = getTypeDie(dbg, die, &err);
-                            v.typeDetail = td ? describeType(dbg, td, &err, 0) : "";
                             if (td) {
+                                v.typeDetail.text = describeType(dbg, td, &err, 0);
+                                Dwarf_Off toff = 0;
+                                if (dwarf_dieoffset(td, &toff, &err) == DW_DLV_OK) {
+                                    const CuInfo* tcu = cuForOffset(cus, toff);
+                                    v.typeDetail.filePath =
+                                        fileFromDecl(tcu, dbg, td, &err);
+                                }
                                 dwarf_dealloc(dbg, td, DW_DLA_DIE);
                             }
                         }

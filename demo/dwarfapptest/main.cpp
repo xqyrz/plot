@@ -28,8 +28,14 @@ int main(int argc, char** argv)
                       << "  type=" << v.type
                       << "  addr=0x" << std::hex << std::nouppercase
                       << v.address << std::dec << "\n";
-            if (!v.typeDetail.empty() && v.typeDetail != v.type) {
-                std::cout << "      decl  " << v.typeDetail << "\n";
+            if (!v.filePath.empty()) {
+                std::cout << "      varfile  " << v.filePath << "\n";
+            }
+            if (!v.typeDetail.text.empty() && v.typeDetail.text != v.type) {
+                std::cout << "      decl  " << v.typeDetail.text << "\n";
+                if (!v.typeDetail.filePath.empty()) {
+                    std::cout << "      typefile " << v.typeDetail.filePath << "\n";
+                }
             }
         }
     } catch (const std::exception& e) {
