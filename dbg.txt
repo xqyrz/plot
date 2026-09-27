@@ -1,0 +1,93 @@
+﻿dwarfapp_test.exe : [DBG] var=UARTPrescTable rawTag=1 effTag=1 teffNull=0
+所在位置 行:6 字符: 1
++ & $exe 'F:\foc\V3.0\MOTOR\MDK-ARM\MOTOR\MOTOR.axf' 2>'F:\plot\dbg.txt ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([DBG] var=UARTP...ag=1 teffNull=0:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[DBG] var=hadc2 rawTag=22 effTag=19 teffNull=0
+[DBG] MC teff tag=19 isArray=0 name=hadc2
+[DBG] child rc=0 hasChild=1
+[DBG] members collected=7
+[DBG] var=hspi3 rawTag=22 effTag=19 teffNull=0
+[DBG] MC teff tag=19 isArray=0 name=hspi3
+[DBG] child rc=0 hasChild=1
+[DBG] members collected=16
+[DBG] var=htim1 rawTag=22 effTag=19 teffNull=0
+[DBG] MC teff tag=19 isArray=0 name=htim1
+[DBG] child rc=0 hasChild=1
+[DBG] members collected=9
+[DBG] var=htim3 rawTag=22 effTag=19 teffNull=0
+[DBG] MC teff tag=19 isArray=0 name=htim3
+[DBG] child rc=0 hasChild=1
+[DBG] members collected=9
+[DBG] var=huart1 rawTag=22 effTag=19 teffNull=0
+[DBG] MC teff tag=19 isArray=0 name=huart1
+[DBG] child rc=0 hasChild=1
+[DBG] members collected=23
+[DBG] var=LedTaskTim rawTag=53 effTag=36 teffNull=0
+[DBG] var=LcdTaskTim rawTag=53 effTag=36 teffNull=0
+[DBG] var=UsartTaskTim rawTag=53 effTag=36 teffNull=0
+[DBG] var=__stdin rawTag=22 effTag=19 teffNull=0
+[DBG] MC teff tag=19 isArray=0 name=__stdin
+[DBG] child rc=-1 hasChild=0
+[DBG] members collected=0
+[DBG] var=__stdout rawTag=22 effTag=19 teffNull=0
+[DBG] MC teff tag=19 isArray=0 name=__stdout
+[DBG] child rc=-1 hasChild=0
+[DBG] members collected=0
+[DBG] var=__stderr rawTag=22 effTag=19 teffNull=0
+[DBG] MC teff tag=19 isArray=0 name=__stderr
+[DBG] child rc=-1 hasChild=0
+[DBG] members collected=0
+[DBG] var=__aeabi_stdin rawTag=15 effTag=15 teffNull=0
+[DBG] var=__aeabi_stdout rawTag=15 effTag=15 teffNull=0
+[DBG] var=__aeabi_stderr rawTag=15 effTag=15 teffNull=0
+[DBG] var=ITM_RxBuffer rawTag=53 effTag=36 teffNull=0
+[DBG] var=Sin_Cos_Table rawTag=1 effTag=1 teffNull=0
+[DBG] var=MC rawTag=22 effTag=19 teffNull=0
+[DBG] MC teff tag=19 isArray=0 name=MC
+[DBG] child rc=0 hasChild=1
+[DBG] members collected=16
+[DBG] var=UsartTaskId rawTag=53 effTag=36 teffNull=0
+[DBG] var=UsartTaskTim rawTag=53 effTag=36 teffNull=0
+[DBG] var=LcdTaskId rawTag=53 effTag=36 teffNull=0
+[DBG] var=LcdTaskTim rawTag=53 effTag=36 teffNull=0
+[DBG] var=ascii_1206 rawTag=1 effTag=1 teffNull=0
+[DBG] var=ascii_1608 rawTag=1 effTag=1 teffNull=0
+[DBG] var=ascii_2412 rawTag=1 effTag=1 teffNull=0
+[DBG] var=ascii_3216 rawTag=1 effTag=1 teffNull=0
+[DBG] var=tfont12 rawTag=1 effTag=1 teffNull=0
+[DBG] var=tfont16 rawTag=1 effTag=1 teffNull=0
+[DBG] var=tfont24 rawTag=1 effTag=1 teffNull=0
+[DBG] var=tfont32 rawTag=1 effTag=1 teffNull=0
+[DBG] var=gImage_hs_logo rawTag=1 effTag=1 teffNull=0
+[DBG] var=LedTaskId rawTag=53 effTag=36 teffNull=0
+[DBG] var=LedTaskTim rawTag=53 effTag=36 teffNull=0
+[DBG] var=SystemCoreClock rawTag=22 effTag=36 teffNull=0
+[DBG] var=AHBPrescTable rawTag=1 effTag=1 teffNull=0
+[DBG] var=APBPrescTable rawTag=1 effTag=1 teffNull=0
+[DBG] var=UARTPrescTable rawTag=1 effTag=1 teffNull=0
+[DBG] var=uwTickPrio rawTag=22 effTag=36 teffNull=0
+[DBG] var=uwTickFreq rawTag=22 effTag=36 teffNull=0
+[DBG] var=uwTick rawTag=53 effTag=36 teffNull=0
+[DBG] var=hadc2 rawTag=22 effTag=19 teffNull=0
+[DBG] MC teff tag=19 isArray=0 name=hadc2
+[DBG] child rc=0 hasChild=1
+[DBG] members collected=7
+[DBG] var=hspi3 rawTag=22 effTag=19 teffNull=0
+[DBG] MC teff tag=19 isArray=0 name=hspi3
+[DBG] child rc=0 hasChild=1
+[DBG] members collected=16
+[DBG] var=htim1 rawTag=22 effTag=19 teffNull=0
+[DBG] MC teff tag=19 isArray=0 name=htim1
+[DBG] child rc=0 hasChild=1
+[DBG] members collected=9
+[DBG] var=htim3 rawTag=22 effTag=19 teffNull=0
+[DBG] MC teff tag=19 isArray=0 name=htim3
+[DBG] child rc=0 hasChild=1
+[DBG] members collected=9
+[DBG] var=huart1 rawTag=22 effTag=19 teffNull=0
+[DBG] MC teff tag=19 isArray=0 name=huart1
+[DBG] child rc=0 hasChild=1
+[DBG] members collected=23

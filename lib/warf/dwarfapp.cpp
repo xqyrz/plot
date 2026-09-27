@@ -94,6 +94,30 @@ Dwarf_Die getTypeDie(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Error* err)
     return td;
 }
 
+// 穿透 typedef / const / volatile 取到底层类型 DIE；返回的 DIE 由调用者释放。
+Dwarf_Die resolveType(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Error* err)
+{
+    Dwarf_Die cur = die;
+    int guard = 0;
+    while (cur && guard++ < 16) {
+        Dwarf_Half tag = 0;
+        if (dwarf_tag(cur, &tag, err) != DW_DLV_OK) {
+            break;
+        }
+        if (tag == DW_TAG_typedef || tag == DW_TAG_const_type
+            || tag == DW_TAG_volatile_type || tag == DW_TAG_restrict_type) {
+            Dwarf_Die nxt = getTypeDie(dbg, cur, err);
+            if (cur != die && cur) {
+                dwarf_dealloc(dbg, cur, DW_DLA_DIE);
+            }
+            cur = nxt;
+        } else {
+            break;
+        }
+    }
+    return cur;
+}
+
 // ---------- 类型展开 ----------
 
 std::string describeType(Dwarf_Debug dbg, Dwarf_Die die,
@@ -401,19 +425,209 @@ uint64_t decodeGlobalAddress(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Error* err)
     return addr;
 }
 
+// ---------- 类型大小 / 数组 / 结构体成员（用于界面展示）----------
+
+// 递归计算某个类型 DIE 的字节大小。
+// 优先取 DW_AT_byte_size；数组按 元素大小×各维度上界累乘；指针按 4 字节处理。
+uint64_t typeByteSize(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Error* err, int depth)
+{
+    if (!die || depth > 12) {
+        return 0;
+    }
+    Dwarf_Unsigned bs = 0;
+    if (dwarf_bytesize(die, &bs, err) == DW_DLV_OK && bs > 0) {
+        return bs;
+    }
+    Dwarf_Half tag = 0;
+    dwarf_tag(die, &tag, err);
+    switch (tag) {
+        case DW_TAG_pointer_type:       // 指针按地址大小，ARM 32 位取 4
+            return 4;
+        case DW_TAG_typedef:
+        case DW_TAG_const_type:
+        case DW_TAG_volatile_type: {
+            Dwarf_Die t = getTypeDie(dbg, die, err);
+            uint64_t s = 0;
+            if (t) {
+                s = typeByteSize(dbg, t, err, depth + 1);
+                dwarf_dealloc(dbg, t, DW_DLA_DIE);
+            }
+            return s;
+        }
+        case DW_TAG_array_type: {
+            Dwarf_Die elem = getTypeDie(dbg, die, err);
+            uint64_t elemSize = 0;
+            if (elem) {
+                elemSize = typeByteSize(dbg, elem, err, depth + 1);
+                dwarf_dealloc(dbg, elem, DW_DLA_DIE);
+            }
+            Dwarf_Die c = nullptr;
+            uint64_t count = 1;
+            if (dwarf_child(die, &c, err) == DW_DLV_OK && c) {
+                Dwarf_Die cur = c;
+                while (cur) {
+                    Dwarf_Half t2 = 0;
+                    dwarf_tag(cur, &t2, err);
+                    if (t2 == DW_TAG_subrange_type) {
+                        Dwarf_Unsigned n = 0;
+                        if (getUIntAttr(dbg, cur, DW_AT_count, &n, err)) {
+                            count *= n;
+                        } else {
+                            Dwarf_Unsigned ub = 0;
+                            if (getUIntAttr(dbg, cur, DW_AT_upper_bound, &ub, err)) {
+                                count *= (ub + 1);
+                            }
+                        }
+                    }
+                    Dwarf_Die next = nullptr;
+                    int r = dwarf_siblingof_b(dbg, cur, IS_INFO, &next, err);
+                    dwarf_dealloc(dbg, cur, DW_DLA_DIE);
+                    cur = next;
+                    if (r != DW_DLV_OK) {
+                        break;
+                    }
+                }
+                if (cur) {
+                    dwarf_dealloc(dbg, cur, DW_DLA_DIE);
+                }
+            }
+            return elemSize * count;
+        }
+        default:
+            return 0;
+    }
+}
+
+// 数组总元素个数（多维数组按各维度上界累乘）
+uint64_t arrayElementCount(Dwarf_Debug dbg, Dwarf_Die arrayDie, Dwarf_Error* err)
+{
+    uint64_t count = 1;
+    Dwarf_Die c = nullptr;
+    if (dwarf_child(arrayDie, &c, err) != DW_DLV_OK || !c) {
+        return count;
+    }
+    Dwarf_Die cur = c;
+    while (cur) {
+        Dwarf_Half tag = 0;
+        dwarf_tag(cur, &tag, err);
+        if (tag == DW_TAG_subrange_type) {
+            Dwarf_Unsigned n = 0;
+            if (getUIntAttr(dbg, cur, DW_AT_count, &n, err)) {
+                count *= n;
+            } else {
+                Dwarf_Unsigned ub = 0;
+                if (getUIntAttr(dbg, cur, DW_AT_upper_bound, &ub, err)) {
+                    count *= (ub + 1);
+                }
+            }
+        }
+        Dwarf_Die next = nullptr;
+        int r = dwarf_siblingof_b(dbg, cur, IS_INFO, &next, err);
+        dwarf_dealloc(dbg, cur, DW_DLA_DIE);
+        cur = next;
+        if (r != DW_DLV_OK) {
+            break;
+        }
+    }
+    if (cur) {
+        dwarf_dealloc(dbg, cur, DW_DLA_DIE);
+    }
+    return count;
+}
+
+// 取成员字节偏移（DW_AT_data_member_location）
+uint64_t memberByteOffset(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Error* err)
+{
+    Dwarf_Attribute a = nullptr;
+    if (dwarf_attr(die, DW_AT_data_member_location, &a, err) != DW_DLV_OK || !a) {
+        return 0;
+    }
+    Dwarf_Half form = 0;
+    dwarf_whatform(a, &form, err);
+    uint64_t off = 0;
+    if (form == DW_FORM_data1 || form == DW_FORM_data2
+        || form == DW_FORM_data4 || form == DW_FORM_data8
+        || form == DW_FORM_udata || form == DW_FORM_sdata) {
+        Dwarf_Unsigned v = 0;
+        if (dwarf_formudata(a, &v, err) == DW_DLV_OK) {
+            off = v;
+        }
+    } else if (form == DW_FORM_block || form == DW_FORM_block1
+               || form == DW_FORM_block2 || form == DW_FORM_block4
+               || form == DW_FORM_exprloc) {
+        Dwarf_Block* blk = nullptr;
+        if (dwarf_formblock(a, &blk, err) == DW_DLV_OK && blk
+            && blk->bl_len >= 2 && blk->bl_data) {
+            const unsigned char* p =
+                reinterpret_cast<const unsigned char*>(blk->bl_data);
+            if (p[0] == DW_OP_plus_uconst) {   // 0x23
+                off = p[1];
+            }
+        }
+    }
+    dwarf_dealloc_attribute(a);
+    return off;
+}
+
+// 收集结构体/联合体的直接成员（不递归嵌套成员）
+void collectStructMembers(Dwarf_Debug dbg, Dwarf_Die structDie, Dwarf_Error* err,
+                          std::vector<VarMemberInfo>& out, int depth = 0)
+{
+    if (depth > 16) {
+        return;
+    }
+    Dwarf_Die c = nullptr;
+    if (dwarf_child(structDie, &c, err) != DW_DLV_OK || !c) {
+        return;
+    }
+    Dwarf_Die cur = c;
+    while (cur) {
+        Dwarf_Half tag = 0;
+        dwarf_tag(cur, &tag, err);
+        if (tag == DW_TAG_member) {
+            VarMemberInfo mi;
+            mi.name   = attrString(dbg, cur, DW_AT_name, err);
+            mi.type   = topTypeName(dbg, cur, err);
+            mi.offset = memberByteOffset(dbg, cur, err);
+            Dwarf_Die td = getTypeDie(dbg, cur, err);
+            if (td) {
+                mi.size = typeByteSize(dbg, td, err, 0);
+                // 穿透 typedef / const / volatile
+                Dwarf_Die teff = resolveType(dbg, td, err);
+                Dwarf_Half ttag = 0;
+                if (teff && dwarf_tag(teff, &ttag, err) == DW_DLV_OK
+                    && (ttag == DW_TAG_structure_type
+                        || ttag == DW_TAG_union_type)) {
+                    mi.isStructOrUnion = true;
+                    // 递归展开嵌套结构体/联合体（如 MC→Foc→Uq/Ud）
+                    collectStructMembers(dbg, teff, err, mi.children, depth + 1);
+                }
+                if (teff && teff != td) {
+                    dwarf_dealloc(dbg, teff, DW_DLA_DIE);
+                }
+                dwarf_dealloc(dbg, td, DW_DLA_DIE);
+            }
+            if (!mi.name.empty()) {
+                out.push_back(std::move(mi));
+            }
+        }
+        Dwarf_Die next = nullptr;
+        int r = dwarf_siblingof_b(dbg, cur, IS_INFO, &next, err);
+        dwarf_dealloc(dbg, cur, DW_DLA_DIE);
+        cur = next;
+        if (r != DW_DLV_OK) {
+            break;
+        }
+    }
+    if (cur) {
+        dwarf_dealloc(dbg, cur, DW_DLA_DIE);
+    }
+}
+
 // ===== 源文件路径解析（基于 CU 源文件表）=====
 // libdwarf 0.9.0：dwarf_srcfiles(cuDie,&files,&count) 取该 CU 源文件表；
 // DW_AT_decl_file 从 1 开始，files[] 为 0 基。Keil 的变量定义 DIE 常不发 decl_file，
 // 此时退用编译单元源文件作为"变量定义文件"。
-
-struct CuInfo
-{
-    Dwarf_Off  start;                // CU 根 DIE 偏移
-    Dwarf_Off  end;                  // 下一个 CU 头偏移（本 CU 的 DIE 范围上界）
-    std::vector<std::string> files;  // 该 CU 的源文件表
-    std::string cuName;              // DW_AT_name（.c 源文件名）
-    std::string compDir;             // DW_AT_comp_dir
-};
 
 // 定位某个 DIE 偏移所属的 CU
 const CuInfo* cuForOffset(const std::vector<CuInfo>& cus, Dwarf_Off off)
@@ -460,14 +674,14 @@ std::string variableFile(const CuInfo* cu, Dwarf_Debug dbg, Dwarf_Die die,
 
 // ---------- 主遍历（两遍：先枚举 CU 建文件表，再收集变量）----------
 
-void collectGlobalVariables(Dwarf_Debug dbg, std::vector<GlobalVariableInfo>& out)
+void collectGlobalVariables(    std::vector<CuInfo>& cus,Dwarf_Debug dbg, std::vector<GlobalVariableInfo>& out)
 {
     Dwarf_Error err = nullptr;
     std::vector<GlobalVariableInfo> tmp;      // 原始结果
     std::map<std::string, size_t> nameIndex;  // 去重：同名保留有地址的
 
     // 第一遍：枚举全部 CU，记录偏移范围 + 源文件表 + 编译单元名
-    std::vector<CuInfo> cus;
+
     {
         Dwarf_Unsigned cuHeaderLen = 0, typeOffset = 0, nextCu = 0;
         Dwarf_Off abbrevOffset = 0;
@@ -556,6 +770,23 @@ void collectGlobalVariables(Dwarf_Debug dbg, std::vector<GlobalVariableInfo>& ou
                                     v.typeDetail.filePath =
                                         fileFromDecl(tcu, dbg, td, &err);
                                 }
+                                // 大小 / 数组 / 结构体成员
+                                v.size = typeByteSize(dbg, td, &err, 0);
+                                // 穿透 typedef / const / volatile 得到底层类型
+                                Dwarf_Die teff = resolveType(dbg, td, &err);
+
+                                Dwarf_Half ttag = 0;
+                                if (teff && dwarf_tag(teff, &ttag, &err) == DW_DLV_OK) {
+                                    if (ttag == DW_TAG_array_type) {
+                                        v.isArray    = true;
+                                        v.arrayCount = arrayElementCount(dbg, teff, &err);
+                                    } else if (ttag == DW_TAG_structure_type
+                                               || ttag == DW_TAG_union_type) {
+                                    collectStructMembers(dbg, teff, &err, v.members);                                    }
+                                }
+                                if (teff && teff != td) {
+                                    dwarf_dealloc(dbg, teff, DW_DLA_DIE);
+                                }
                                 dwarf_dealloc(dbg, td, DW_DLA_DIE);
                             }
                         }
@@ -619,7 +850,8 @@ void DwarfApp::loadFile()
     }
 
     try {
-        collectGlobalVariables(dbg, m_vars);
+        m_cus.clear();
+        collectGlobalVariables(m_cus,dbg, m_vars);
     } catch (...) {
         dwarf_finish(dbg);
         throw;

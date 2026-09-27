@@ -29,6 +29,8 @@ add_subdirectory(ioapp/vofa)
 add_subdirectory(page/iopage)
 add_subdirectory(page/iowpage)
 add_subdirectory(page/plot)
+add_subdirectory(page/axfpage)
+
 
 #add_subdirectory(testplug)
 add_subdirectory(testmavlink)
