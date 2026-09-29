@@ -59,16 +59,14 @@ static void buildMemberNodes(AxfNode* parentNode,
         AxfNode* mNode = new AxfNode();
         mNode->type     = AxfNodeType::Member;
         mNode->name     = QString::fromStdString(m.name);
-        mNode->typeName = m.isStructOrUnion
-                          ? "struct " + QString::fromStdString(m.type)
-                          : QString::fromStdString(m.type);
+        mNode->typeName = QString::fromStdString(m.type);
         mNode->size     = m.size;
         mNode->address  = baseAddr + m.offset;
         mNode->parent   = parentNode;
         parentNode->children.append(mNode);
 
-        // 该成员本身又是结构体/联合体：继续递归展开其子成员
-        if (m.isStructOrUnion && !m.children.empty()) {
+        // 该成员本身是结构体/联合体 或 数组：继续递归展开其子成员
+        if ((m.isStructOrUnion || m.isArray) && !m.children.empty()) {
             buildMemberNodes(mNode, m.children, baseAddr + m.offset);
         }
     }
@@ -114,24 +112,32 @@ void AxfModel::rebuild()
         AxfNode* varNode = new AxfNode();
         varNode->type      = AxfNodeType::Variable;
         varNode->name      = QString::fromStdString(v.name);
-        varNode->typeName  = QString::fromStdString(v.type);
+        varNode->typeName  = (v.isStatic ? "static " : QString())+ QString::fromStdString(v.type);
         varNode->size      = v.size;
         varNode->address   = v.address;
-        varNode->checkable = true;
+        varNode->checkable = false;
         varNode->parent    = g;
         g->children.append(varNode);
 
         // 结构体/联合体成员（递归展开到基本类型，如 MC→Foc→Uq/Ud）
         buildMemberNodes(varNode, v.members, v.address);
 
-        // 数组元素
+        // 数组元素：子节点显示元素类型（去掉末尾的 [n] 维度）
         if (v.isArray && v.arrayCount > 0) {
             uint64_t elemSize = (v.arrayCount > 0) ? (v.size / v.arrayCount) : 0;
+            QString arrType = QString::fromStdString(v.type);
+            // 去掉末尾所有 [N] 维度，得到元素类型
+            QString elemType = arrType;
+            while (elemType.endsWith(']')) {
+                int bracket = elemType.lastIndexOf('[');
+                if (bracket < 0) break;
+                elemType = elemType.left(bracket).trimmed();
+            }
             for (uint64_t i = 0; i < v.arrayCount; ++i) {
                 AxfNode* eNode = new AxfNode();
                 eNode->type     = AxfNodeType::Member;
                 eNode->name     = QString("%1[%2]").arg(QString::fromStdString(v.name)).arg(i);
-                eNode->typeName = QString::fromStdString(v.type);
+                eNode->typeName = elemType;
                 eNode->size     = elemSize;
                 eNode->address  = v.address + i * elemSize;
                 eNode->parent   = varNode;
@@ -206,20 +212,29 @@ QVariant AxfModel::data(const QModelIndex& index, int role) const
 
     if (role == Qt::DisplayRole) {
         switch (col) {
-            case 0: return node->name;
+            case 0:
+              if (node->type == AxfNodeType::FileGroup)
+              {
+                  return node->name.split('/').last().split('\\').last();
+              }
+            else
+            {
+                return node->name;
+            }
             case 1: return node->typeName;
             case 2: return node->size ? QString::number(node->size) : QString();
             case 3: return node->address ? QString("0x%1").arg(node->address, 0, 16) : QString();
             case 4: return QString();
         }
     } else if (role == Qt::CheckStateRole) {
-        if (col == 4 && node->checkable) {
-            return node->checked ? Qt::Checked : Qt::Unchecked;
-        }
+    // if (col == 4 && node->checkable) {
+        if (col == 4 && (node->children.size() ==0) && (node->type != AxfNodeType::FileGroup) ) {
+         return node->checked ? Qt::Checked : Qt::Unchecked;
+     }
     } else if (role == Qt::TextAlignmentRole) {
-        if (col == 2 || col == 3) {
-            return int(Qt::AlignRight | Qt::AlignVCenter);
-        }
+        //if (col == 2 || col == 3) {
+            return int(Qt::AlignLeft | Qt::AlignVCenter);
+      // }
     } else if (role == Qt::FontRole) {
         if (node->type == AxfNodeType::FileGroup) {
             QFont f;

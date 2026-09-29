@@ -74,7 +74,7 @@ bool getUIntAttr(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attrnum,
 }
 
 // 取 die 的 DW_AT_type 指向的类型 DIE（跨 CU 也支持）。返回的 DIE 由调用方 dealloc。
-Dwarf_Die getTypeDie(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Error* err)
+static Dwarf_Die getTypeDie(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Error* err)
 {
     Dwarf_Attribute a = nullptr;
     if (dwarf_attr(die, DW_AT_type, &a, err) != DW_DLV_OK || !a) {
@@ -381,6 +381,147 @@ std::string describeType(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Error* err, int d
     }
 }
 
+// 生成 C 原生类型签名（参照 J-Scope Select Symbols 对话框）：
+//   typedef u8 -> unsigned char
+//   volatile u16 -> volatile unsigned short
+//   const u16[256] -> const unsigned short[256]
+//   typedef ENCODER_STRUCT -> struct ENCODER_STRUCT
+//   float* -> float*
+// 与 describeType 的区别：不展开结构体成员，typedef 不保留别名。
+std::string typeSignature(Dwarf_Debug dbg, Dwarf_Die die,
+                          Dwarf_Error* err, int depth)
+{
+    if (!die || depth > 20) {
+        return std::string();
+    }
+    Dwarf_Half tag = 0;
+    dwarf_tag(die, &tag, err);
+
+    switch (tag) {
+        case DW_TAG_const_type: {
+            Dwarf_Die t = getTypeDie(dbg, die, err);
+            std::string b;
+            if (t) {
+                b = typeSignature(dbg, t, err, depth + 1);
+                dwarf_dealloc(dbg, t, DW_DLA_DIE);
+            }
+            return "const " + b;
+        }
+        case DW_TAG_volatile_type: {
+            Dwarf_Die t = getTypeDie(dbg, die, err);
+            std::string b;
+            if (t) {
+                b = typeSignature(dbg, t, err, depth + 1);
+                dwarf_dealloc(dbg, t, DW_DLA_DIE);
+            }
+            return "volatile " + b;
+        }
+        case DW_TAG_restrict_type: {
+            Dwarf_Die t = getTypeDie(dbg, die, err);
+            std::string b;
+            if (t) {
+                b = typeSignature(dbg, t, err, depth + 1);
+                dwarf_dealloc(dbg, t, DW_DLA_DIE);
+            }
+            return b;   // restrict 在 C 中极少用于全局变量，忽略
+        }
+        case DW_TAG_typedef: {
+            // 穿透 typedef，不保留用户别名（u8 → unsigned char）。
+            // 但匿名结构体/联合体（typedef struct {…} MOTOR_STRUCT;）
+            // 在 DWARF 中 struct DIE 无 DW_AT_name，此时用 typedef 名补前缀：
+            // "struct MOTOR_STRUCT"。
+            std::string tname = attrString(dbg, die, DW_AT_name, err);
+            Dwarf_Die t = getTypeDie(dbg, die, err);
+            if (t) {
+                Dwarf_Half ttag = 0;
+                dwarf_tag(t, &ttag, err);
+                std::string b = typeSignature(dbg, t, err, depth + 1);
+                dwarf_dealloc(dbg, t, DW_DLA_DIE);
+                if (!b.empty()) {
+                    if ((b == "struct" || b == "union" || b == "enum")
+                        && !tname.empty()) {
+                        return b + " " + tname;
+                    }
+                    return b;
+                }
+                if ((ttag == DW_TAG_structure_type || ttag == DW_TAG_union_type
+                     || ttag == DW_TAG_enumeration_type) && !tname.empty()) {
+                    const char* kw = (ttag == DW_TAG_structure_type) ? "struct "
+                                   : (ttag == DW_TAG_union_type) ? "union " : "enum ";
+                    return std::string(kw) + tname;
+                }
+            }
+            return tname;
+        }
+        case DW_TAG_base_type: {
+            return attrString(dbg, die, DW_AT_name, err);
+        }
+        case DW_TAG_structure_type:
+        case DW_TAG_union_type: {
+            std::string name = attrString(dbg, die, DW_AT_name, err);
+
+            if (name.empty())
+            {
+                return {};
+            }
+           else return (tag == DW_TAG_structure_type ? "struct" : "union ") + name;
+        }
+        case DW_TAG_enumeration_type: {
+            std::string name = attrString(dbg, die, DW_AT_name, err);
+            if (name.empty()) {
+                return "enum";
+            }
+            return "enum " + name;
+        }
+        case DW_TAG_pointer_type: {
+            Dwarf_Die t = getTypeDie(dbg, die, err);
+            std::string b;
+            if (t) {
+                b = typeSignature(dbg, t, err, depth + 1);
+                dwarf_dealloc(dbg, t, DW_DLA_DIE);
+            }
+            return b + "*";
+        }
+        case DW_TAG_reference_type: {
+            Dwarf_Die t = getTypeDie(dbg, die, err);
+            std::string b;
+            if (t) {
+                b = typeSignature(dbg, t, err, depth + 1);
+                dwarf_dealloc(dbg, t, DW_DLA_DIE);
+            }
+            return b + "&";
+        }
+        case DW_TAG_array_type: {
+            Dwarf_Die t = getTypeDie(dbg, die, err);
+            std::string b;
+            if (t) {
+                b = typeSignature(dbg, t, err, depth + 1);
+                dwarf_dealloc(dbg, t, DW_DLA_DIE);
+            }
+            return b + arrayDims(dbg, die, err, depth);
+        }
+        default: {
+            std::string name = attrString(dbg, die, DW_AT_name, err);
+            if (!name.empty()) {
+                return name;
+            }
+            Dwarf_Die t = getTypeDie(dbg, die, err);
+            if (t) {
+                std::string b = typeSignature(dbg, t, err, depth + 1);
+                dwarf_dealloc(dbg, t, DW_DLA_DIE);
+                return b;
+            }
+            Dwarf_Die _t = getTypeDie(dbg, die, err);
+            if (!_t) {
+                return std::string();
+            }
+            std::string _name = attrString(dbg, _t, DW_AT_name, err);
+            dwarf_dealloc(dbg, _t, DW_DLA_DIE);
+            return name;
+        }
+    }
+}
+
 // 顶层类型名（只取类型 DIE 的名字，不展开）：MOTORCONTROL_STRUCT、uint32_t、char* ...
 std::string topTypeName(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Error* err)
 {
@@ -587,20 +728,39 @@ void collectStructMembers(Dwarf_Debug dbg, Dwarf_Die structDie, Dwarf_Error* err
         if (tag == DW_TAG_member) {
             VarMemberInfo mi;
             mi.name   = attrString(dbg, cur, DW_AT_name, err);
-            mi.type   = topTypeName(dbg, cur, err);
             mi.offset = memberByteOffset(dbg, cur, err);
             Dwarf_Die td = getTypeDie(dbg, cur, err);
             if (td) {
+                mi.type = typeSignature(dbg, td, err, 0);
                 mi.size = typeByteSize(dbg, td, err, 0);
                 // 穿透 typedef / const / volatile
                 Dwarf_Die teff = resolveType(dbg, td, err);
                 Dwarf_Half ttag = 0;
-                if (teff && dwarf_tag(teff, &ttag, err) == DW_DLV_OK
-                    && (ttag == DW_TAG_structure_type
-                        || ttag == DW_TAG_union_type)) {
-                    mi.isStructOrUnion = true;
-                    // 递归展开嵌套结构体/联合体（如 MC→Foc→Uq/Ud）
-                    collectStructMembers(dbg, teff, err, mi.children, depth + 1);
+                if (teff && dwarf_tag(teff, &ttag, err) == DW_DLV_OK) {
+                    if (ttag == DW_TAG_structure_type
+                        || ttag == DW_TAG_union_type) {
+                        mi.isStructOrUnion = true;
+                        // 递归展开嵌套结构体/联合体（如 MC→Foc→Uq/Ud）
+                        collectStructMembers(dbg, teff, err, mi.children, depth + 1);
+                    } else if (ttag == DW_TAG_array_type) {
+                        // 结构体中的数组成员：展开为 [0] [1] ... 子节点
+                        mi.isArray = true;
+                        mi.arrayCount = arrayElementCount(dbg, teff, err);
+                        Dwarf_Die elemType = getTypeDie(dbg, teff, err);
+                        if (elemType) {
+                            uint64_t elemSize = typeByteSize(dbg, elemType, err, 0);
+                            std::string elemSig = typeSignature(dbg, elemType, err, 0);
+                            for (uint64_t i = 0; i < mi.arrayCount; ++i) {
+                                VarMemberInfo child;
+                                child.name   = mi.name + "[" + std::to_string(i) + "]";
+                                child.type   = elemSig;
+                                child.size   = elemSize;
+                                child.offset = i * elemSize;
+                                mi.children.push_back(std::move(child));
+                            }
+                            dwarf_dealloc(dbg, elemType, DW_DLA_DIE);
+                        }
+                    }
                 }
                 if (teff && teff != td) {
                     dwarf_dealloc(dbg, teff, DW_DLA_DIE);
@@ -758,11 +918,12 @@ void collectGlobalVariables(    std::vector<CuInfo>& cus,Dwarf_Debug dbg, std::v
                     if (external || addr != 0) {
                         GlobalVariableInfo v;
                         v.name       = name;
-                        v.type       = topTypeName(dbg, die, &err);
+                        v.isStatic   = !external;   // 无 DW_AT_external 即文件内 static
                         v.filePath   = variableFile(&cu, dbg, die, &err);
                         {
                             Dwarf_Die td = getTypeDie(dbg, die, &err);
                             if (td) {
+                                v.type = typeSignature(dbg, td, &err, 0);
                                 v.typeDetail.text = describeType(dbg, td, &err, 0);
                                 Dwarf_Off toff = 0;
                                 if (dwarf_dieoffset(td, &toff, &err) == DW_DLV_OK) {

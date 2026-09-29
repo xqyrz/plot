@@ -25,7 +25,7 @@ struct AxfNode
     QString      typeName;  // Type 列
     qulonglong   size = 0;      // Size 列
     qulonglong   address = 0;   // Address 列
-    bool         checkable = false;
+    bool         checkable = false; //delete
     bool         checked   = false;
     AxfNode*     parent = nullptr;
     QVector<AxfNode*> children;

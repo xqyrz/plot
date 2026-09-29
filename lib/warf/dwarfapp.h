@@ -45,6 +45,8 @@ struct VarMemberInfo
     uint64_t    offset = 0;  // 成员字节偏移（相对于所属结构体基址）
     uint64_t    size   = 0;  // 成员字节大小
     bool        isStructOrUnion = false; // 该成员本身是否为结构体/联合体（可继续展开）
+    bool        isArray = false;         // 该成员本身是否为数组（可展开为元素）
+    uint64_t    arrayCount = 0;         // 数组元素个数
     std::vector<VarMemberInfo> children; // 结构体成员的子成员（递归）
 };
 
@@ -61,6 +63,7 @@ struct GlobalVariableInfo
 
     bool        isArray = false;    // 顶层类型是否为数组
     uint64_t    arrayCount = 0;     // 数组元素个数（多维数组取总元素数）
+    bool        isStatic = false;   // 是否为文件内 static（内部链接）
     std::vector<VarMemberInfo> members; // 结构体/联合体成员（非结构体时为空）
 };
 
