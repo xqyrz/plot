@@ -941,6 +941,22 @@ void collectGlobalVariables(    std::vector<CuInfo>& cus,Dwarf_Debug dbg, std::v
                                     if (ttag == DW_TAG_array_type) {
                                         v.isArray    = true;
                                         v.arrayCount = arrayElementCount(dbg, teff, &err);
+                                        // 数组元素本身是结构体/联合体时，收集元素成员，
+                                        // 使每个数组元素节点可继续展开（如 tfont32[0]→成员）
+                                        Dwarf_Die elemDie = getTypeDie(dbg, teff, &err);
+                                        if (elemDie) {
+                                            Dwarf_Die elemEff = resolveType(dbg, elemDie, &err);
+                                            Dwarf_Half etag = 0;
+                                            if (elemEff && dwarf_tag(elemEff, &etag, &err) == DW_DLV_OK
+                                                && (etag == DW_TAG_structure_type
+                                                    || etag == DW_TAG_union_type)) {
+                                                collectStructMembers(dbg, elemEff, &err, v.members);
+                                            }
+                                            if (elemEff && elemEff != elemDie) {
+                                                dwarf_dealloc(dbg, elemEff, DW_DLA_DIE);
+                                            }
+                                            dwarf_dealloc(dbg, elemDie, DW_DLA_DIE);
+                                        }
                                     } else if (ttag == DW_TAG_structure_type
                                                || ttag == DW_TAG_union_type) {
                                     collectStructMembers(dbg, teff, &err, v.members);                                    }

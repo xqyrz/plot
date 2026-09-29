@@ -142,6 +142,10 @@ void AxfModel::rebuild()
                 eNode->address  = v.address + i * elemSize;
                 eNode->parent   = varNode;
                 varNode->children.append(eNode);
+                // 数组元素是结构体时，递归展开其成员（如 tfont32[0]→FNT成员）
+                if (!v.members.empty()) {
+                    buildMemberNodes(eNode, v.members, v.address + i * elemSize);
+                }
             }
         }
     }
