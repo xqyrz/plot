@@ -2,10 +2,13 @@
 project(axfpage VERSION 0.1 LANGUAGES CXX)
 
 add_library(${PROJECT_NAME} SHARED
-        axfpage.h
-        axfpage.cpp
+        axftree.h
+        axftree.cpp
         axfmodel.h
         axfmodel.cpp
+        axfpage.h
+        axfpage.cpp
+        axfpage.ui
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -30,11 +33,14 @@ install(TARGETS ${PROJECT_NAME}
 
 
 add_executable(${PROJECT_NAME}test
-        axfpage.h
-        axfpage.cpp
+        axftree.h
+        axftree.cpp
         axfmodel.h
         axfmodel.cpp
         main.cpp
+        axfpage.h
+        axfpage.cpp
+        axfpage.ui
 )
 target_link_libraries(${PROJECT_NAME}test
         Qt${QT_VERSION_MAJOR}::Core

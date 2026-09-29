@@ -151,6 +151,87 @@ void AxfModel::rebuild()
     }
 
     Q_UNUSED(order);
+    applyFilter();
+    endResetModel();
+}
+
+// ===== 过滤 =====
+
+bool AxfModel::nodeMatches(AxfNode* node) const
+{
+    if (m_filterTexts.isEmpty()) {
+        return true;
+    }
+
+    QString str;
+    // 匹配 Name 或 Type（不区分大小写）
+    bool flag = true;
+    for (auto & var:m_filterTexts)
+    {
+        if (var.isEmpty())continue;
+        flag = false;
+        if (node->name.contains(var, Qt::CaseInsensitive)
+        || node->typeName.contains(var, Qt::CaseInsensitive))
+        {
+            return true;
+        }
+        for (auto& child:node->children)
+        {
+            if (child->name.contains(var, Qt::CaseInsensitive)
+            || child->typeName.contains(var, Qt::CaseInsensitive))
+            {
+                return true;
+            }
+        }
+        auto parent = node->parent;
+        while (parent)
+        {
+           if (parent->name.contains(var, Qt::CaseInsensitive)
+           || parent->typeName.contains(var, Qt::CaseInsensitive))
+           {
+               return true;
+           }
+            parent = parent->parent;
+        }
+    }
+
+    return flag;
+}
+
+QVector<AxfNode*> AxfModel::visibleChildren(AxfNode* parent) const
+{
+    QVector<AxfNode*> out;
+    if (!parent) return out;
+    for (AxfNode* c : parent->children) {
+        if (c->visible && nodeMatches(c)) {
+            out.append(c);
+        }
+    }
+    return out;
+}
+
+void AxfModel::applyFilter()
+{
+    // 自底向上计算 visible：节点自身匹配 或 任一后代匹配
+    std::function<bool(AxfNode*)> rec = [&](AxfNode* n) -> bool {
+        bool selfMatch = nodeMatches(n);
+        bool childMatch = false;
+        for (AxfNode* c : n->children) {
+            if (rec(c)) {
+                childMatch = true;
+            }
+        }
+        n->visible = selfMatch || childMatch;
+        return n->visible;
+    };
+    rec(m_root);
+}
+
+void AxfModel::setFilterText(const  QList<QString>& text)
+{
+    beginResetModel();
+    m_filterTexts = text;
+    applyFilter();
     endResetModel();
 }
 
@@ -172,9 +253,15 @@ QModelIndex AxfModel::parent(const QModelIndex& index) const
     if (!p || p == m_root) {
         return {};
     }
+    // 计算在可见兄弟中的行号
     int row = 0;
     if (p->parent) {
-        row = p->parent->children.indexOf(p);
+        int idx = 0;
+        for (AxfNode* c : p->parent->children) {
+            if (c == p) break;
+            if (c->visible) ++idx;
+        }
+        row = idx;
     }
     return createIndex(row, 0, p);
 }
@@ -185,16 +272,19 @@ QModelIndex AxfModel::index(int row, int column, const QModelIndex& parent) cons
         return {};
     }
     AxfNode* p = nodeForIndex(parent);
-    if (row < 0 || row >= p->children.size()) {
+    QVector<AxfNode*> vc = visibleChildren(p);
+    if (row < 0 || row >= vc.size()) {
         return {};
     }
-    return createIndex(row, column, p->children[row]);
+    return createIndex(row, column, vc[row]);
 }
 
 int AxfModel::rowCount(const QModelIndex& parent) const
 {
     AxfNode* node = nodeForIndex(parent);
-    return node ? node->children.size() : 0;
+    if (!node) return 0;
+
+    return visibleChildren(node).size();
 }
 
 int AxfModel::columnCount(const QModelIndex& parent) const

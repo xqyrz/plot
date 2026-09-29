@@ -1,8 +1,8 @@
 ﻿//
 // Created by 25137 on 2026/9/27.
 //
-#include "axfpage.h"
 #include <QApplication>
+#include "axfpage.h"
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
