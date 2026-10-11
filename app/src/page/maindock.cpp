@@ -60,19 +60,12 @@ void MainDock::createPerspectiveUi()
     connect(PerspectiveComboBox, SIGNAL(activated(const QString&)), DockManager, SLOT(openPerspective(const QString&)));
 #endif
     PerspectiveListAction->setDefaultWidget(PerspectiveComboBox);
-    // ui->toolBar->addSeparator();
-    // ui->toolBar->addAction(PerspectiveListAction);
-    // ui->toolBar->addAction(SavePerspectiveAction);
 }
 
 void MainDock::_InitPage()
 {
      QWidget* w = new NodeEditPage(this);
     auto pre =  _addDock(w,"node");
-    for (auto & var:VIEWManage::instance()->getObjs())
-    {
-        _addDock(qobject_cast<QWidget*>(var),var->metaObject()->className(),pre);
-    }
     pre->setCurrentDockWidget(pre->dockWidget(0));
 }
 ads::CDockAreaWidget* MainDock::_addDock(QWidget* widget, QString name,ads::CDockAreaWidget* parent)

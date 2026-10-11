@@ -6,8 +6,7 @@
 #include <QDebug>
 
 
-VOFAAPP::VOFAAPP( QObject* parent): QObject(parent)
-,IOAPPInterface(IOAPP::VAFA_ID)
+VOFAAPP::VOFAAPP( QObject* parent):IOAPPInterface(IOAPP::VAFA_ID)
 ,_last(QTime::currentTime())
 {
     addCallback(0,[this]( const QList<IOAPP::SIGNALS>& _signals)

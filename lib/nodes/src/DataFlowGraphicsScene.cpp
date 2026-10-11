@@ -188,6 +188,14 @@ bool DataFlowGraphicsScene::load(QString fileName)
 bool DataFlowGraphicsScene::_save() const
 {
     QFile file(defaultConfigPath);
+    QFileInfo fileInfo(file);
+    if (!QDir(fileInfo.path()).exists())
+    {
+       if ( QDir().mkdir(fileInfo.path())==false){
+           qWarning()<<"mkdir failed:"<<fileInfo.path();
+           return false;
+       }
+    }
     if (file.open(QIODevice::WriteOnly)) {
         file.write(QJsonDocument(_graphModel.save()).toJson());
         QMessageBox::information(nullptr,"信息","保存成功");

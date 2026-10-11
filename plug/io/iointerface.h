@@ -15,6 +15,7 @@
 #include <QtWidgets/QHBoxLayout>
 class  IOInterface:public InterfaceBase
 {
+    Q_OBJECT
 public:
     enum
     {
@@ -112,7 +113,20 @@ private:
         }
     };
     std::list<std::function<void(const IO::Frame&)>> _readReadyCallback;
-
+private:
+    Q_PROPERTY(int status READ status WRITE setStatus NOTIFY statusChanged)
+public:
+    // IOInterface_obj(QObject* parent = nullptr) : QObject(parent){};
+    void setStatus(int _status)
+    {
+        m_status = ( IO::STATUS)_status;
+        emit statusChanged();
+    }
+    IO::STATUS status()const{return m_status;}
+    signals:
+        void statusChanged();
+private:
+    IO::STATUS m_status = IO::CLOSE_STATUS;
 };
 inline const char* IOInterface::getSignal(int index) const
 {
@@ -132,25 +146,17 @@ inline const char* IOInterface::getSlot(int index) const
     default:
         return nullptr;
     }
+
+
+
+
 }
 
-class IOInterface_obj:public QObject
-{
-    Q_OBJECT
-    Q_PROPERTY(int status READ status WRITE setStatus NOTIFY statusChanged)
-public:
-    IOInterface_obj(QObject* parent = nullptr) : QObject(parent){};
-    void setStatus(int _status)
-    {
-        m_status = ( IO::STATUS)_status;
-        emit statusChanged();
-    }
-    IO::STATUS status()const{return m_status;}
-signals:
-    void statusChanged();
-private:
-    IO::STATUS m_status = IO::CLOSE_STATUS;
-};
+//class IOInterface_obj:public QObject
+//{
+//    Q_OBJECT
+//
+//};
 
 QT_BEGIN_NAMESPACE
 #define IOInterface_Id "IO.Plugin.Base"

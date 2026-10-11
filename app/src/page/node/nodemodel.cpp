@@ -51,6 +51,7 @@ std::shared_ptr<NodeData> BaseModel::outData(PortIndex const port)
     // if (port < 1)return std::make_shared<MyNodeData>();
     // return std::make_shared<SimpleNodeData>();
 }
+/*
 IOModel::IOModel(QString name):BaseModel(IO_TYPE,std::move(name)
         ,{TypeEnum::IN_VIRTUAL_TX,TypeEnum::IN_IO_TX}
         ,{TypeEnum::OUT_IO_RX})
@@ -84,4 +85,4 @@ IOAPPModel::IOAPPModel(QString name):BaseModel(IOAPP_TYPE,std::move(name)
        //Manage::showConfig(this);
        // QMessageBox::information(nullptr,"IOModel","IOModel");
     });
-}
+ */

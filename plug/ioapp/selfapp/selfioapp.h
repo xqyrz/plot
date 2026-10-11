@@ -8,7 +8,7 @@
 #include "ioappinterface.h"
 #include "mavlink/selfio/mavlink.h"
 
-class SelfIOAPP:public QObject,public IOAPPInterface{
+class SelfIOAPP:public IOAPPInterface{
     Q_OBJECT
     Q_PLUGIN_METADATA(IID IOAPPInterface_Id FILE "selfioapp.json")
     Q_INTERFACES(IOAPPInterface)

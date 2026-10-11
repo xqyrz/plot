@@ -10,7 +10,7 @@
 #include "iointerface.h"
 #include "asio.hpp"
 
-class  APort:public IOInterface_obj,public IOInterface
+class  APort:public IOInterface
 {
     Q_OBJECT
     Q_INTERFACES(IOInterface)

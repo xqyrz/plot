@@ -1,33 +1,21 @@
 ﻿//
-// Created by 25137 on 2026/9/29.
+// Created by 25137 on 2026/10/11.
 //
 
 #ifndef PLOT_AXFPAGE_H
 #define PLOT_AXFPAGE_H
+#include "../pagebase.h"
 
-#include <QWidget>
-
-
-QT_BEGIN_NAMESPACE
-namespace Ui
-{
-    class AxfPage;
-}
-class AxfTree;
-QT_END_NAMESPACE
-
-class AxfPage : public QWidget
+class AxfPage:public PageBase
 {
     Q_OBJECT
-
+    Q_INTERFACES(PageBase)
+    Q_PLUGIN_METADATA(IID PageBase_Id FILE "axfpage.json")
 public:
-    explicit AxfPage(QWidget* parent = nullptr);
-    ~AxfPage() override;
-private slots:
-    void on_key_textChanged();
+    explicit AxfPage();
+    ~AxfPage() override{};
 private:
-    Ui::AxfPage* ui;
-    AxfTree* m_tree;
+
 };
 
 

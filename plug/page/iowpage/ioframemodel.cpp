@@ -2,6 +2,10 @@
 #include <QColor>
 #include <QDebug>
 using namespace IO;
+IoFrameModel::~IoFrameModel()
+{
+    m_timer.stop();
+}
 IoFrameModel::IoFrameModel(QObject *parent)
     : QAbstractTableModel(parent)
 {

@@ -5,8 +5,7 @@
 #include <QDebug>
 
 ATCPClient::ATCPClient(IO::Config con,QObject* parent)
-    :QObject(parent)
-    ,IOInterface("atcpclient",con)
+    :IOInterface("atcpclient",con)
     ,_socket(new tcp::socket(io_context))
 {
     auto fun = [this](const IO::Frame& frame)

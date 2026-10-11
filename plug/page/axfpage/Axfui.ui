@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AxfPage</class>
+ <class>AxfUI</class>
  <widget class="QWidget" name="AxfPage">
   <property name="geometry">
    <rect>

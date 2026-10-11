@@ -73,7 +73,7 @@ private:
 };
 
 ATCPServer::ATCPServer(IO::Config con,QObject* parent)
-    :QObject(parent),IOInterface("atcpserver",con)
+    :IOInterface("atcpserver",con)
     ,acceptor_(new tcp::acceptor(io_context))
 {
     addCallback(0,[this](const IO::Frame& frame)

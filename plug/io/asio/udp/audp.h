@@ -9,7 +9,7 @@
 #include "asio.hpp"
 using asio::ip::udp;
 
-class  AUdp:public IOInterface_obj,public IOInterface{
+class  AUdp:public IOInterface{
     Q_OBJECT
     Q_INTERFACES(IOInterface)
     Q_PLUGIN_METADATA(IID IOInterface_Id FILE "audp.json")

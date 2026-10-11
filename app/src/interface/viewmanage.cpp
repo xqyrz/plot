@@ -7,18 +7,6 @@
 #include "plotview.h"
 #include <QDebug>
 using TypeEnum=QtNodes::NodeDataTypeEnum;
-QMap<VIEWManage::VIEW_ENUM, BaseModel> VIEWManage::VIEW_ENUM_DATA = {
-    {VIEWManage::PLOT_VIEW, BaseModel(BaseModel::VIEW_TYPE
-        , "PlotView"
-        ,QList<QtNodes::NodeDataTypeEnum::InputType>{TypeEnum::IN_APP_RX,TypeEnum::IN_APP_SIGNAL}
-        ,QList<QtNodes::NodeDataTypeEnum::OutputType> {TypeEnum::OUT_APP_TX}
-        )},
-{VIEWManage::IO_VIEW, BaseModel(BaseModel::VIEW_TYPE
-    , "IOWPage"
-    ,QList<QtNodes::NodeDataTypeEnum::InputType>{TypeEnum::IN_APP_RX}
-    ,QList<QtNodes::NodeDataTypeEnum::OutputType> {TypeEnum::OUT_APP_TX}
-    )},
-};
  VIEWManage* VIEWManage::m_viewManage =nullptr;
 VIEWManage* VIEWManage::instance(QObject* parent)
 {
@@ -30,26 +18,10 @@ VIEWManage* VIEWManage::instance(QObject* parent)
 }
 bool VIEWManage::hasType(const QString& type)
 {
-    for (auto& var : VIEW_ENUM_DATA)
-    {
-        if (var.name() == type)
-        {
-            return true;
-        }
-    }
-
     return false;
 }
 BaseModel VIEWManage::creatType(const QString& type)
 {
-    for (auto& var : VIEW_ENUM_DATA)
-    {
-        if (var.name() == type)
-        {
-           return var;
-        }
-    }
-    qWarning()<<"creatType fail"<<type;
     return {};
 }
 QString VIEWManage::check(QString& var) const

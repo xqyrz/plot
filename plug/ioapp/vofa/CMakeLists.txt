@@ -8,6 +8,8 @@ file(GLOB_RECURSE SRC_FILES
 
 )
 add_library(${VOFA_APP} SHARED
+        ${Base_SRC_FILES}
+        ${IOAPP_SRC_FILES}
         ${SRC_FILES}
 )
 

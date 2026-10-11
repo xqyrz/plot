@@ -6,8 +6,7 @@
 #include <QDebug>
 
 
-SelfIOAPP::SelfIOAPP( QObject* parent): QObject(parent)
-,IOAPPInterface(IOAPP::SELFIO_ID)
+SelfIOAPP::SelfIOAPP( QObject* parent):IOAPPInterface(IOAPP::SELFIO_ID)
 {
     addCallback(0,[this]( const QList<IOAPP::SIGNALS>& _signals)
     {

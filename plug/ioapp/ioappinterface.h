@@ -10,8 +10,9 @@
 #include <QObject>
 class IOAPPInterface:public InterfaceBase
 {
+    Q_OBJECT
 public:
-    IOAPPInterface(int _id=0 ):id(_id){};
+    IOAPPInterface(int _id=0 ):InterfaceBase(), id(_id){};
     void getFrame(const IO::Frame&);
     virtual QList<IOAPP::SIGNALS> decode(const IO::Frame& data) = 0;
     virtual IO::Frame encode() = 0;

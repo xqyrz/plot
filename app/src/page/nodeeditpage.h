@@ -24,7 +24,7 @@ public:
     signals:
     void d(int);
 private:
-    static std::shared_ptr<NodeDelegateModelRegistry> registerDataModels();
+    static std::shared_ptr<NodeDelegateModelRegistry> _registerDataModels();
     void _sceneLoaded();
     void showConfigDialog(QObject* obj,int index);
     void _saveConfig(const int index,const QList<std::tuple<QVariant::Type,QString,QVariant>>& config);

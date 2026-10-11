@@ -15,7 +15,7 @@
 #include <utility>
 using namespace  asio;
 APort::APort(QObject* parent, IO::Config config)
-    :IOInterface_obj(parent),
+    :
     IOInterface("aport",std::move(config)),
     handle(new serial_port(io_context))
 {

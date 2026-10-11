@@ -5,7 +5,7 @@
 #include "jlinkarm.h"
 class JlinkARM;
 class QTimer;
-class AJLinkArm :public QObject, public IOInterface
+class AJLinkArm : public IOInterface
 {
     Q_OBJECT
         Q_PLUGIN_METADATA(IID IOInterface_Id FILE "ajlinkarm.json")

@@ -7,7 +7,7 @@
 
 #include "ioappinterface.h"
 
-class VOFAAPP:public QObject,public IOAPPInterface{
+class VOFAAPP:public IOAPPInterface{
     Q_OBJECT
     Q_PLUGIN_METADATA(IID IOAPPInterface_Id FILE "selfioapp.json")
     Q_INTERFACES(IOAPPInterface)

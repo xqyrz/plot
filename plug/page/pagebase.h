@@ -9,14 +9,18 @@
 #include <QDebug>
 
 class PageBase:public InterfaceBase {
+Q_OBJECT
 
+public:
+    using InterfaceBase::InterfaceBase;
+    const char* getSignal(int index) const override { qDebug()<<index;return nullptr;}
+    const char* getSlot(int index) const override { qDebug()<<index;return nullptr;}
+         QWidget* ui(){return _ui;};
 protected:
     inline static const  QString KEY =QStringLiteral("key");
     inline static const  QString CONFIG_KEY =QStringLiteral("config");
-
-public:
-     const char* getSignal(int index) const override { qDebug()<<index;return nullptr;}
-     const char* getSlot(int index) const override { qDebug()<<index;return nullptr;}
+protected:
+    QWidget* _ui{nullptr};
 };
 
 QT_BEGIN_NAMESPACE

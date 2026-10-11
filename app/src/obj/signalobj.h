@@ -23,10 +23,10 @@
          {APP_RX, "app_rx"}
      };
 }
-class SignalObj:public QObject,public InterfaceBase{
+class SignalObj:public InterfaceBase{
 Q_OBJECT
 public:
-    SignalObj(SIGNALDATA::SIGNALS_ENUM _type, QObject *parent = nullptr):QObject(parent),type(_type){};
+    SignalObj(SIGNALDATA::SIGNALS_ENUM _type, QObject *parent = nullptr):InterfaceBase(parent),type(_type){};
       ~SignalObj() override = default;
      const char* getSignal(int index) const override;
      const char* getSlot(int index) const override;

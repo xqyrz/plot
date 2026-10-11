@@ -8,8 +8,28 @@
 #include <QObject>
 #include <QMap>
 #include <QDebug>
-#include "../../../lib/mdb/mdb.h"
-class InterfaceBase {
+//#include "../../../lib/mdb/mdb.h"
+namespace Plug
+{
+    enum InputType {          // 更好的命名
+        IN_VIRTUAL_TX,
+        IN_IO_TX,
+        IN_IO_RX,
+        IN_APP_TX,
+        IN_APP_RX,
+        IN_APP_SIGNAL
+    };
+
+    enum OutputType {        // 更好的命名
+        OUT_IO_TX,
+        OUT_IO_RX,
+        OUT_APP_TX,
+        OUT_APP_RX,
+        OUT_APP_SIGNAL,
+    };
+}
+class InterfaceBase:public QObject {
+    Q_OBJECT
 public:
     typedef enum
     {
@@ -24,9 +44,9 @@ public:
         }
         return nullptr;
     }
-    InterfaceBase()
+    InterfaceBase():QObject()
     {
-        MDB::instance()->add(keyStr(IOOBJS),reinterpret_cast<uintptr_t>(this));
+       // MDB::instance()->add(keyStr(IOOBJS),reinterpret_cast<uintptr_t>(this));
     };
     virtual ~InterfaceBase()
     {
@@ -50,7 +70,6 @@ public:
     {
         DefaultEnum,
         IOInterfaceEnum,
-
     };
 protected:
     QMap<QString,  std::function<void(const void*)>> m_funs;

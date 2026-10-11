@@ -318,7 +318,9 @@ QVariant AxfModel::data(const QModelIndex& index, int role) const
             case 1: return node->typeName;
             case 2: return node->size ? QString::number(node->size) : QString();
             case 3: return node->address ? QString("0x%1").arg(node->address, 0, 16) : QString();
-            case 4: return QString();
+            case 4:
+            default:
+            return QString();
         }
     } else if (role == Qt::CheckStateRole) {
     // if (col == 4 && node->checkable) {
@@ -327,7 +329,7 @@ QVariant AxfModel::data(const QModelIndex& index, int role) const
      }
     } else if (role == Qt::TextAlignmentRole) {
         //if (col == 2 || col == 3) {
-            return int(Qt::AlignLeft | Qt::AlignVCenter);
+            return static_cast<int>(Qt::AlignLeft | Qt::AlignVCenter);
       // }
     } else if (role == Qt::FontRole) {
         if (node->type == AxfNodeType::FileGroup) {
@@ -373,10 +375,14 @@ bool AxfModel::setData(const QModelIndex& index, const QVariant& value, int role
     if (!node) {
         return false;
     }
-    if (role == Qt::CheckStateRole && index.column() == 4 && node->checkable) {
+    if (role == Qt::CheckStateRole && index.column() == 4) {
         node->checked = (value.toInt() == Qt::Checked);
         emit dataChanged(index, index, { Qt::CheckStateRole });
         return true;
     }
     return QAbstractItemModel::setData(index, value, role);
+}
+void AxfModel::addNode(AxfNode* node)
+{
+
 }

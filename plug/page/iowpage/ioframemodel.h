@@ -24,7 +24,7 @@ class IoFrameModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-
+    ~IoFrameModel() ;
     static int _indexOf( const std::vector<QString>& v, const QString& value)
     {
         auto it = std::find(v.begin(), v.end(), value);

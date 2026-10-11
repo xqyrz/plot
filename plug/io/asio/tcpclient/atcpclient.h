@@ -8,7 +8,7 @@
 #include "iointerface.h"
 #include "asio.hpp"
 using asio::ip::tcp;
-class ATCPClient:public QObject,public IOInterface{
+class ATCPClient:public IOInterface{
     Q_OBJECT
     Q_INTERFACES(IOInterface)
     //    Q_PLUGIN_METADATA(IID IOInterface_Id)

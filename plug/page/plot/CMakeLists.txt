@@ -10,7 +10,10 @@ file(GLOB_RECURSE SRC_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/*.ui"
 )
 
-add_library(${PLOT_LIB} SHARED ${SRC_FILES}
+add_library(${PLOT_LIB} SHARED
+        ${Base_SRC_FILES}
+        ${PAGE_SRC_FILES}
+        ${SRC_FILES}
         )
 
 target_include_directories(${PLOT_LIB}

@@ -8,6 +8,8 @@ file(GLOB_RECURSE HEAD_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
 )
 add_library(${JLINKARM} SHARED
+        ${Base_SRC_FILES}
+        ${IO_SRC_FILES}
         ${SRC_FILES}
         ${HEAD_FILES}
         ${BUS_PATH}/bus.h

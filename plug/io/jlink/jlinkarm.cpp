@@ -166,7 +166,7 @@ JlinkARM::JlinkARM()
     }
     else
     {
-        qWarning() << "JLinkARM.dll 加载失败";
+        qWarning() << "JLinkARM.dll load fail";
     }
 }
 

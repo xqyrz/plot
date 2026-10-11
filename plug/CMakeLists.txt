@@ -2,6 +2,10 @@
 # 添加子目录
 #add_subdirectory(io)
 project(Plug)
+file(GLOB Base_SRC_FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+)
 
 
 set(IO_PATH ${CMAKE_CURRENT_SOURCE_DIR}/io)
@@ -22,14 +26,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_subdirectory(io)
 
 
-add_subdirectory(ioapp/selfapp)
-add_subdirectory(ioapp/vofa)
+add_subdirectory(ioapp)
 
 
-add_subdirectory(page/iopage)
-add_subdirectory(page/iowpage)
-add_subdirectory(page/plot)
-add_subdirectory(page/axfpage)
+add_subdirectory(page)
 
 
 #add_subdirectory(testplug)

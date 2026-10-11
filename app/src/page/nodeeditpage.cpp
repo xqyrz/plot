@@ -19,77 +19,9 @@
 #include "interface/manage.h"
 #include "node/nodemodel.h"
 #include "plotview.h"
-std::shared_ptr<NodeDelegateModelRegistry> NodeEditPage::registerDataModels()
+std::shared_ptr<NodeDelegateModelRegistry> NodeEditPage::_registerDataModels()
 {
     auto ret = std::make_shared<NodeDelegateModelRegistry>();
-    for (auto& var : VIEWManage::VIEW_ENUM_DATA)
-    {
-        ret->registerModel<BaseModel>(
-            [var]() {
-                return std::make_unique<BaseModel>(var);
-            }
-        );
-    }
-    for (auto & var:SIGNALDATA::SIGNALS_ENUM_DATA)
-    {
-        ret->registerModel<PortModel>(std::move([var]() { return std::make_unique<PortModel>(var); }),"MANAGE");
-    }
-
-    QDir dir(QCoreApplication::applicationDirPath());
-    dir.cdUp();
-    auto plugins = dir.absolutePath() + "/plugins";
-    QCoreApplication::addLibraryPath(plugins);
-    // qInfo() <<plugins<<"libraryPaths "<< QCoreApplication::libraryPaths();
-    QDir path = QDir(plugins);
-    foreach (QFileInfo info, path.entryInfoList(QDir::Files | QDir::NoDotAndDotDot))
-    {
-#ifdef QT_DEBUG
-        if (!info.absoluteFilePath().contains("d.dll"))continue;
-#else
-        if (info.absoluteFilePath().contains("d.dll"))continue;
-#endif
-        QPluginLoader pluginLoader(info.absoluteFilePath());
-        if (auto plugin = pluginLoader.instance())
-        {
-            // 获取元数据（名称、版本、依赖）
-
-            QJsonObject meta = pluginLoader.metaData();
-            // qDebug()<<meta;
-            auto json = meta.value("MetaData").toObject();
-            auto iid = meta.value("IID").toString();
-            auto className = meta.value("className").toString();
-            qInfo() << QString("**********  %1 %2:%3   **********").arg(info.baseName(), iid, className);
-            // 访问感兴趣的接口
-            if (iid == IOInterface_Id)
-            {
-                IOInterfaceManage::instance()->addPlug(info.absoluteFilePath());
-                auto creator = [className]()
-                {
-                    return std::make_unique<IOModel>(className);
-                };
-                ret->registerModel<IOModel>(std::move(creator), "IO");
-            }
-            else if (iid == IOAPPInterface_Id)
-            {
-                IOAPPInterfaceManage::instance()->addPlug(info.absoluteFilePath());
-                auto creator = [className]() { return std::make_unique<IOAPPModel>(className); };
-                ret->registerModel<IOAPPModel>(std::move(creator), "IOAPP");
-            }
-            else if (iid == PageBase_Id)
-            {
-                VIEWManage::instance()->addPlug(info.absoluteFilePath());
-               auto creator = [className](){ return std::make_unique<BaseModel>(VIEWManage::creatType(className));};
-                ret->registerModel<IOAPPModel>(std::move(creator), "View");
-            }
-            //plugin->deleteLater();
-        }
-        else
-        {
-            qWarning() << pluginLoader.errorString();
-        }
-    }
-
-
     return ret;
 }
 void dumpMeta(const QObject* obj)
@@ -473,7 +405,7 @@ QList<std::tuple<QVariant::Type, QString, QVariant>> NodeEditPage::_loadConfig(i
 }
 NodeEditPage::NodeEditPage(QWidget* parent)
     :GraphicsView(parent)
-    ,registry( registerDataModels())
+    ,registry( _registerDataModels())
     ,dataFlowGraphModel(new DataFlowGraphModel(registry))
     ,scene(new DataFlowGraphicsScene(*dataFlowGraphModel))
     ,configPath(QStandardPaths::writableLocation(

@@ -2,8 +2,7 @@
 #include "jlinkarm.h"
 #include <QTimer>
 AJLinkArm::AJLinkArm(IO::Config config, QObject* parent)
-    :QObject(parent)
-    ,IOInterface("aJlinkArm", config)
+    :IOInterface("aJlinkArm", config)
     ,_handle(new JlinkARM())
 ,timer(new QTimer(this))
 {
