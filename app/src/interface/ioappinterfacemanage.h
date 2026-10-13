@@ -14,12 +14,7 @@ class IOAPPInterfaceManage : public QObject ,public ManageBase {
 public:
     static IOAPPInterfaceManage *instance();
     auto const& getPlugs() const { return plugs; }
-    int addPlug(const QString& plugPath)
-    {
-        if (plugs.contains(plugPath)) return false;
-        plugs.append(plugPath);
-        return true;
-    }
+
     QObject* creatObj(const int  index,QString type) override;
     bool hasIndex(const int  index)const override;
 private:

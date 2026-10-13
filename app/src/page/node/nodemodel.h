@@ -33,7 +33,7 @@ public:
       }NodeTye;
     Q_ENUM(NodeTye);
 
-  BaseModel():NodeDelegateModel(),m_type(DEFAULT_TYPE){};
+  //BaseModel():NodeDelegateModel(),m_type(DEFAULT_TYPE){};
   BaseModel(NodeTye type,QString _name,QList<QtNodes::NodeDataTypeEnum::InputType> _in,QList<QtNodes::NodeDataTypeEnum::OutputType> _out);
 
     virtual ~BaseModel() override

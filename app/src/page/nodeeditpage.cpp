@@ -15,10 +15,9 @@
 #include "interface/ioappinterfacemanage.h"
 #include "interface/iointerfacemanage.h"
 #include "interface/viewmanage.h"
-//#include "interface/signalmanage.h"
-#include "interface/manage.h"
 #include "node/nodemodel.h"
 #include "plotview.h"
+#include "interface/manageinterface.h"
 std::shared_ptr<NodeDelegateModelRegistry> NodeEditPage::_registerDataModels()
 {
     auto ret = std::make_shared<NodeDelegateModelRegistry>();
@@ -412,6 +411,17 @@ NodeEditPage::NodeEditPage(QWidget* parent)
                     QStandardPaths::AppConfigLocation
                 )+"/config.json")
 {
+    //foreach(auto &var:ManageInterface::instance())
+    //{
+//
+    //}
+    //QList<QtNodes::NodeDataTypeEnum::InputType> in = {QtNodes::NodeDataTypeEnum::IN_IO_TX};
+    //QList<QtNodes::NodeDataTypeEnum::OutputType> out = {QtNodes::NodeDataTypeEnum::OUT_IO_TX};
+    //registry->registerModel<BaseModel>(
+    //    [in, out]() {
+    //        return std::make_unique<BaseModel>(BaseModel::IO_TYPE, "IO", in, out);
+    //    },
+    //    "IO");
     connect(dataFlowGraphModel,&DataFlowGraphModel::configClicked,this,[this](int index)
     {
             //TODO

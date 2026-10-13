@@ -9,12 +9,6 @@ class VIEWManage: public QObject ,public ManageBase {
     Q_OBJECT
 public:
     static VIEWManage *instance(QObject* parent=nullptr);
-    int addPlug(const QString& plugPath)
-    {
-        if (plugs.contains(plugPath)) return false;
-        plugs.append(plugPath);
-        return true;
-    }
     static bool hasType(const QString &type);
     static BaseModel creatType(const QString &type);
     QString check(QString& var)const override;

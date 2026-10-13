@@ -7,12 +7,49 @@
 #include <QPluginLoader>
 #include <QDir>
 #include <QDebug>
-#include "iointerfacemanage.h"
-#include "ioappinterfacemanage.h"
-#include "viewmanage.h"
+#include "manageinterface.h"
 #include "../plug/io/iointerface.h"
 #include "../plug/ioapp/ioappinterface.h"
 #include "../plug/page/pagebase.h"
+ManageInterface* ManageInterface::instance(QObject* parent)
+{
+    static ManageInterface* instance = new ManageInterface(parent);
+    return instance;
+}
+void ManageInterface::addPlug(const QPluginLoader* pluginLoader)
+{
+    PlugData plugData;
+    // 获取元数据（名称、版本、依赖）
+    QJsonObject meta = pluginLoader->metaData();
+
+    auto json = meta.value("MetaData").toObject();
+    auto iid = meta.value("IID").toString();
+    plugData.name = meta.value("className").toString();
+    plugData.date = json["date"].toString();
+    plugData.fileName = pluginLoader->fileName();
+    if (plugs.contains(plugData))return;
+
+    if (iid == IOInterface_Id)
+    {
+
+        plugData.type = Plug::Type::IO;
+    }
+    else if (iid == IOAPPInterface_Id)
+    {
+
+        plugData.type = Plug::Type::IOAPP;
+    }
+    else if (iid == PageBase_Id)
+    {
+        plugData.type = Plug::Type::VIEW;
+    }
+    else
+    {
+        qWarning() <<"not load plugin"<<pluginLoader->fileName();
+        return;
+    }
+    plugs.append(plugData);
+}
 ManageInterface::ManageInterface(QObject* parent):QObject(parent)
 {
 
@@ -38,29 +75,9 @@ ManageInterface::ManageInterface(QObject* parent):QObject(parent)
             auto iid = meta.value("IID").toString();
             auto className = meta.value("className").toString();
             auto date = json["date"].toString();
-            //    qInfo() << QString("load:[%1]  %2 %3:%4  ").arg(date,info.baseName(), iid, className);
+            qInfo() << QString("load:[%1]  %2 %3:%4  ").arg(date,info.baseName(), iid, className);
             // 访问感兴趣的接口
-            if (iid == IOInterface_Id)
-            {
-
-                IOInterfaceManage::instance()->addPlug(info.absoluteFilePath());
-            }
-            else if (iid == IOAPPInterface_Id)
-            {
-
-                IOAPPInterfaceManage::instance()->addPlug(info.absoluteFilePath());
-            }
-            else if (iid == PageBase_Id)
-            {
-                pluginLoader.instance();
-                VIEWManage::instance()->addPlug(info.absoluteFilePath());
-                pluginLoader.unload();
-            }
-            else
-            {
-                qWarning() <<"not load plugin"<<info.absoluteFilePath();
-            }
-            //plugin->deleteLater();
+            ManageInterface::instance()->addPlug(&pluginLoader);
         }
         else
         {

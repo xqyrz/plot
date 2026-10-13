@@ -9,6 +9,7 @@
 #include <QMap>
 #include <QDebug>
 //#include "../../../lib/mdb/mdb.h"
+
 namespace Plug
 {
     enum InputType {          // 更好的命名
@@ -26,6 +27,15 @@ namespace Plug
         OUT_APP_TX,
         OUT_APP_RX,
         OUT_APP_SIGNAL,
+    };
+
+    enum class  Type
+    {
+        Default,
+        VIEW,
+        IO,
+        IOAPP,
+        SIGNAL,
     };
 }
 class InterfaceBase:public QObject {
@@ -50,7 +60,7 @@ public:
     };
     virtual ~InterfaceBase()
     {
-        qDebug() << "~InterfaceBase()";
+       // qDebug() << "~InterfaceBase()";
     }
     virtual const char* getSignal(int index) const=0;
     virtual const char* getSlot(int index) const=0;

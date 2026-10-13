@@ -10,27 +10,24 @@
 
 class BaseModel;
 class InterfaceBase;
-namespace ManageData
-{
-    enum class  Type
-    {
-        Default,
-        VIEW,
-        IO,
-        IOAPP,
-        SIGNAL,
-    };
-}
+
 class ManageBase{
 public:
+
     virtual ~ManageBase()=default;
     virtual QString check(QString& var)const;
     virtual QObject* creatObj(const int index,QString type)=0;
     virtual bool hasIndex(const int  index)const=0;
      QObject* getObj(const int  index)const {return objs.value(index);}
     QMap<  int ,QObject*> getObjs(){return objs;};
+    int addPlug(const QString& plugPath)
+    {
+       // if (plugs.contains(plugPath)) return false;
+       // plugs.append(plugPath);
+        return true;
+    }
 protected:
-    ManageData::Type type=ManageData::Type::Default;
+    Plug::Type type=Plug::Type::Default;
     QMap<  int ,QObject*> objs;
     QList<QString> plugs;
 };

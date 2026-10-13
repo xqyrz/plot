@@ -7,6 +7,7 @@
 #include "mainwindow.h"
 #include "SRC/log/sflogger.hpp"
 #include "iocommon.h"
+#include "interface/manageinterface.h"
 Q_DECLARE_METATYPE(QList<IO::Frame>)
 int main(int argc, char *argv[]) {
     qputenv("QT_WIN_DEBUG_CONSOLE", "attach");
@@ -29,7 +30,7 @@ int main(int argc, char *argv[]) {
     // 2. 适配非整数倍缩放
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
     QApplication a(argc, argv);
-
+    ManageInterface::instance();
     MainWindow w;
     w.show();
 
