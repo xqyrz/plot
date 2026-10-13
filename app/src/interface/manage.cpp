@@ -5,7 +5,7 @@
 #include "manage.h"
 #include <QPluginLoader>
 #include "viewmanage.h"
-#include "signalmanage.h"
+//#include "signalmanage.h"
 #include "ioappinterfacemanage.h"
 #include "iointerfacemanage.h"
 QString ManageBase::check(QString& var) const
@@ -31,10 +31,10 @@ QObject* Manage::getObj(const int index)
     {
         obj = IOAPPInterfaceManage::instance()->getObj(index);
     }
-    else if (SignalManage::instance()->hasIndex(index))
-    {
-        obj = SignalManage::instance()->getObj(index);
-    }
+   //else if (SignalManage::instance()->hasIndex(index))
+   //{
+   //    obj = SignalManage::instance()->getObj(index);
+   //}
     else if (VIEWManage::instance()->hasIndex(index))
     {
         obj = VIEWManage::instance()->getObj(index);
@@ -56,10 +56,10 @@ InterfaceBase* Manage::getInterfaceBase(const int index)
     {
         obj = qobject_cast<IOAPPInterface*>(IOAPPInterfaceManage::instance()->getObj(index));
     }
-    else if (SignalManage::instance()->hasIndex(index))
-    {
-        //obj =qobject_cast<SignalManage*>(SignalManage::instance()->getObj(index));
-    }
+   // else if (SignalManage::instance()->hasIndex(index))
+   // {
+   //     //obj =qobject_cast<SignalManage*>(SignalManage::instance()->getObj(index));
+   // }
     else if (VIEWManage::instance()->hasIndex(index))
     {
        // obj =qobject_cast<V*>(VIEWManage::instance()->getObj(index));

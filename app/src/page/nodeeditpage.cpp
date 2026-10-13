@@ -15,7 +15,7 @@
 #include "interface/ioappinterfacemanage.h"
 #include "interface/iointerfacemanage.h"
 #include "interface/viewmanage.h"
-#include "interface/signalmanage.h"
+//#include "interface/signalmanage.h"
 #include "interface/manage.h"
 #include "node/nodemodel.h"
 #include "plotview.h"
@@ -82,10 +82,10 @@ void NodeEditPage::_sceneLoaded()
         {
             IOAPPInterfaceManage::instance()->creatObj(var, type);
         }
-        else if (!SignalManage::instance()->check(type).isEmpty())
-        {
-            SignalManage::instance()->creatObj(var, type);
-        }
+       // else if (!SignalManage::instance()->check(type).isEmpty())
+       // {
+       //     SignalManage::instance()->creatObj(var, type);
+       // }
         else
         {
             qCritical() << "todo: not type nodeIds" << var << type;
@@ -179,7 +179,7 @@ void NodeEditPage::_sceneLoaded()
 void NodeEditPage::showConfigDialog(QObject* _obj, int index)
 {
     auto obj = qobject_cast<IOInterface*>(_obj);
-    auto io_obj = (IOInterface_obj*)(_obj);
+    auto io_obj = (IOInterface*)(_obj);
     QDialog d(this);
     auto config = obj->getConfig();
 
@@ -249,7 +249,7 @@ void NodeEditPage::showConfigDialog(QObject* _obj, int index)
         });
     }
     d.adjustSize();
-    connect(io_obj,&IOInterface_obj::statusChanged,this,[&]()
+    connect(io_obj,&IOInterface::statusChanged,this,[&]()
     {
         if ( io_obj->status() == IO::OPEN_STATUS )
         {

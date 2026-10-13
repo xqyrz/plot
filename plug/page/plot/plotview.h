@@ -4,13 +4,13 @@
 
 #ifndef PLOTVIEW_H
 #define PLOTVIEW_H
-#include <QWidget>
-#include "plotmodel.h"
 #include <QPointer>
-#include "qcustomplot/qcustomplot.h"
-#include "plotcommon.h"
-#include "../plug/interfacebase.h"
+#include <QWidget>
+#include "../../../common/plug/interfacebase.h"
 #include "../pagebase.h"
+#include "plotcommon.h"
+#include "plotmodel.h"
+#include "qcustomplot/qcustomplot.h"
 class QHBoxLayout;
 class QCheckBox;
 class QComboBox;

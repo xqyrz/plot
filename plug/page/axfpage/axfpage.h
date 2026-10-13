@@ -5,7 +5,7 @@
 #ifndef PLOT_AXFPAGE_H
 #define PLOT_AXFPAGE_H
 #include "../pagebase.h"
-
+#include <QWidget>
 class AxfPage:public PageBase
 {
     Q_OBJECT

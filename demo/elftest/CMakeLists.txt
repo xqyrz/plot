@@ -15,5 +15,5 @@ target_compile_definitions(${PROJECT_NAME}
 )
 target_include_directories(${PROJECT_NAME}
         PUBLIC
-        {CMAKE_INSTALL_PREFIX}/include
+        ${CMAKE_SOURCE_DIR}/install/include
 )

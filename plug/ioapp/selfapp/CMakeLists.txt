@@ -12,7 +12,7 @@ file(GLOB_RECURSE SRC_FILES
 )
 MESSAGE("SRC_FILES: ${SRC_FILES}")
 add_library(${SELFIOAPP_LIB} SHARED
-        ${Base_SRC_FILES}
+        ${PlugBase_SRC_FILES}
         ${IOAPP_SRC_FILES}
         ${SRC_FILES}
 )

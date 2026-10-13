@@ -44,7 +44,7 @@ public:
         }
         return nullptr;
     }
-    InterfaceBase():QObject()
+    InterfaceBase(QObject* parent=nullptr):QObject(parent)
     {
        // MDB::instance()->add(keyStr(IOOBJS),reinterpret_cast<uintptr_t>(this));
     };

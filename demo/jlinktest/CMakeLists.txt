@@ -27,7 +27,7 @@ target_compile_definitions(${PROJECT_NAME}
 )
 target_include_directories(${PROJECT_NAME}
         PUBLIC
-        {CMAKE_INSTALL_PREFIX}/include
+        ${CMAKE_SOURCE_DIR}/install/include
 )
 target_compile_definitions(${PROJECT_NAME}
         PRIVATE PLUG_PATH="${CMAKE_INSTALL_PREFIX}/plugins/ajlinkarmd.dll"

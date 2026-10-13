@@ -8,7 +8,7 @@ file(GLOB_RECURSE HEAD_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
 )
 add_library(${JLINKARM} SHARED
-        ${Base_SRC_FILES}
+        ${PlugBase_SRC_FILES}
         ${IO_SRC_FILES}
         ${SRC_FILES}
         ${HEAD_FILES}
@@ -25,6 +25,7 @@ target_include_directories(${JLINKARM}
 target_link_libraries(${JLINKARM}
         Qt${QT_VERSION_MAJOR}::Core
         mdb::mdb
+        ${IO_LIB}
 )
 
 install(TARGETS ${JLINKARM}

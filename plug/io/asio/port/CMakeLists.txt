@@ -7,7 +7,7 @@ file(GLOB_RECURSE SRC_FILES
 
 )
 add_library(${APORT_LIB} SHARED
-        ${Base_SRC_FILES}
+        ${PlugBase_SRC_FILES}
         ${IO_SRC_FILES}
         ${SRC_FILES}
 

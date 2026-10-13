@@ -15,7 +15,6 @@
 #include <QtNodes/NodeDelegateModelRegistry>
 class InterfaceBase;
 using namespace QtNodes;
-class IOInterface_obj;
 class NodeEditPage : public GraphicsView
 {
     Q_OBJECT

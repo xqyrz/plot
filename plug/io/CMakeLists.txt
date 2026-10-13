@@ -2,10 +2,7 @@
 add_library(${IO_LIB} STATIC
         ${CMAKE_CURRENT_SOURCE_DIR}/iointerface.h
 )
-file(GLOB IO_SRC_FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
-)
+
 
 
 target_link_libraries(${IO_LIB}

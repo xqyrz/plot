@@ -7,4 +7,5 @@
 AxfPage::AxfPage():
     PageBase()
 {
+    _ui = new AxfUI();
 }

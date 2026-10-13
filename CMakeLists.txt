@@ -93,19 +93,50 @@ set(BUS_PATH "${CMAKE_CURRENT_SOURCE_DIR}/common/bus")
 message("CMAKE_CURRENT_SOURCE_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/install/include")
 include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}/common
-        ${CMAKE_CURRENT_SOURCE_DIR}/install/include
         ${CMAKE_CURRENT_SOURCE_DIR}/common/bus/protoc/include
         ${CMAKE_CURRENT_SOURCE_DIR}/plug/page/plot
         ${CMAKE_CURRENT_SOURCE_DIR}/plug/io
         lib/QtPropertyBrowser
 )
+file(GLOB PlugBase_SRC_FILES_H
+        "${CMAKE_CURRENT_SOURCE_DIR}/common/plug/*.h"
+)
+file(GLOB PlugBase_SRC_FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/common/plug/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/common/plug/*.h"
+)
 
+file(GLOB IO_SRC_FILES_H
+        "${CMAKE_CURRENT_SOURCE_DIR}/common/plug/io/*.h"
+)
+file(GLOB IO_SRC_FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/common/plug/io/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/common/plug/io/*.h"
+)
+
+file(GLOB IOAPP_SRC_FILES_H
+        "${CMAKE_CURRENT_SOURCE_DIR}/common/plug/ioapp/*.h"
+)
+file(GLOB IOAPP_SRC_FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/common/plug/ioapp/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/common/plug/ioapp/*.h"
+)
+
+file(GLOB PAGE_SRC_FILES_H
+        "${CMAKE_CURRENT_SOURCE_DIR}/common/plug/page/*.h"
+)
+file(GLOB PAGE_SRC_FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/common/plug/page/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/common/plug/page/*.h"
+)
 
 add_subdirectory(lib)
 # 添加子目录
 add_subdirectory(plug)
 
 add_subdirectory(demo)
+
+
 add_subdirectory(app)
 
 #add_custom_target(install_all

@@ -11,6 +11,7 @@
 #include "manage.h"
 class SignalManage : public QObject ,public ManageBase
 {
+    Q_OBJECT
 public:
 
 

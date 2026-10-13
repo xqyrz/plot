@@ -2,10 +2,7 @@
 # 添加子目录
 #add_subdirectory(io)
 project(Plug)
-file(GLOB Base_SRC_FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
-)
+
 
 
 set(IO_PATH ${CMAKE_CURRENT_SOURCE_DIR}/io)
@@ -33,4 +30,4 @@ add_subdirectory(page)
 
 
 #add_subdirectory(testplug)
-add_subdirectory(testmavlink)
+#add_subdirectory(testmavlink)

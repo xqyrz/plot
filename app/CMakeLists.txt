@@ -9,13 +9,18 @@ file(GLOB_RECURSE SRC_FILES
 #set(QWindowKit_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/QWindowKit)
 #find_package(QWindowKit COMPONENTS Core Widgets REQUIRED)
 include_directories(${CMAKE_SOURCE_DIR}/shared ${CMAKE_SOURCE_DIR}/src )
-#message("SRC_FILES ${SRC_FILES}")
+message("--PlugBase_SRC_FILES_H ${PlugBase_SRC_FILES_H}")
 add_executable(${APP_NAME} ${SRC_FILES}
+        #${PlugBase_SRC_FILES_H}
+        #${IO_SRC_FILES_H}
+        #${IOAPP_SRC_FILES_H}
+        #${PAGE_SRC_FILES_H}
         src/interface/manage.cpp
         src/interface/manage.h
         ${BUS_PATH}/bus.h
         ${BUS_PATH}/bus.cpp
         ../plug/io/iointerface.h
+        ../common/plug/interfacebase.h
 )
 
 target_link_libraries(${APP_NAME}

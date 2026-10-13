@@ -5,8 +5,8 @@
 #ifndef PAGEBASE_H
 #define PAGEBASE_H
 
-#include "../interfacebase.h"
 #include <QDebug>
+#include "../../common/plug/interfacebase.h"
 
 class PageBase:public InterfaceBase {
 Q_OBJECT

@@ -4,15 +4,15 @@
 
 #ifndef IOINTERFACE_H
 #define IOINTERFACE_H
-#include  <QObject>
-#include <utility>
-#include <set>
-#include "../interfacebase.h"
-#include "bus/bus.h"
-#include "iocommon.h"
 #include <QDebug>
+#include <QObject>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QHBoxLayout>
+#include <set>
+#include <utility>
+#include "../../common/plug/interfacebase.h"
+#include "bus/bus.h"
+#include "iocommon.h"
 class  IOInterface:public InterfaceBase
 {
     Q_OBJECT

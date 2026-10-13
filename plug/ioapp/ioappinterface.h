@@ -4,10 +4,10 @@
 
 #ifndef PLOT_IOAPPINTERFACE_H
 #define PLOT_IOAPPINTERFACE_H
-#include "ioappcommon.h"
-#include "../io/iointerface.h"
-#include "../interfacebase.h"
 #include <QObject>
+#include "../../common/plug/interfacebase.h"
+#include "../io/iointerface.h"
+#include "ioappcommon.h"
 class IOAPPInterface:public InterfaceBase
 {
     Q_OBJECT
