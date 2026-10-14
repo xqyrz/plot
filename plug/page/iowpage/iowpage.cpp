@@ -58,7 +58,7 @@ void IOWPage::on_devOpen_clicked()
         qWarning() << "not set callback";
     }
 }
-void IOWPage::slot_rx(const INC::Frame& frame)
+void IOWPage::slot_rx(const PLUG::Frame& frame)
 {
     ui->tableIO->addRow(frame);
     //TODO:timer 定时 优化性能
@@ -78,7 +78,7 @@ return nullptr;
 const char* IOWPage::getSlot(int index) const {
     switch (index)
     {
-    case 0:return SLOT(slot_rx(const INC::Frame&));break;
+    case 0:return SLOT(slot_rx(const PLUG::Frame&));break;
     default:return nullptr;
     }
 }

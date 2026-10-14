@@ -16,7 +16,7 @@ ManageInterface* ManageInterface::instance(QObject* parent)
     static ManageInterface instance(parent);
     return &instance;
 }
-void ManageInterface::addPlug(const QPluginLoader* pluginLoader)
+void ManageInterface::addPlug( QPluginLoader* pluginLoader)
 {
     PlugData plugData;
     // 获取元数据（名称、版本、依赖）
@@ -32,23 +32,29 @@ void ManageInterface::addPlug(const QPluginLoader* pluginLoader)
     if (iid == IOInterface_Id)
     {
 
-        plugData.type = Plug::Type::IO;
+        plugData.type = PLUG::Type::IO;
     }
     else if (iid == IOAPPInterface_Id)
     {
 
-        plugData.type = Plug::Type::IOAPP;
+        plugData.type = PLUG::Type::IOAPP;
     }
     else if (iid == PageBase_Id)
     {
-        plugData.type = Plug::Type::VIEW;
+        plugData.type = PLUG::Type::VIEW;
     }
     else
     {
         qWarning() <<"not load plugin"<<pluginLoader->fileName();
         return;
     }
-    plugs.append(plugData);
+    auto obj =static_cast<InterfaceBase*>( pluginLoader->instance());
+    if (obj)
+    {
+        plugData.in = obj->inputPorts();
+        plugData.out = obj->outputPorts();
+        plugs.append(plugData);
+    }
 }
 ManageInterface::ManageInterface(QObject* parent):QObject(parent)
 {

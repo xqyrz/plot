@@ -22,7 +22,7 @@ IOView::IOView(QWidget* parent) : QTableView(parent), model(new IoFrameModel(thi
    // this->viewport()->setAttribute(Qt::WA_NoSystemBackground);
    // this->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     // connect(BUS::interface(), &BUS::readIO_sig, model,
-    //         [&](const QList<INC::Frame>& frames) { model->appendFrame(frames); });
+    //         [&](const QList<PLUG::Frame>& frames) { model->appendFrame(frames); });
     connect(model, &IoFrameModel::scrollToBottom, this, &IOView::scrollToBottom,Qt::UniqueConnection);
 
     QTimer::singleShot(1, this, [this]() { this->setModel(model); });
@@ -47,7 +47,7 @@ IOView::IOView(QWidget* parent) : QTableView(parent), model(new IoFrameModel(thi
     });
 
 }
-void IOView::addRow(const INC::Frame& frame)
+void IOView::addRow(const PLUG::Frame& frame)
 {
     model->appendFrame(frame);
 }

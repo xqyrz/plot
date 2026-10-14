@@ -13,16 +13,16 @@ class VOFAAPP:public IOAPPInterface{
     Q_INTERFACES(IOAPPInterface)
 public:
     explicit VOFAAPP( QObject* parent = nullptr);
-    QList<INC::_SIGNALS>  decode(const INC::Frame& data) override ;
-    INC::Frame encode() override;
+    QList<PLUG::_SIGNALS>  decode(const PLUG::Frame& data) override ;
+    PLUG::Frame encode() override;
      QList<std::tuple<QVariant::Type,QString,QVariant>> getConfig() override;
      void setConfig(const QList<std::tuple<QVariant::Type,QString,QVariant>> &)override;
 
 signals:
-   void hasSignal(const QList<INC::_SIGNALS>&);
-    void sig_app_rx(const INC::Frame&);
+   void hasSignal(const QList<PLUG::_SIGNALS>&);
+    void sig_app_rx(const PLUG::Frame&);
 private slots:
-    void rx_frame(const INC::Frame&);
+    void rx_frame(const PLUG::Frame&);
 private:
     const uint8_t sys_id = 1;
     const uint8_t comp_id = 1;

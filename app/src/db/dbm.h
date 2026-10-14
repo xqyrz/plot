@@ -14,7 +14,7 @@ class DBM : public QObject
 public:
     static DBM* instance();
     bool addFrame(QString & ,QString & ,QString & ,QString & ,QString & ,QString & ,QByteArray&);
-     bool addFrame (QList<INC::Frame>& frame);
+     bool addFrame (QList<PLUG::Frame>& frame);
     bool exportMemoryDb(const QString &filePath);
     QSqlDatabase* db(){return m_db;}
 private:

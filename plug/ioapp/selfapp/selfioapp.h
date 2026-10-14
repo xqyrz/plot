@@ -14,13 +14,13 @@ class SelfIOAPP:public IOAPPInterface{
     Q_INTERFACES(IOAPPInterface)
 public:
     explicit SelfIOAPP( QObject* parent = nullptr);
-    QList<INC::_SIGNALS>  decode(const INC::Frame& data) override ;
-    INC::Frame encode() override;
+    QList<PLUG::_SIGNALS>  decode(const PLUG::Frame& data) override ;
+    PLUG::Frame encode() override;
 signals:
-   void hasSignal(const QList<INC::_SIGNALS>&);
-    void sig_app_rx(const INC::Frame&);
+   void hasSignal(const QList<PLUG::_SIGNALS>&);
+    void sig_app_rx(const PLUG::Frame&);
 private slots:
-    void rx_frame(const INC::Frame&);
+    void rx_frame(const PLUG::Frame&);
 private:
     mavlink_message_t rcv_msg;
     mavlink_status_t status;

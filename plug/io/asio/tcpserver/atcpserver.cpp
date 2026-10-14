@@ -72,11 +72,11 @@ private:
     }
 };
 
-ATCPServer::ATCPServer(INC::Config con,QObject* parent)
+ATCPServer::ATCPServer(PLUG::Config con,QObject* parent)
     :IOInterface("atcpserver",con)
     ,acceptor_(new tcp::acceptor(io_context))
 {
-    addCallback(0,[this](const INC::Frame& frame)
+    addCallback(0,[this](const PLUG::Frame& frame)
 {
     emit rx_frame(frame);
 });
@@ -169,11 +169,11 @@ bool ATCPServer::close() {
 
     return true;
 }
-int ATCPServer::write(const INC::Frame&)
+int ATCPServer::write(const PLUG::Frame&)
 {
     return 0;
 }
-int ATCPServer::write(const QList<INC::Frame>&) {
+int ATCPServer::write(const QList<PLUG::Frame>&) {
     return 0;
 }
 
@@ -194,15 +194,15 @@ void ATCPServer::do_accept() {
                             });
                     session->set_read_callback([self](Session::Ptr s, const char* data, size_t length)
                     {
-                        QList<INC::Frame> frames;
+                        QList<PLUG::Frame> frames;
                         auto  remote_ep = s->getRemoteEndpoint();
-                        frames.append(INC::Frame{
+                        frames.append(PLUG::Frame{
                             {
                                 QString::fromStdString(remote_ep.address().to_string()),
                                 QString::number(remote_ep.port())
                             },
                             QDateTime::currentDateTime(),
-                            INC::RT::RX,
+                            PLUG::RT::RX,
                             QByteArray(data,length)
                         });
                         self->_readReady(frames);

@@ -12,7 +12,7 @@
 #include <vector>
 #include "../../../common/plug/io/iocommon.h"
 // 自定义哈希函数（用于map的key）
-inline uint qHash(const INC::Config &key, uint seed = 0)
+inline uint qHash(const PLUG::Config &key, uint seed = 0)
 {
     return qHash(key.dev, seed)
             ^ qHash(key.ch, seed)
@@ -54,7 +54,7 @@ public:
 
     // ==================== 数据操作接口（对外提供） ====================
     // 插入一帧数据
-    void appendFrame(const INC::Frame &frame);
+    void appendFrame(const PLUG::Frame &frame);
     template<typename T>
     void appendFrames(const T& frames)
     {
@@ -76,11 +76,11 @@ public:
     // 清空所有数据和索引
     void clearAll();
     // 获取指定行的数据
-    INC::Frame getFrame(int row) const;
+    PLUG::Frame getFrame(int row) const;
 
     // ==================== 按条件查找接口（基于map索引） ====================
     // 1. 按完整Config查找所有行号
-    const std::list<uint>* findRowsByConfig(const INC::Config &cfg) const;
+    const std::list<uint>* findRowsByConfig(const PLUG::Config &cfg) const;
     // 2. 按设备IP(dev)查找所有行号
     const std::list<uint>* findRowsByDev(const QString &dev) const;
     // 3. 按通道(ch)查找所有行号
@@ -92,7 +92,7 @@ public:
 signals:
     void scrollToBottom();
 private:
-    void _addFrame(const INC::Frame& frame);
+    void _addFrame(const PLUG::Frame& frame);
     typedef struct
     {
         union
@@ -110,7 +110,7 @@ private:
     std::vector<QString> own_chs;
     const std::vector<QString> rt{"RX","TX"};
     // 数据存储：预分配9999空间
-    std::vector<INC::Frame> m_frames;
+    std::vector<PLUG::Frame> m_frames;
 
     // ==================== 多级分类索引（核心） ====================
     // 1. 完整Config哈希 -> 数据行号列表
@@ -152,7 +152,7 @@ private:
         COL_ASCII
      };
     QTimer m_timer;
-    INC::Frame frames[999];
+    PLUG::Frame frames[999];
     int cnt = 0;
 };
 

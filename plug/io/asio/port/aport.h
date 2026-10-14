@@ -17,19 +17,19 @@ class  APort:public IOInterface
     Q_PLUGIN_METADATA(IID IOInterface_Id FILE "port.json")
 
 public:
-    explicit APort( QObject* parent = nullptr,INC::Config config=INC::Config());
+    explicit APort( QObject* parent = nullptr,PLUG::Config config=PLUG::Config());
     ~APort() override;
     void run() override;
     bool open() override;
     bool close() override;
-    int write(const INC::Frame&) override;
-    int write(const QList<INC::Frame>&) override;
+    int write(const PLUG::Frame&) override;
+    int write(const QList<PLUG::Frame>&) override;
     QList<std::tuple<QVariant::Type,QString,QVariant>> getConfig() override;
     void setConfig(const QList<std::tuple<QVariant::Type,QString,QVariant>> &) override;
     signals:
-            void rx_frame(const INC::Frame&);
+            void rx_frame(const PLUG::Frame&);
 public   slots:
-    void tx_frame(const INC::Frame& frame){write(frame);};
+    void tx_frame(const PLUG::Frame& frame){write(frame);};
 private:
     void do_read();
 private:

@@ -15,17 +15,17 @@ class ATCPClient:public IOInterface{
     Q_PLUGIN_METADATA(IID IOInterface_Id FILE "atcpclient.json")
 
 public:
-    explicit ATCPClient(INC::Config config=INC::Config(), QObject* parent = nullptr);
+    explicit ATCPClient(PLUG::Config config=PLUG::Config(), QObject* parent = nullptr);
     ~ATCPClient() override;
     void run() override;
     bool open() override;
     bool close() override;
-    int write(const INC::Frame&) override;
-    int write(const QList<INC::Frame>&) override;
+    int write(const PLUG::Frame&) override;
+    int write(const QList<PLUG::Frame>&) override;
     signals:
-        void rx_frame(const INC::Frame&);
+        void rx_frame(const PLUG::Frame&);
 public   slots:
-    void tx_frame(const INC::Frame& frame){write(frame);};
+    void tx_frame(const PLUG::Frame& frame){write(frame);};
 private:
 
 private:

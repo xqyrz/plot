@@ -11,7 +11,47 @@
 #else
 #  define P_EXPORT Q_DECL_IMPORT
 #endif
-namespace INC{
+namespace PLUG{
+
+    enum class InputType {          // 更好的命名
+        IN_VIRTUAL_TX,
+        IN_IO_TX,
+        IN_IO_RX,
+        IN_APP_TX,
+        IN_APP_RX,
+        IN_APP_SIGNAL
+    };
+
+    enum class OutputType {        // 更好的命名
+        OUT_IO_TX,
+        OUT_IO_RX,
+        OUT_APP_TX,
+        OUT_APP_RX,
+        OUT_APP_SIGNAL,
+    };
+
+    enum class  Type
+    {
+        Default,
+        VIEW,
+        IO,
+        IOAPP,
+        SIGNAL,
+    };
+    inline const char* TypeStr(Type type)
+    {
+        switch (type)
+        {
+        case Type::VIEW:return "VIEW";
+        case Type::IO:return "IO";
+        case Type::IOAPP:return "IOAPP";
+        case Type::SIGNAL:return "SIGNAL";
+        case Type::Default:return "Default";
+        default: return "UNKNOW";
+        }
+    }
+
+
     typedef struct {
         QString dev;//设备 ip
         QString ch;//通道
@@ -61,5 +101,5 @@ namespace INC{
         _SIGNALS() : ID{0,0,0},time(0) {}
     };
 }
-Q_DECLARE_METATYPE(INC::Frame)
+Q_DECLARE_METATYPE(PLUG::Frame)
 #endif // PLOT_INTERFACECOMMON_H

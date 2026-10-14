@@ -25,7 +25,7 @@ public:
 private slots:
     void on_devOpen_clicked();
 public slots:
-    void  slot_rx(const INC::Frame&);
+    void  slot_rx(const PLUG::Frame&);
     void setIOobjs(const QList<IOInterface*>&);
 public:
     const char* getSignal(int index) const override ;

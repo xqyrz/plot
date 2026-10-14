@@ -16,19 +16,19 @@ class  ATCPServer:public IOInterface{
     Q_PLUGIN_METADATA(IID IOInterface_Id FILE "atcpserver.json")
 
 public:
-    explicit ATCPServer(INC::Config config=INC::Config(), QObject* parent = nullptr);
+    explicit ATCPServer(PLUG::Config config=PLUG::Config(), QObject* parent = nullptr);
     ~ATCPServer();
     void run() override;
     bool open() override;
     bool close() override;
-    int write(const INC::Frame&)override;
-    int write(const QList<INC::Frame>&) override;
+    int write(const PLUG::Frame&)override;
+    int write(const QList<PLUG::Frame>&) override;
     auto & getSessions(){return sessions;}
     auto & getAccept(){return acceptor_;}
     signals:
-    void rx_frame(const INC::Frame&);
+    void rx_frame(const PLUG::Frame&);
 public   slots:
-    void tx_frame(const INC::Frame& frame){write(frame);};
+    void tx_frame(const PLUG::Frame& frame){write(frame);};
 private:
     void do_accept();
 private:

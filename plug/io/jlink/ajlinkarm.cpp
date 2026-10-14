@@ -1,13 +1,13 @@
 #include "ajlinkarm.h"
 #include "jlinkarm.h"
 #include <QTimer>
-AJLinkArm::AJLinkArm(INC::Config config, QObject* parent)
+AJLinkArm::AJLinkArm(PLUG::Config config, QObject* parent)
     :IOInterface("aJlinkArm", config)
     ,_handle(new JlinkARM())
 ,timer(new QTimer(this))
 {
     qDebug()<<"version:"<<_handle->jlinkGetDLLVersionFunc();
-    addCallback(0,[this](const INC::Frame& frame)
+    addCallback(0,[this](const PLUG::Frame& frame)
 {
     emit rx_frame(frame);
 });
@@ -105,12 +105,12 @@ bool AJLinkArm::close()
     return false;
 }
 
-int AJLinkArm::write(const INC::Frame&)
+int AJLinkArm::write(const PLUG::Frame&)
 {
     return 0;
 }
 
-int AJLinkArm::write(const QList<INC::Frame>&)
+int AJLinkArm::write(const QList<PLUG::Frame>&)
 {
     return 0;
 }

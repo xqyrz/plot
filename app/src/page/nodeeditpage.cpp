@@ -18,6 +18,19 @@
 std::shared_ptr<NodeDelegateModelRegistry> NodeEditPage::_registerDataModels()
 {
     auto ret = std::make_shared<NodeDelegateModelRegistry>();
+    for (auto  var : ManageInterface::instance()->getPlugs()) {
+        auto nodeType = BaseModel::PLUG_TO_NODE_TYPE(var.type);  // 恢复类型映射
+        // 用插件信息区分注册名，避免互相覆盖
+
+        ret->registerModel<BaseModel>(
+            [name = var.name, in = var.in, out = var.out, nodeType]() {
+                qDebug()<<"in"<<in.size()<<"out"<<out.size();
+                return std::make_unique<BaseModel>(nodeType, name, in, out);
+            },
+           PLUG::TypeStr(var.type)
+        );
+    }
+
     return ret;
 }
 void dumpMeta(const QObject* obj)
@@ -227,7 +240,7 @@ void NodeEditPage::showConfigDialog(QObject* _obj, int index)
     d.adjustSize();
     connect(io_obj,&IOInterface::statusChanged,this,[&]()
     {
-        if ( io_obj->status() == INC::OPEN_STATUS )
+        if ( io_obj->status() == PLUG::OPEN_STATUS )
         {
             d.close();
         }

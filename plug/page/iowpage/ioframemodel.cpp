@@ -196,7 +196,7 @@ const std::list<uint>* IoFrameModel::findRowsByOwnCh(const QString& ownCh) const
         return &it->second;
     return nullptr;
 }
-void IoFrameModel::_addFrame(const INC::Frame& frame)
+void IoFrameModel::_addFrame(const PLUG::Frame& frame)
 {
     m_frames.push_back(frame);
     auto  devIndex= indexOf(devs,frame.info.dev);

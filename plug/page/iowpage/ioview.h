@@ -17,7 +17,7 @@ public:
     static IOView* instance(QWidget* parent = nullptr);
     IOView(QWidget* parent = nullptr);
 public:
-    void addRow(const INC::Frame& frame);
+    void addRow(const PLUG::Frame& frame);
     bool updateFlag() const{return m_update;};
 public slots:
     void setUpdateFlag(bool flag){m_update = flag;emit updateFlagChanged(m_update);};

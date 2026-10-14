@@ -13,9 +13,9 @@ public:
     QString fileName;
     QString name;
     QString date;
-    Plug::Type type;
-    QList<Plug::InputType> in;
-    QList<Plug::OutputType> out;
+    PLUG::Type type;
+    QList<PLUG::InputType> in;
+    QList<PLUG::OutputType> out;
     bool operator==(const PlugData& other) const
     {
         return other.fileName == fileName;
@@ -40,8 +40,9 @@ public:
 
    static ManageInterface* instance(QObject* parent=nullptr);
     virtual ~ManageInterface() = default;
-    void addPlug(const QPluginLoader* plug);
+    void addPlug( QPluginLoader* plug);
     QObject* getObj(const int  index)const {return nullptr;}
+    const QList<PlugData>& getPlugs()const {return plugs;}
 private:
     ManageInterface(QObject* parent);
 private:

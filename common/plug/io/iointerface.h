@@ -20,24 +20,24 @@ public:
     {
         O_RX = 0
     };
-    explicit IOInterface(const QString& name, INC::Config con) : config(std::move(con))
+    explicit IOInterface(const QString& name, PLUG::Config con) : config(std::move(con))
     {
         m_type = IOInterfaceEnum;
         m_name = name;
-        qRegisterMetaType<INC::Frame>("IO::Frame");
-        qRegisterMetaType<INC::Frame>("const IO::Frame&");
-        qRegisterMetaType<INC::Frame>("const QList<IOAPP::SIGNALS>");
-        qRegisterMetaType<INC::Frame>("const QList<IOAPP::SIGNALS>&");
+        qRegisterMetaType<PLUG::Frame>("IO::Frame");
+        qRegisterMetaType<PLUG::Frame>("const IO::Frame&");
+        qRegisterMetaType<PLUG::Frame>("const QList<IOAPP::SIGNALS>");
+        qRegisterMetaType<PLUG::Frame>("const QList<IOAPP::SIGNALS>&");
 
-        m_inputPorts << Plug::InputType::IN_IO_RX<< Plug::InputType::IN_IO_TX;
-        m_outputPorts << Plug::OutputType::OUT_IO_TX<< Plug::OutputType::OUT_IO_RX;
+        m_inputPorts << PLUG::InputType::IN_IO_RX<< PLUG::InputType::IN_IO_TX;
+        m_outputPorts << PLUG::OutputType::OUT_IO_TX<< PLUG::OutputType::OUT_IO_RX;
     };
     ~IOInterface() = default;
     virtual bool open() = 0;
     virtual bool close() = 0;
 
-    virtual int write(const INC::Frame&) = 0;
-    virtual int write(const QList<INC::Frame>&) = 0;
+    virtual int write(const PLUG::Frame&) = 0;
+    virtual int write(const QList<PLUG::Frame>&) = 0;
     int getReadCount() const { return rCount; }
     int getWriteCount() const { return wCount; }
     int getErrorCount() const { return eCount; }
@@ -46,21 +46,21 @@ public:
 
     int getWriteBufferNum() const { return wBuffer.size(); }
 
-    INC::Config _getConfig() const { return config; }
-    void _setConfig(const INC::Config& config) { this->config = config; }
+    PLUG::Config _getConfig() const { return config; }
+    void _setConfig(const PLUG::Config& config) { this->config = config; }
 
 
 
-    QList<INC::Frame> readALL()
+    QList<PLUG::Frame> readALL()
     {
-        QList<INC::Frame> d;
+        QList<PLUG::Frame> d;
         d.swap(rBuffer); // 交换内容
         return d; // 返回 d
 
 
         // return std::exchange(rBuffer, {});
     };
-    bool addCallback(int index, const std::function<void(const INC::Frame&)> &ptr)
+    bool addCallback(int index, const std::function<void(const PLUG::Frame&)> &ptr)
     {
         switch (index)
         {
@@ -75,7 +75,7 @@ public:
 protected:
     virtual void run() = 0;
 
-    void _readReady(const QList<INC::Frame>& frames)
+    void _readReady(const QList<PLUG::Frame>& frames)
     {
         rCount += frames.size();
         rBuffer.append(frames);
@@ -91,11 +91,11 @@ protected:
     };
 
 protected:
-    INC::Config config;
+    PLUG::Config config;
 
 private:
-    QList<INC::Frame> rBuffer;
-    QList<INC::Frame> wBuffer;
+    QList<PLUG::Frame> rBuffer;
+    QList<PLUG::Frame> wBuffer;
     int rCount = 0;
     int wCount = 0;
     int eCount = 0;
@@ -105,28 +105,28 @@ private:
 
     struct readFunctionComparator
     {
-        bool operator()(const std::function<void(const INC::Frame&)>& lhs,
-                        const std::function<void(const INC::Frame&)>& rhs) const
+        bool operator()(const std::function<void(const PLUG::Frame&)>& lhs,
+                        const std::function<void(const PLUG::Frame&)>& rhs) const
         {
             // 通过目标地址比较
-            return lhs.target<void(const INC::Frame&)>() !=rhs.target<void(const INC::Frame&)>();
+            return lhs.target<void(const PLUG::Frame&)>() !=rhs.target<void(const PLUG::Frame&)>();
         }
     };
-    std::list<std::function<void(const INC::Frame&)>> _readReadyCallback;
+    std::list<std::function<void(const PLUG::Frame&)>> _readReadyCallback;
 private:
     Q_PROPERTY(int status READ status WRITE setStatus NOTIFY statusChanged)
 public:
     // IOInterface_obj(QObject* parent = nullptr) : QObject(parent){};
     void setStatus(int _status)
     {
-        m_status = ( INC::STATUS)_status;
+        m_status = ( PLUG::STATUS)_status;
         emit statusChanged();
     }
-    INC::STATUS status()const{return m_status;}
+    PLUG::STATUS status()const{return m_status;}
     signals:
         void statusChanged();
 private:
-    INC::STATUS m_status = INC::CLOSE_STATUS;
+    PLUG::STATUS m_status = PLUG::CLOSE_STATUS;
 };
 
 

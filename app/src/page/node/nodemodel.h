@@ -34,7 +34,10 @@ public:
     Q_ENUM(NodeTye);
 
   //BaseModel():NodeDelegateModel(),m_type(DEFAULT_TYPE){};
-  BaseModel(NodeTye type,QString _name,QList<QtNodes::NodeDataTypeEnum::InputType> _in,QList<QtNodes::NodeDataTypeEnum::OutputType> _out);
+  BaseModel(const NodeTye type
+      ,const QString _name
+      ,const QList<PLUG::InputType> _in
+      ,const QList<PLUG::OutputType> _out);
 
     virtual ~BaseModel() override
     {
@@ -70,6 +73,20 @@ public:
         }
         return *this;
     }
+
+    static NodeTye PLUG_TO_NODE_TYPE(const PLUG::Type& plug)
+    {
+        switch (plug)
+        {
+        case PLUG::Type::Default:return DEFAULT_TYPE;
+        case PLUG::Type::VIEW:return VIEW_TYPE;
+        case PLUG::Type::IO:return IO_TYPE;
+        case PLUG::Type::IOAPP:return IOAPP_TYPE;
+        case PLUG::Type::SIGNAL:return SIGNAL_TYPE;
+            default:Q_ASSERT(1);break;
+        }
+        return DEFAULT_TYPE;
+    }
 public:
     QString caption() const override { return m_caption; }
 
@@ -92,8 +109,8 @@ protected:
     NodeTye m_type=DEFAULT_TYPE;
     QString m_name;
     QString m_caption;
-    QList<QtNodes::NodeDataTypeEnum::InputType> in;
-    QList<QtNodes::NodeDataTypeEnum::OutputType> out;
+    QList<PLUG::InputType> in;
+    QList<PLUG::OutputType> out;
 protected:
 
     QWidget* m_widget=nullptr;

@@ -29,13 +29,13 @@ public:
     SignalObj(SIGNALDATA::SIGNALS_ENUM _type, QObject *parent = nullptr):InterfaceBase(parent),type(_type){};
       ~SignalObj() override = default;
 signals:
-     void sig_rx_frame(const INC::Frame&);
-     void sig_hasSignal(const QList<INC::_SIGNALS>&);
-     void sig_app_rx(const INC::Frame&);
+     void sig_rx_frame(const PLUG::Frame&);
+     void sig_hasSignal(const QList<PLUG::_SIGNALS>&);
+     void sig_app_rx(const PLUG::Frame&);
  public slots:
-     void slot_rx_frame(const INC::Frame&);
-     void slot_hasSignal(const QList<INC::_SIGNALS>&);
-     void slot_app_rx(const INC::Frame&);
+     void slot_rx_frame(const PLUG::Frame&);
+     void slot_hasSignal(const QList<PLUG::_SIGNALS>&);
+     void slot_app_rx(const PLUG::Frame&);
 private:
     QList<QObject*> in;
     QList<QObject*> out;

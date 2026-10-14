@@ -11,34 +11,7 @@
 #include "interfacecommon.h"
 //#include "../../../lib/mdb/mdb.h"
 
-namespace Plug
-{
-    enum class InputType {          // 更好的命名
-        IN_VIRTUAL_TX,
-        IN_IO_TX,
-        IN_IO_RX,
-        IN_APP_TX,
-        IN_APP_RX,
-        IN_APP_SIGNAL
-    };
 
-    enum class OutputType {        // 更好的命名
-        OUT_IO_TX,
-        OUT_IO_RX,
-        OUT_APP_TX,
-        OUT_APP_RX,
-        OUT_APP_SIGNAL,
-    };
-
-    enum class  Type
-    {
-        Default,
-        VIEW,
-        IO,
-        IOAPP,
-        SIGNAL,
-    };
-}
 class InterfaceBase:public QObject {
     Q_OBJECT
 public:
@@ -63,12 +36,12 @@ public:
     {
        // qDebug() << "~InterfaceBase()";
     }
-    const char* getSignal(Plug::InputType index) const;
-    const char* getSlot(Plug::OutputType index) const;
+    const char* getSignal(PLUG::InputType index) const;
+    const char* getSlot(PLUG::OutputType index) const;
     const char* getSignal(int index) const{return getSignal(m_inputPorts.at(index));};
     const char* getSlot(int index) const{return getSlot(m_outputPorts.at(index));};
-    QList<Plug::InputType> inputPorts()const{return m_inputPorts;}
-    QList<Plug::OutputType> outputPorts()const{return m_outputPorts;}
+    QList<PLUG::InputType> inputPorts()const{return m_inputPorts;}
+    QList<PLUG::OutputType> outputPorts()const{return m_outputPorts;}
     virtual QList<std::tuple<QVariant::Type,QString,QVariant>> getConfig(){return {};};
     virtual void setConfig(const QList<std::tuple<QVariant::Type,QString,QVariant>> &){};
     void fun(const QString& key,const void * value)
@@ -87,24 +60,24 @@ public:
         IOInterfaceEnum,
     };
 signals:
-void signals_OUT_IO_TX(const INC::Frame&);
-void signals_OUT_IO_RX(const INC::Frame&);
-void signals_OUT_APP_TX(const INC::Frame&);
-void signals_OUT_APP_RX(const INC::Frame&);
-void signals_OUT_APP_SIGNAL(const QList<INC::_SIGNALS>&);
+void signals_OUT_IO_TX(const PLUG::Frame&);
+void signals_OUT_IO_RX(const PLUG::Frame&);
+void signals_OUT_APP_TX(const PLUG::Frame&);
+void signals_OUT_APP_RX(const PLUG::Frame&);
+void signals_OUT_APP_SIGNAL(const QList<PLUG::_SIGNALS>&);
 public slots:
-void slots_IN_VIRTUAL_TX(const INC::Frame&);
-void slots_IN_IO_TX(const INC::Frame&);
-void slots_IN_IO_RX(const INC::Frame&);
-void slots_IN_APP_TX(const INC::Frame&);
-void slots_IN_APP_RX(const INC::Frame&);
-void slots_IN_APP_SIGNAL(const QList<INC::_SIGNALS>&);
+void slots_IN_VIRTUAL_TX(const PLUG::Frame&);
+void slots_IN_IO_TX(const PLUG::Frame&);
+void slots_IN_IO_RX(const PLUG::Frame&);
+void slots_IN_APP_TX(const PLUG::Frame&);
+void slots_IN_APP_RX(const PLUG::Frame&);
+void slots_IN_APP_SIGNAL(const QList<PLUG::_SIGNALS>&);
 protected:
     QMap<QString,  std::function<void(const void*)>> m_funs;
      int m_type = DefaultEnum;
      QString m_name = "UNKNOW";
-    QList<Plug::InputType> m_inputPorts;
-    QList<Plug::OutputType> m_outputPorts;
+    QList<PLUG::InputType> m_inputPorts;
+    QList<PLUG::OutputType> m_outputPorts;
 
 };
 #endif //INTERFACEBASE_H

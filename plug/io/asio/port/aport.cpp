@@ -14,7 +14,7 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <utility>
 using namespace  asio;
-APort::APort(QObject* parent, INC::Config config)
+APort::APort(QObject* parent, PLUG::Config config)
     :
     IOInterface("aport",std::move(config)),
     handle(new serial_port(io_context))
@@ -28,7 +28,7 @@ APort::APort(QObject* parent, INC::Config config)
         "parity":"NONE",
         "flow":"NONE"
     })";
-    addCallback(0,[this](const INC::Frame& frame)
+    addCallback(0,[this](const PLUG::Frame& frame)
     {
         emit rx_frame(frame);
     });
@@ -178,7 +178,7 @@ bool APort::open()
             qInfo()<<"open "<<config.dev<<" baud "<<baud<<" data "<<data<<" stop "<<stop<<" parity "<<parity<<" flow "<<flow;
             do_read();
             run();
-            setStatus(INC::OPEN_STATUS);
+            setStatus(PLUG::OPEN_STATUS);
         }
     }
     catch (const std::exception& e) {
@@ -190,7 +190,7 @@ bool APort::open()
 bool APort::close()
 {
     // 1. 先中断异步操作
-    setStatus(INC::CLOSE_STATUS);
+    setStatus(PLUG::CLOSE_STATUS);
     // 2. 再关闭句柄
     if (handle->is_open())
     {
@@ -199,14 +199,14 @@ bool APort::close()
     }
     return true;
 }
-int APort::write(const INC::Frame& frame)
+int APort::write(const PLUG::Frame& frame)
 {
     if (!handle->is_open()) {return 0;}
     return handle->write_some(asio::buffer(frame.data.data(), frame.data.size()));
 }
-int APort::write(const QList<INC::Frame>& frames)
+int APort::write(const QList<PLUG::Frame>& frames)
 {
-    foreach (const INC::Frame& frame, frames)
+    foreach (const PLUG::Frame& frame, frames)
     {
         write(frame);
     }
@@ -291,11 +291,11 @@ void APort::do_read()
     asio::buffer(recv_buffer_),
     [this](std::error_code ec, std::size_t bytes_recvd) {
         if (!ec && bytes_recvd > 0) {
-            QList<INC::Frame> frames;
-            frames.append(INC::Frame{
+            QList<PLUG::Frame> frames;
+            frames.append(PLUG::Frame{
                 this->config,
                 QDateTime::currentDateTime(),
-                    INC::RT::RX,
+                    PLUG::RT::RX,
                 QByteArray(recv_buffer_.data(),bytes_recvd)
             });
             /*qDebug().noquote()<< QString("%1:%2 %3")
