@@ -41,6 +41,7 @@ public:
    static ManageInterface* instance(QObject* parent=nullptr);
     virtual ~ManageInterface() = default;
     void addPlug(const QPluginLoader* plug);
+    QObject* getObj(const int  index)const {return nullptr;}
 private:
     ManageInterface(QObject* parent);
 private:

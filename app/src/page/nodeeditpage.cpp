@@ -12,9 +12,6 @@
 #include "../plug/io/iointerface.h"
 #include "../plug/ioapp/ioappinterface.h"
 #include "../plug/page/pagebase.h"
-#include "interface/ioappinterfacemanage.h"
-#include "interface/iointerfacemanage.h"
-#include "interface/viewmanage.h"
 #include "node/nodemodel.h"
 #include "plotview.h"
 #include "interface/manageinterface.h"
@@ -69,26 +66,6 @@ void NodeEditPage::_sceneLoaded()
     for (auto& var : allNodeIds)
     {
         auto type = model.nodeData(var, NodeRole::Type).toString();
-        if (VIEWManage::hasType(type)) // 管理
-        {
-            VIEWManage::instance()->creatObj(var, type);
-        }
-        else if (!IOInterfaceManage::instance()->check(type).isEmpty())
-        {
-            IOInterfaceManage::instance()->creatObj(var, type);
-        }
-        else if (!IOAPPInterfaceManage::instance()->check(type).isEmpty())
-        {
-            IOAPPInterfaceManage::instance()->creatObj(var, type);
-        }
-       // else if (!SignalManage::instance()->check(type).isEmpty())
-       // {
-       //     SignalManage::instance()->creatObj(var, type);
-       // }
-        else
-        {
-            qCritical() << "todo: not type nodeIds" << var << type;
-        }
     }
     for (auto& var : allNodeIds)
     {
@@ -98,8 +75,8 @@ void NodeEditPage::_sceneLoaded()
         {
             try
             {
-                QObject* in_obj = Manage::getObj(cid.inNodeId);
-                QObject* out_obj = Manage::getObj(cid.outNodeId);
+                QObject* in_obj = ManageInterface::instance()->getObj(cid.inNodeId);
+                QObject* out_obj = ManageInterface::instance()->getObj(cid.outNodeId);
                // qDebug() << "in:" << cid.inNodeId << in_obj << "out:" << cid.outNodeId << out_obj;
 
                 if (!in_obj || !out_obj)
@@ -425,17 +402,17 @@ NodeEditPage::NodeEditPage(QWidget* parent)
     connect(dataFlowGraphModel,&DataFlowGraphModel::configClicked,this,[this](int index)
     {
             //TODO
-        if (auto obj =qobject_cast<IOInterface*>(Manage::getObj(index)))
+        if (auto obj =qobject_cast<IOInterface*>(ManageInterface::instance()->getObj(index)))
         {
             qInfo()<<"configClicked "<<index<<obj;
             auto config =obj->getConfig();
 
-            showConfigDialog(Manage::getObj(index),index);
+            showConfigDialog(ManageInterface::instance()->getObj(index),index);
         }
-        else  if (auto obj =qobject_cast<IOAPPInterface*>(Manage::getObj(index)))
+        else  if (auto obj =qobject_cast<IOAPPInterface*>(ManageInterface::instance()->getObj(index)))
         {
             qInfo()<<"IOAPPInterface configClicked "<<index<<obj;
-             showConfigDialog(Manage::getObj(index),index);
+             showConfigDialog(ManageInterface::instance()->getObj(index),index);
         }
     });
     // SignalObj d(SIGNALDATA::IO_RX);
@@ -458,11 +435,11 @@ NodeEditPage::NodeEditPage(QWidget* parent)
             auto indexes = _allIndexes();
             for (int index : indexes) {
                 auto cfg = _loadConfig(index);
-                auto obj = Manage::getInterfaceBase(index);
-                if (obj)
-                {
-                    obj->setConfig(cfg);
-                }
+                //auto obj = Manage::getInterfaceBase(index);
+                //if (obj)
+                //{
+                //    obj->setConfig(cfg);
+                //}
             }
         }
         catch (const std::logic_error& e) {

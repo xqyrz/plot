@@ -15,8 +15,6 @@ add_executable(${APP_NAME} ${SRC_FILES}
         #${IO_SRC_FILES_H}
         #${IOAPP_SRC_FILES_H}
         #${PAGE_SRC_FILES_H}
-        src/interface/manage.cpp
-        src/interface/manage.h
         ${BUS_PATH}/bus.h
         ${BUS_PATH}/bus.cpp
         ../plug/io/iointerface.h
