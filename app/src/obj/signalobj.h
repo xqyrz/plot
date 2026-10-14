@@ -7,8 +7,8 @@
 
 #include <QMap>
 #include <QObject>
-#include "iointerface.h"
-#include "../ioapp/ioappinterface.h"
+#include "../../../common/plug/io/iointerface.h"
+#include "../../../common/plug/ioapp/ioappinterface.h"
  namespace  SIGNALDATA
 {
     typedef enum
@@ -28,16 +28,14 @@ Q_OBJECT
 public:
     SignalObj(SIGNALDATA::SIGNALS_ENUM _type, QObject *parent = nullptr):InterfaceBase(parent),type(_type){};
       ~SignalObj() override = default;
-     const char* getSignal(int index) const override;
-     const char* getSlot(int index) const override;
 signals:
-     void sig_rx_frame(const IO::Frame&);
-     void sig_hasSignal(const QList<IOAPP::SIGNALS>&);
-     void sig_app_rx(const IO::Frame&);
+     void sig_rx_frame(const INC::Frame&);
+     void sig_hasSignal(const QList<INC::_SIGNALS>&);
+     void sig_app_rx(const INC::Frame&);
  public slots:
-     void slot_rx_frame(const IO::Frame&);
-     void slot_hasSignal(const QList<IOAPP::SIGNALS>&);
-     void slot_app_rx(const IO::Frame&);
+     void slot_rx_frame(const INC::Frame&);
+     void slot_hasSignal(const QList<INC::_SIGNALS>&);
+     void slot_app_rx(const INC::Frame&);
 private:
     QList<QObject*> in;
     QList<QObject*> out;

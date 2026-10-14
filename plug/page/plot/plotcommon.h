@@ -5,7 +5,6 @@
 #ifndef PLOTCOMMON_H
 #define PLOTCOMMON_H
 #include <QLoggingCategory>
-#include "../plug/ioapp/ioappcommon.h"
 #define APP_NAME "plot"
 // Q_DECLARE_LOGGING_CATEGORY(plot)
 // Q_LOGGING_CATEGORY(plot,APP_NAME)

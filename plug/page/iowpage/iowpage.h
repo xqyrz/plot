@@ -5,11 +5,11 @@
 #ifndef IOWPAGE_H
 #define IOWPAGE_H
 
+#include <QJsonObject>
 #include <QWidget>
 #include <functional>
-#include <QJsonObject>
+#include "../../../common/plug/io/iocommon.h"
 #include "../pagebase.h"
-#include "../io/iocommon.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class IOWPage; }
 QT_END_NAMESPACE
@@ -25,7 +25,7 @@ public:
 private slots:
     void on_devOpen_clicked();
 public slots:
-    void  slot_rx(const IO::Frame&);
+    void  slot_rx(const INC::Frame&);
     void setIOobjs(const QList<IOInterface*>&);
 public:
     const char* getSignal(int index) const override ;

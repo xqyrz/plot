@@ -13,8 +13,7 @@ Q_OBJECT
 
 public:
     using InterfaceBase::InterfaceBase;
-    const char* getSignal(int index) const override { qDebug()<<index;return nullptr;}
-    const char* getSlot(int index) const override { qDebug()<<index;return nullptr;}
+
          QWidget* ui(){return _ui;};
 protected:
     inline static const  QString KEY =QStringLiteral("key");

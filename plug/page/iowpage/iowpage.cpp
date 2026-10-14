@@ -5,12 +5,12 @@
 // You may need to build the project (run Qt uic code generator) to get "ui_IOWPage.h" resolved
 
 #include "iowpage.h"
-#include "ui_iowpage.h"
-#include <QFile>
-#include <QTextStream>
 #include <QDebug>
+#include <QFile>
 #include <QScrollBar>
-#include "iointerface.h"
+#include <QTextStream>
+#include "../../../common/plug/io/iointerface.h"
+#include "ui_iowpage.h"
 IOWPage::IOWPage(QWidget *parent) :
     QWidget(parent), ui(new Ui::IOWPage) {
 
@@ -58,7 +58,7 @@ void IOWPage::on_devOpen_clicked()
         qWarning() << "not set callback";
     }
 }
-void IOWPage::slot_rx(const IO::Frame& frame)
+void IOWPage::slot_rx(const INC::Frame& frame)
 {
     ui->tableIO->addRow(frame);
     //TODO:timer 定时 优化性能
@@ -78,7 +78,7 @@ return nullptr;
 const char* IOWPage::getSlot(int index) const {
     switch (index)
     {
-    case 0:return SLOT(slot_rx(const IO::Frame&));break;
+    case 0:return SLOT(slot_rx(const INC::Frame&));break;
     default:return nullptr;
     }
 }

@@ -25,7 +25,6 @@ target_include_directories(${JLINKARM}
 target_link_libraries(${JLINKARM}
         Qt${QT_VERSION_MAJOR}::Core
         mdb::mdb
-        ${IO_LIB}
 )
 
 install(TARGETS ${JLINKARM}

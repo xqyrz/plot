@@ -17,8 +17,9 @@ add_executable(${APP_NAME} ${SRC_FILES}
         #${PAGE_SRC_FILES_H}
         ${BUS_PATH}/bus.h
         ${BUS_PATH}/bus.cpp
-        ../plug/io/iointerface.h
+        ../common/plug/io/iointerface.h
         ../common/plug/interfacebase.h
+        ../common/plug/interfacebase.cpp
 )
 
 target_link_libraries(${APP_NAME}

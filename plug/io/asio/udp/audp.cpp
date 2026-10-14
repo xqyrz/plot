@@ -5,14 +5,14 @@
 #include "audp.h"
 #include <QDebug>
 #include <QThread>
-AUdp::AUdp(QObject *parent,IO::Config config )
+AUdp::AUdp(QObject *parent,INC::Config config )
     :IOInterface("aUdp",config)
     ,_socket(new udp::socket(io_context))
     ,recv_buffer_()
 {
     this->config.dev = "0.0.0.0";
     this->config.ch = "6123";
-    addCallback(0,[this](const IO::Frame& frame)
+    addCallback(0,[this](const INC::Frame& frame)
     {
         emit rx_frame(frame);
     });
@@ -62,14 +62,14 @@ try {
         //_socket->connect(endpoint, ec);
              if (ec) {
             qWarning() << "Failed to connect:" << QString::fromStdString(ec.message());
-                 setStatus(IO::CLOSE_STATUS);
+                 setStatus(INC::CLOSE_STATUS);
             return false;
         }
 
         qDebug() << QString("Connected to local: %1:%2")// <==> remote: %3:%4")
         .arg(QString::fromStdString(_socket->local_endpoint().address().to_string()))
         .arg(_socket->local_endpoint().port());
-        setStatus(IO::OPEN_STATUS);
+        setStatus(INC::OPEN_STATUS);
         run();
 
     }
@@ -92,15 +92,15 @@ bool AUdp::close() {
     return false;
 }
 
-int AUdp::write(const IO::Frame & frame) {
+int AUdp::write(const INC::Frame & frame) {
     if (!_socket->is_open()) {return 0;}
     return _socket->send(asio::buffer(frame.data.data(), frame.data.size()));
 }
 
-int AUdp::write(const QList<IO::Frame>& frames)
+int AUdp::write(const QList<INC::Frame>& frames)
 {
 
-    foreach (const IO::Frame& frame, frames)
+    foreach (const INC::Frame& frame, frames)
     {
         write(frame);
     }
@@ -143,12 +143,12 @@ void AUdp::do_read()
                 // .arg(endpoint.port())
                 // .arg(QString( QByteArray(recv_buffer_.data(), bytes_recvd).toHex(' ')));
                 // qDebug() << QThread::currentThread();
-                QList<IO::Frame> frames;
+                QList<INC::Frame> frames;
                 auto remote_ep = endpoint;
-                frames.append(IO::Frame{
+                frames.append(INC::Frame{
                     {QString::fromStdString(remote_ep.address().to_string()), QString::number(remote_ep.port())},
                     QDateTime::currentDateTime(),
-                    IO::RT::RX,
+                    INC::RT::RX,
                     QByteArray(recv_buffer_.data(), bytes_recvd)});
                 this->_readReady(frames);
             }

@@ -130,6 +130,7 @@ file(GLOB PAGE_SRC_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/common/plug/page/*.h"
 )
 
+set(PLUG_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/common/plug)
 add_subdirectory(lib)
 # 添加子目录
 add_subdirectory(plug)

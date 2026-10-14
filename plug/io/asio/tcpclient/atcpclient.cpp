@@ -4,11 +4,11 @@
 #include "atcpclient.h"
 #include <QDebug>
 
-ATCPClient::ATCPClient(IO::Config con,QObject* parent)
+ATCPClient::ATCPClient(INC::Config con,QObject* parent)
     :IOInterface("atcpclient",con)
     ,_socket(new tcp::socket(io_context))
 {
-    auto fun = [this](const IO::Frame& frame)
+    auto fun = [this](const INC::Frame& frame)
     {
         emit rx_frame(frame);
     };
@@ -84,7 +84,7 @@ bool ATCPClient::close() {
 
     return true;
 }
-int ATCPClient::write(const IO::Frame& frame) {
+int ATCPClient::write(const INC::Frame& frame) {
     if (_socket->is_open())
     {
         _socket->async_write_some(
@@ -103,7 +103,7 @@ int ATCPClient::write(const IO::Frame& frame) {
     }
     return 0;
 }
-int ATCPClient::write(const QList<IO::Frame>&) {
+int ATCPClient::write(const QList<INC::Frame>&) {
     return 0;
 }
 

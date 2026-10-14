@@ -6,23 +6,23 @@
 #include <QDebug>
 
 
-SelfIOAPP::SelfIOAPP( QObject* parent):IOAPPInterface(IOAPP::SELFIO_ID)
+SelfIOAPP::SelfIOAPP( QObject* parent):IOAPPInterface(INC::SELFIO_ID)
 {
-    addCallback(0,[this]( const QList<IOAPP::SIGNALS>& _signals)
+    addCallback(0,[this]( const QList<INC::_SIGNALS>& _signals)
     {
         emit hasSignal(_signals);
     });
-    // connect(this,&SelfIOAPP::hasSignal,this,[](const QList<IOAPP::SIGNALS>& s)
+    // connect(this,&SelfIOAPP::hasSignal,this,[](const QList<INC::_SIGNALS>& s)
     // {
     //     qInfo()<<s.size();
     // });
 }
 
-QList<IOAPP::SIGNALS>  SelfIOAPP::decode(const IO::Frame& frame)
+QList<INC::_SIGNALS>  SelfIOAPP::decode(const INC::Frame& frame)
 {
 
     int i = 0;
-    QList<IOAPP::SIGNALS> list;
+    QList<INC::_SIGNALS> list;
     auto buf = frame.data.constData();
     
     while (i<frame.data.size())
@@ -32,7 +32,7 @@ QList<IOAPP::SIGNALS>  SelfIOAPP::decode(const IO::Frame& frame)
             // 返回 true 表示一个完整消息已解析完成
 //           qDebug() << "Message received, id=" << rcv_msg.msgid;
             // 根据 msgid 处理具体消息
-            auto fun = [this](IOAPP::SIGNALS& sig, uint64_t id, std::string name, double value)
+            auto fun = [this](INC::_SIGNALS& sig, uint64_t id, std::string name, double value)
             {
                 sig.ID.id = id;
                 sig.name =name;
@@ -136,9 +136,9 @@ QList<IOAPP::SIGNALS>  SelfIOAPP::decode(const IO::Frame& frame)
     emit hasSignal(list);
     return list;
 }
-IO::Frame SelfIOAPP::encode()
+INC::Frame SelfIOAPP::encode()
 {
-    IO::Frame frame;
+    INC::Frame frame;
     mavlink_message_t msg;
     mavlink_sensor_t sb;
     sb.sensor1 = 12345.678;
@@ -148,7 +148,7 @@ IO::Frame SelfIOAPP::encode()
     frame.data = QByteArray((char*)buffer, len);
     return frame;
 }
-void SelfIOAPP::rx_frame(const IO::Frame& frame)
+void SelfIOAPP::rx_frame(const INC::Frame& frame)
 {
     emit sig_app_rx(frame);
     decode(frame);

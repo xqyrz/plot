@@ -109,7 +109,7 @@ bool DBM::addFrame(QString& time, QString& channel, QString& frame_id, QString& 
 }
 
 
-bool DBM::addFrame(QList<IO::Frame>& frames)
+bool DBM::addFrame(QList<INC::Frame>& frames)
 {
     QSqlQuery query(*m_db);
 

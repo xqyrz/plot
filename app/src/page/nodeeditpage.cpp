@@ -9,12 +9,12 @@
 #include <stdexcept>
 
 
-#include "../plug/io/iointerface.h"
-#include "../plug/ioapp/ioappinterface.h"
-#include "../plug/page/pagebase.h"
+#include "../../../common/plug/io/iointerface.h"
+#include "../../../common/plug/ioapp/ioappinterface.h"
+#include "../../../common/plug/page/pagebase.h"
+#include "interface/manageinterface.h"
 #include "node/nodemodel.h"
 #include "plotview.h"
-#include "interface/manageinterface.h"
 std::shared_ptr<NodeDelegateModelRegistry> NodeEditPage::_registerDataModels()
 {
     auto ret = std::make_shared<NodeDelegateModelRegistry>();
@@ -227,7 +227,7 @@ void NodeEditPage::showConfigDialog(QObject* _obj, int index)
     d.adjustSize();
     connect(io_obj,&IOInterface::statusChanged,this,[&]()
     {
-        if ( io_obj->status() == IO::OPEN_STATUS )
+        if ( io_obj->status() == INC::OPEN_STATUS )
         {
             d.close();
         }

@@ -4,43 +4,40 @@
 
 #ifndef PLOT_IOAPPINTERFACE_H
 #define PLOT_IOAPPINTERFACE_H
-#include "ioappcommon.h"
-#include "../io/iointerface.h"
-#include "../interfacebase.h"
 #include <QObject>
+#include "../interfacebase.h"
+#include "../io/iointerface.h"
 class IOAPPInterface:public InterfaceBase
 {
     Q_OBJECT
 public:
     IOAPPInterface(int _id=0 ):InterfaceBase(), id(_id){};
-    void getFrame(const IO::Frame&);
-    virtual QList<IOAPP::SIGNALS> decode(const IO::Frame& data) = 0;
-    virtual IO::Frame encode() = 0;
-    const char* getSignal(int index) const override;
-    const char* getSlot(int index) const override;
-    inline IOAPP::SIGNALS getSignalData()
+    void getFrame(const INC::Frame&);
+    virtual QList<INC::_SIGNALS> decode(const INC::Frame& data) = 0;
+    virtual INC::Frame encode() = 0;
+    inline INC::_SIGNALS getSignalData()
     {
-        IOAPP::SIGNALS signal;
+        INC::_SIGNALS signal;
        // signal.time = QDateTime::currentDateTime().toMSecsSinceEpoch();
         signal.ID.res = 1;
         signal.ID.type = id;
 
         return signal;
     }
-    void addCallback(int index,std::function<void(const QList<IOAPP::SIGNALS>& )> ptr);
+    void addCallback(int index,std::function<void(const QList<INC::_SIGNALS>& )> ptr);
 protected:
     QList<QByteArray> m_data;
     struct signalFunctionComparator {
-        bool operator()(const std::function<void(const  QList<IOAPP::SIGNALS>&)>& lhs,
-                        const std::function<void(const  QList<IOAPP::SIGNALS>&)>& rhs) const {
+        bool operator()(const std::function<void(const  QList<INC::_SIGNALS>&)>& lhs,
+                        const std::function<void(const  QList<INC::_SIGNALS>&)>& rhs) const {
             // 通过目标地址比较
-            return lhs.target<void(const  QList<IOAPP::SIGNALS>&)>() < rhs.target<void(const  QList<IOAPP::SIGNALS>&)>();
+            return lhs.target<void(const  QList<INC::_SIGNALS>&)>() < rhs.target<void(const  QList<INC::_SIGNALS>&)>();
         }
     };
-    std::set<std::function<void(const  QList<IOAPP::SIGNALS>& )>,signalFunctionComparator> _signalCallback;
+    std::set<std::function<void(const  QList<INC::_SIGNALS>& )>,signalFunctionComparator> _signalCallback;
     const uint32_t id;
 };
-inline void IOAPPInterface::getFrame(const IO::Frame& frame)
+inline void IOAPPInterface::getFrame(const INC::Frame& frame)
 {
     auto _signals = this->decode(frame);
     if (_signals.size())
@@ -51,23 +48,8 @@ inline void IOAPPInterface::getFrame(const IO::Frame& frame)
         }
     }
 }
-inline const char* IOAPPInterface::getSignal(int index) const {
-    switch (index)
-{
-    case 1: return SIGNAL(sig_app_rx(const IO::Frame&));
-    case 2: return SIGNAL(hasSignal(const QList<IOAPP::SIGNALS>&));
-    default: return nullptr;
-} }
-inline const char* IOAPPInterface::getSlot(int index) const
-{
-    switch (index)
-    {
-    case 0: return SLOT(rx_frame(const IO::Frame&));
-    default: return nullptr;
-    }
 
-}
-inline void IOAPPInterface::addCallback(int index,std::function<void(const QList<IOAPP::SIGNALS>& )> ptr)
+inline void IOAPPInterface::addCallback(int index,std::function<void(const QList<INC::_SIGNALS>& )> ptr)
 {
     _signalCallback.insert(ptr);
 }

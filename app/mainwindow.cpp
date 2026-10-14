@@ -25,9 +25,9 @@
 #include "shared/widgetframe/windowbar.h"
 #include "shared/widgetframe/windowbutton.h"
 
-#include "src/page/maindock.h"
+#include "../common/plug/io/iointerface.h"
 #include "mdb.h"
-#include "iointerface.h"
+#include "src/page/maindock.h"
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     setAttribute(Qt::WA_DontCreateNativeAncestors);

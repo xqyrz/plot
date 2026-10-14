@@ -4,17 +4,17 @@
 
 #include "manageinterface.h"
 #include <QCoreApplication>
-#include <QPluginLoader>
-#include <QDir>
 #include <QDebug>
+#include <QDir>
+#include <QPluginLoader>
+#include "../../../common/plug/io/iointerface.h"
+#include "../../../common/plug/ioapp/ioappinterface.h"
+#include "../../../common/plug/page/pagebase.h"
 #include "manageinterface.h"
-#include "../plug/io/iointerface.h"
-#include "../plug/ioapp/ioappinterface.h"
-#include "../plug/page/pagebase.h"
 ManageInterface* ManageInterface::instance(QObject* parent)
 {
-    static ManageInterface* instance = new ManageInterface(parent);
-    return instance;
+    static ManageInterface instance(parent);
+    return &instance;
 }
 void ManageInterface::addPlug(const QPluginLoader* pluginLoader)
 {
@@ -77,7 +77,7 @@ ManageInterface::ManageInterface(QObject* parent):QObject(parent)
             auto date = json["date"].toString();
             qInfo() << QString("load:[%1]  %2 %3:%4  ").arg(date,info.baseName(), iid, className);
             // 访问感兴趣的接口
-            ManageInterface::instance()->addPlug(&pluginLoader);
+            addPlug(&pluginLoader);
         }
         else
         {

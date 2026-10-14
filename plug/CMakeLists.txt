@@ -18,7 +18,10 @@ set(VOFA_APP vofaapp)
 
 set(IOAPP_PATH ${CMAKE_CURRENT_SOURCE_DIR}/ioapp)
 MESSAGE("CMAKE_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}")
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${PLUG_INCLUDE_PATH}
+)
 
 add_subdirectory(io)
 

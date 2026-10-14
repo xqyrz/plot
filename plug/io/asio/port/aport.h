@@ -7,7 +7,7 @@
 #if _MSC_VER >= 1900
 #pragma execution_character_set("utf-8")
 #endif
-#include "iointerface.h"
+#include "../../../../common/plug/io/iointerface.h"
 #include "asio.hpp"
 
 class  APort:public IOInterface
@@ -17,19 +17,19 @@ class  APort:public IOInterface
     Q_PLUGIN_METADATA(IID IOInterface_Id FILE "port.json")
 
 public:
-    explicit APort( QObject* parent = nullptr,IO::Config config=IO::Config());
+    explicit APort( QObject* parent = nullptr,INC::Config config=INC::Config());
     ~APort() override;
     void run() override;
     bool open() override;
     bool close() override;
-    int write(const IO::Frame&) override;
-    int write(const QList<IO::Frame>&) override;
+    int write(const INC::Frame&) override;
+    int write(const QList<INC::Frame>&) override;
     QList<std::tuple<QVariant::Type,QString,QVariant>> getConfig() override;
     void setConfig(const QList<std::tuple<QVariant::Type,QString,QVariant>> &) override;
     signals:
-            void rx_frame(const IO::Frame&);
+            void rx_frame(const INC::Frame&);
 public   slots:
-    void tx_frame(const IO::Frame& frame){write(frame);};
+    void tx_frame(const INC::Frame& frame){write(frame);};
 private:
     void do_read();
 private:

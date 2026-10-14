@@ -6,10 +6,10 @@
 #include <QDebug>
 
 
-VOFAAPP::VOFAAPP( QObject* parent):IOAPPInterface(IOAPP::VAFA_ID)
+VOFAAPP::VOFAAPP( QObject* parent):IOAPPInterface(INC::VAFA_ID)
 ,_last(QTime::currentTime())
 {
-    addCallback(0,[this]( const QList<IOAPP::SIGNALS>& _signals)
+    addCallback(0,[this]( const QList<INC::_SIGNALS>& _signals)
     {
         emit hasSignal(_signals);
     });
@@ -19,11 +19,11 @@ VOFAAPP::VOFAAPP( QObject* parent):IOAPPInterface(IOAPP::VAFA_ID)
     }
 }
 
-QList<IOAPP::SIGNALS>  VOFAAPP::decode(const IO::Frame& frame)
+QList<INC::_SIGNALS>  VOFAAPP::decode(const INC::Frame& frame)
 {
     auto last = buffer;
     int i = 0;
-    QList<IOAPP::SIGNALS> list;
+    QList<INC::_SIGNALS> list;
     auto time = QTime::currentTime();
     if (_last.msecsTo(time)>200)
     {
@@ -79,9 +79,9 @@ QList<IOAPP::SIGNALS>  VOFAAPP::decode(const IO::Frame& frame)
 
     return list;
 }
-IO::Frame VOFAAPP::encode()
+INC::Frame VOFAAPP::encode()
 {
-    IO::Frame frame;
+    INC::Frame frame;
 
     return frame;
 }
@@ -105,7 +105,7 @@ void VOFAAPP::setConfig(const QList<std::tuple<QVariant::Type, QString, QVariant
     }
 }
 
-void VOFAAPP::rx_frame(const IO::Frame& frame)
+void VOFAAPP::rx_frame(const INC::Frame& frame)
 {
     emit sig_app_rx(frame);
     decode(frame);

@@ -5,7 +5,7 @@
 #ifndef ATCPSERVER_H
 #define ATCPSERVER_H
 
-#include "iointerface.h"
+#include "../../../../common/plug/io/iointerface.h"
 #include "asio.hpp"
 using asio::ip::tcp;
 class ATCPClient:public IOInterface{
@@ -15,17 +15,17 @@ class ATCPClient:public IOInterface{
     Q_PLUGIN_METADATA(IID IOInterface_Id FILE "atcpclient.json")
 
 public:
-    explicit ATCPClient(IO::Config config=IO::Config(), QObject* parent = nullptr);
+    explicit ATCPClient(INC::Config config=INC::Config(), QObject* parent = nullptr);
     ~ATCPClient() override;
     void run() override;
     bool open() override;
     bool close() override;
-    int write(const IO::Frame&) override;
-    int write(const QList<IO::Frame>&) override;
+    int write(const INC::Frame&) override;
+    int write(const QList<INC::Frame>&) override;
     signals:
-        void rx_frame(const IO::Frame&);
+        void rx_frame(const INC::Frame&);
 public   slots:
-    void tx_frame(const IO::Frame& frame){write(frame);};
+    void tx_frame(const INC::Frame& frame){write(frame);};
 private:
 
 private:

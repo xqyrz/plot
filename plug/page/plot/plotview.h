@@ -7,7 +7,7 @@
 #include <QPointer>
 #include <QWidget>
 #include "../../../common/plug/interfacebase.h"
-#include "../pagebase.h"
+#include "../../../common/plug/page/pagebase.h"
 #include "plotcommon.h"
 #include "plotmodel.h"
 #include "qcustomplot/qcustomplot.h"
@@ -30,7 +30,7 @@ public:
     ~PlotView() override;
     void expandAll()const;
     int getPlotType() const{return plotType;}
-     void addSignalData(const IOAPP::SIGNALS& _signal);
+     void addSignalData(const INC::_SIGNALS& _signal);
 
      const char* getSignal(int index) const;
      const char* getSlot(int index) const;
@@ -42,7 +42,7 @@ public slots:
     TreeNode* add_plotData( uint64_t id, QSharedPointer<QCPGraphDataContainer>& data, const QString plot_name = "plot",int group = 0);
     void setCurrentPlot(int type,const QCPLayerable * item);
     void enupRang();
-    void _addSignalData(const QList<IOAPP::SIGNALS>& _signals);
+    void _addSignalData(const QList<INC::_SIGNALS>& _signals);
 private slots:
     void setPlotType(int type);
 

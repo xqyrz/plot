@@ -5,7 +5,7 @@
 #ifndef PLOT_SELFIOAPP_H
 #define PLOT_SELFIOAPP_H
 
-#include "ioappinterface.h"
+#include "ioapp/ioappinterface.h"
 #include "mavlink/selfio/mavlink.h"
 
 class SelfIOAPP:public IOAPPInterface{
@@ -14,13 +14,13 @@ class SelfIOAPP:public IOAPPInterface{
     Q_INTERFACES(IOAPPInterface)
 public:
     explicit SelfIOAPP( QObject* parent = nullptr);
-    QList<IOAPP::SIGNALS>  decode(const IO::Frame& data) override ;
-    IO::Frame encode() override;
+    QList<INC::_SIGNALS>  decode(const INC::Frame& data) override ;
+    INC::Frame encode() override;
 signals:
-   void hasSignal(const QList<IOAPP::SIGNALS>&);
-    void sig_app_rx(const IO::Frame&);
+   void hasSignal(const QList<INC::_SIGNALS>&);
+    void sig_app_rx(const INC::Frame&);
 private slots:
-    void rx_frame(const IO::Frame&);
+    void rx_frame(const INC::Frame&);
 private:
     mavlink_message_t rcv_msg;
     mavlink_status_t status;

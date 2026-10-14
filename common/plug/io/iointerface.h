@@ -10,9 +10,8 @@
 #include <QtWidgets/QHBoxLayout>
 #include <set>
 #include <utility>
-#include "../../common/plug/interfacebase.h"
+#include "../interfacebase.h"
 #include "bus/bus.h"
-#include "iocommon.h"
 class  IOInterface:public InterfaceBase
 {
     Q_OBJECT
@@ -21,23 +20,24 @@ public:
     {
         O_RX = 0
     };
-    explicit IOInterface(const QString& name, IO::Config con) : config(std::move(con))
+    explicit IOInterface(const QString& name, INC::Config con) : config(std::move(con))
     {
         m_type = IOInterfaceEnum;
         m_name = name;
-        qRegisterMetaType<IO::Frame>("IO::Frame");
-        qRegisterMetaType<IO::Frame>("const IO::Frame&");
-        qRegisterMetaType<IO::Frame>("const QList<IOAPP::SIGNALS>");
-        qRegisterMetaType<IO::Frame>("const QList<IOAPP::SIGNALS>&");
+        qRegisterMetaType<INC::Frame>("IO::Frame");
+        qRegisterMetaType<INC::Frame>("const IO::Frame&");
+        qRegisterMetaType<INC::Frame>("const QList<IOAPP::SIGNALS>");
+        qRegisterMetaType<INC::Frame>("const QList<IOAPP::SIGNALS>&");
+
+        m_inputPorts << Plug::InputType::IN_IO_RX<< Plug::InputType::IN_IO_TX;
+        m_outputPorts << Plug::OutputType::OUT_IO_TX<< Plug::OutputType::OUT_IO_RX;
     };
     ~IOInterface() = default;
     virtual bool open() = 0;
     virtual bool close() = 0;
 
-    virtual int write(const IO::Frame&) = 0;
-    virtual int write(const QList<IO::Frame>&) = 0;
-    const char* getSignal(int index) const override;
-    const char* getSlot(int index) const override;
+    virtual int write(const INC::Frame&) = 0;
+    virtual int write(const QList<INC::Frame>&) = 0;
     int getReadCount() const { return rCount; }
     int getWriteCount() const { return wCount; }
     int getErrorCount() const { return eCount; }
@@ -46,21 +46,21 @@ public:
 
     int getWriteBufferNum() const { return wBuffer.size(); }
 
-    IO::Config _getConfig() const { return config; }
-    void _setConfig(const IO::Config& config) { this->config = config; }
+    INC::Config _getConfig() const { return config; }
+    void _setConfig(const INC::Config& config) { this->config = config; }
 
 
 
-    QList<IO::Frame> readALL()
+    QList<INC::Frame> readALL()
     {
-        QList<IO::Frame> d;
+        QList<INC::Frame> d;
         d.swap(rBuffer); // 交换内容
         return d; // 返回 d
 
 
         // return std::exchange(rBuffer, {});
     };
-    bool addCallback(int index, const std::function<void(const IO::Frame&)> &ptr)
+    bool addCallback(int index, const std::function<void(const INC::Frame&)> &ptr)
     {
         switch (index)
         {
@@ -75,7 +75,7 @@ public:
 protected:
     virtual void run() = 0;
 
-    void _readReady(const QList<IO::Frame>& frames)
+    void _readReady(const QList<INC::Frame>& frames)
     {
         rCount += frames.size();
         rBuffer.append(frames);
@@ -91,11 +91,11 @@ protected:
     };
 
 protected:
-    IO::Config config;
+    INC::Config config;
 
 private:
-    QList<IO::Frame> rBuffer;
-    QList<IO::Frame> wBuffer;
+    QList<INC::Frame> rBuffer;
+    QList<INC::Frame> wBuffer;
     int rCount = 0;
     int wCount = 0;
     int eCount = 0;
@@ -105,52 +105,30 @@ private:
 
     struct readFunctionComparator
     {
-        bool operator()(const std::function<void(const IO::Frame&)>& lhs,
-                        const std::function<void(const IO::Frame&)>& rhs) const
+        bool operator()(const std::function<void(const INC::Frame&)>& lhs,
+                        const std::function<void(const INC::Frame&)>& rhs) const
         {
             // 通过目标地址比较
-            return lhs.target<void(const IO::Frame&)>() !=rhs.target<void(const IO::Frame&)>();
+            return lhs.target<void(const INC::Frame&)>() !=rhs.target<void(const INC::Frame&)>();
         }
     };
-    std::list<std::function<void(const IO::Frame&)>> _readReadyCallback;
+    std::list<std::function<void(const INC::Frame&)>> _readReadyCallback;
 private:
     Q_PROPERTY(int status READ status WRITE setStatus NOTIFY statusChanged)
 public:
     // IOInterface_obj(QObject* parent = nullptr) : QObject(parent){};
     void setStatus(int _status)
     {
-        m_status = ( IO::STATUS)_status;
+        m_status = ( INC::STATUS)_status;
         emit statusChanged();
     }
-    IO::STATUS status()const{return m_status;}
+    INC::STATUS status()const{return m_status;}
     signals:
         void statusChanged();
 private:
-    IO::STATUS m_status = IO::CLOSE_STATUS;
+    INC::STATUS m_status = INC::CLOSE_STATUS;
 };
-inline const char* IOInterface::getSignal(int index) const
-{
-    switch (index)
-    {
-    case 0:         return SIGNAL(rx_frame(const IO::Frame&));
-    default:
-        return nullptr;
-    }
-}
-inline const char* IOInterface::getSlot(int index) const
-{
-    switch (index)
-    {
-    case 0:
-        return SLOT(tx_frame(const IO::Frame&));
-    default:
-        return nullptr;
-    }
 
-
-
-
-}
 
 //class IOInterface_obj:public QObject
 //{

@@ -4,11 +4,10 @@
 
 #include <QtWidgets/QApplication>
 
-#include "mainwindow.h"
 #include "SRC/log/sflogger.hpp"
-#include "iocommon.h"
 #include "interface/manageinterface.h"
-Q_DECLARE_METATYPE(QList<IO::Frame>)
+#include "mainwindow.h"
+Q_DECLARE_METATYPE(QList<INC::Frame>)
 int main(int argc, char *argv[]) {
     qputenv("QT_WIN_DEBUG_CONSOLE", "attach");
     qputenv("QSG_INFO", "1");
@@ -18,7 +17,7 @@ int main(int argc, char *argv[]) {
     qputenv("QSG_RHI_HDR", "scrgb");
     qputenv("QT_QPA_DISABLE_REDIRECTION_SURFACE", "1");
     SfLogger::instance("APP");
-    qRegisterMetaType<QList<IO::Frame>>("QList<IO::Frame>");
+    qRegisterMetaType<QList<INC::Frame>>("QList<IO::Frame>");
 
 
     qInstallMessageHandler(SfLogger::customMessageHandler);
