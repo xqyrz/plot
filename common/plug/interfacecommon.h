@@ -14,7 +14,7 @@
 namespace PLUG{
 
     enum class InputType {          // 更好的命名
-        IN_VIRTUAL_TX,
+        IN_VIRTUAL_TX=0,
         IN_IO_TX,
         IN_IO_RX,
         IN_APP_TX,
@@ -23,7 +23,7 @@ namespace PLUG{
     };
 
     enum class OutputType {        // 更好的命名
-        OUT_IO_TX,
+        OUT_IO_TX=0,
         OUT_IO_RX,
         OUT_APP_TX,
         OUT_APP_RX,

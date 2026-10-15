@@ -12,14 +12,14 @@ class PageBase:public InterfaceBase {
 Q_OBJECT
 
 public:
-    using InterfaceBase::InterfaceBase;
-
-         QWidget* ui(){return _ui;};
+    PageBase(QWidget* parent=nullptr);
+    ~PageBase();
+         QWidget* ui(){return m_ui;};
 protected:
     inline static const  QString KEY =QStringLiteral("key");
     inline static const  QString CONFIG_KEY =QStringLiteral("config");
 protected:
-    QWidget* _ui{nullptr};
+    QWidget* m_ui{nullptr};
 };
 
 QT_BEGIN_NAMESPACE

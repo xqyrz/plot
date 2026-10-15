@@ -13,10 +13,12 @@
 #include "plottree.h"
 #include "plotcustom.h"
 PlotView::PlotView(QWidget* parent) :
-    QWidget(parent), zero(QDateTime::currentDateTime().toMSecsSinceEpoch()), _graphView(new PlotCustom(this)),
-    _treeView(new PlotTree(this)), _toolBar(new QToolBar(this)), _modleComboBox(new QComboBox(this)),
-    _xSpinBox(new QSpinBox(this)), _xCheckBox(new QCheckBox(this)), _model(new PlotModel(this))
+    PageBase(parent), zero(QDateTime::currentDateTime().toMSecsSinceEpoch()), _graphView(new PlotCustom(ui())),
+    _treeView(new PlotTree(ui())), _toolBar(new QToolBar(ui())), _modleComboBox(new QComboBox(ui())),
+    _xSpinBox(new QSpinBox(ui())), _xCheckBox(new QCheckBox(ui())), _model(new PlotModel(ui()))
 {
+    ui()->setParent(parent);
+    m_inputPorts << PLUG::InputType::IN_APP_SIGNAL;
     QSettings settings(PLOT::PLOT_COMPANY, PLOT::PLOT_PRODUCT);
     plotType = (PLOT::PlotType)settings.value("Plot/plotType", PLOT::TYPE_oneXoneY).toInt();
     initUI();
@@ -49,8 +51,8 @@ void PlotView::expandAll() const {
 
 void PlotView::initUI()
 {
-	auto splitter = new QSplitter(this);
-	auto layout = new QVBoxLayout(this);
+	auto splitter = new QSplitter(ui());
+	auto layout = new QVBoxLayout(ui());
 
 	_treeView->setModel(_model);
 
@@ -107,7 +109,7 @@ void PlotView::initConnect()
     connect(_model, &QAbstractItemModel::dataChanged, this, [this]() { _graphView->resetUI(); });
 }
 
-void PlotView::addSignalData(const IOAPP::SIGNALS& _signal)
+void PlotView::addSignalData(const PLUG::_SIGNALS& _signal)
 {
     auto node = _model->getNode(_signal.id);
     if (!node) {
@@ -137,7 +139,7 @@ void PlotView::addSignalData(const IOAPP::SIGNALS& _signal)
             )
         );
 }
-void PlotView::_addSignalData(const QList<IOAPP::SIGNALS>& _signals)
+void PlotView::_addSignalData(const QList<PLUG::_SIGNALS>& _signals)
 {
     //qInfo() << QThread::currentThread();
     //    qInfo()<<_signals.size();

@@ -18,13 +18,32 @@
 std::shared_ptr<NodeDelegateModelRegistry> NodeEditPage::_registerDataModels()
 {
     auto ret = std::make_shared<NodeDelegateModelRegistry>();
+
+    for (auto var:BaseModel::inputTypeMap){
+        auto inPort = INNodeData(var);
+        QList<PLUG::InputType> in;
+        for (int i = 0; i < 5; ++i)
+        {
+            in.append(BaseModel::inputTypeMap.key(var));
+        }
+
+        QList<PLUG::OutputType> out;
+        auto key = BaseModel::inputTypeMap.key(var);
+        out.append(BaseModel::inputTOoutput.value(key));
+        ret->registerModel<BaseModel>(
+        [name = inPort.type().name, in =in, out = out, nodeType=BaseModel::SIGNAL_TYPE]() {
+            return std::make_unique<BaseModel>(nodeType, name, in, out);
+        },
+       PLUG::TypeStr(PLUG::Type::SIGNAL)
+    );
+    }
+
     for (auto  var : ManageInterface::instance()->getPlugs()) {
         auto nodeType = BaseModel::PLUG_TO_NODE_TYPE(var.type);  // 恢复类型映射
         // 用插件信息区分注册名，避免互相覆盖
 
         ret->registerModel<BaseModel>(
             [name = var.name, in = var.in, out = var.out, nodeType]() {
-                qDebug()<<"in"<<in.size()<<"out"<<out.size();
                 return std::make_unique<BaseModel>(nodeType, name, in, out);
             },
            PLUG::TypeStr(var.type)

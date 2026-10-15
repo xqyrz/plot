@@ -29,7 +29,7 @@ public:
         qRegisterMetaType<PLUG::Frame>("const QList<IOAPP::SIGNALS>");
         qRegisterMetaType<PLUG::Frame>("const QList<IOAPP::SIGNALS>&");
 
-        m_inputPorts << PLUG::InputType::IN_IO_RX<< PLUG::InputType::IN_IO_TX;
+        m_inputPorts << PLUG::InputType::IN_VIRTUAL_TX;
         m_outputPorts << PLUG::OutputType::OUT_IO_TX<< PLUG::OutputType::OUT_IO_RX;
     };
     ~IOInterface() = default;

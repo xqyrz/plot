@@ -12,7 +12,7 @@ class AxfPage:public PageBase
     Q_INTERFACES(PageBase)
     Q_PLUGIN_METADATA(IID PageBase_Id FILE "axfpage.json")
 public:
-    explicit AxfPage();
+    explicit AxfPage(QWidget* parent=nullptr);
     ~AxfPage() override{};
 private:
 

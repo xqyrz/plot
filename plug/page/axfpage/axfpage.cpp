@@ -4,8 +4,10 @@
 
 #include "axfpage.h"
 #include "AxfUI.h"
-AxfPage::AxfPage():
-    PageBase()
+AxfPage::AxfPage(QWidget* parent):
+    PageBase(parent)
 {
-    _ui = new AxfUI();
+    ui()->deleteLater();
+    m_ui = new AxfUI(parent);
+    m_inputPorts << PLUG::InputType::IN_IO_TX;
 }

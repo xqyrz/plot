@@ -11,7 +11,11 @@ class IOAPPInterface:public InterfaceBase
 {
     Q_OBJECT
 public:
-    IOAPPInterface(int _id=0 ):InterfaceBase(), id(_id){};
+    IOAPPInterface(int _id=0 ):InterfaceBase(), id(_id)
+    {
+        m_inputPorts << PLUG::InputType::IN_IO_TX<< PLUG::InputType::IN_IO_RX;
+        m_outputPorts << PLUG::OutputType::OUT_APP_TX<< PLUG::OutputType::OUT_APP_RX<< PLUG::OutputType::OUT_APP_SIGNAL;
+    };
     void getFrame(const PLUG::Frame&);
     virtual QList<PLUG::_SIGNALS> decode(const PLUG::Frame& data) = 0;
     virtual PLUG::Frame encode() = 0;

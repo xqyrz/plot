@@ -20,7 +20,7 @@ class PlotTree;
 class PlotCustom;
 class PlotModel;
 class TreeNode;
-class  PlotView  : public QWidget,public PageBase
+class  PlotView  : public PageBase
 {
     Q_OBJECT
     Q_INTERFACES(PageBase)

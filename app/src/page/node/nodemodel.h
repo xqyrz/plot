@@ -31,7 +31,7 @@ public:
         VIEW_TYPE,
         SIGNAL_TYPE
       }NodeTye;
-    Q_ENUM(NodeTye);
+ //   Q_ENUM(NodeTye);
 
   //BaseModel():NodeDelegateModel(),m_type(DEFAULT_TYPE){};
   BaseModel(const NodeTye type
@@ -76,18 +76,22 @@ public:
 
     static NodeTye PLUG_TO_NODE_TYPE(const PLUG::Type& plug)
     {
-        switch (plug)
-        {
-        case PLUG::Type::Default:return DEFAULT_TYPE;
-        case PLUG::Type::VIEW:return VIEW_TYPE;
-        case PLUG::Type::IO:return IO_TYPE;
-        case PLUG::Type::IOAPP:return IOAPP_TYPE;
-        case PLUG::Type::SIGNAL:return SIGNAL_TYPE;
-            default:Q_ASSERT(1);break;
-        }
-        return DEFAULT_TYPE;
+        return plugTypeMap.value(plug);
     }
+    static QtNodes::NodeDataTypeEnum::InputType InputPLUG_TO_NODE_InputTYPE(const PLUG::InputType& inputType)
+    {
+        return inputTypeMap.value(inputType);
+    }
+    static QtNodes::NodeDataTypeEnum::OutputType OutputPLUG_TO_NODE_OutputTYPE(const PLUG::OutputType& inputType)
+    {
+        return outputTypeMap.value(inputType);
+    }
+
 public:
+    static QMap<PLUG::Type,NodeTye> plugTypeMap;
+    static QMap<PLUG::InputType,QtNodes::NodeDataTypeEnum::InputType> inputTypeMap;
+    static QMap<PLUG::OutputType,QtNodes::NodeDataTypeEnum::OutputType> outputTypeMap;
+    static QMap<PLUG::InputType,PLUG::OutputType> inputTOoutput;
     QString caption() const override { return m_caption; }
 
     QString name() const override { return m_name; }

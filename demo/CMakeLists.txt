@@ -1,5 +1,5 @@
 ﻿add_subdirectory(sqlite)
-add_subdirectory(jlinkTest)
+#add_subdirectory(jlinkTest)
 add_subdirectory(testhex)
 add_subdirectory(elftest)
 add_subdirectory(dwarfapptest)
