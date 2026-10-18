@@ -6,6 +6,7 @@
 #include "plug\interfacecommon.h"
 #include <utility>
 #include <QLabel>
+#include <QPluginLoader>
 using namespace QtNodes;
 
  QMap<PLUG::Type,BaseModel::NodeTye> BaseModel::plugTypeMap{
@@ -38,12 +39,14 @@ QMap<PLUG::InputType,PLUG::OutputType> BaseModel::inputTOoutput{
     {PLUG::InputType::IN_APP_SIGNAL ,PLUG::OutputType::OUT_APP_SIGNAL   }
 };
 
-BaseModel::BaseModel(NodeTye type,QString _name,QList<PLUG::InputType> _in,QList<PLUG::OutputType> _out)
-    :m_type(type), m_name(std::move(_name)), in(_in),out(_out)
+BaseModel::BaseModel(QString plugPath
+      ,NodeTye type,QString _name,QList<PLUG::InputType> _in,QList<PLUG::OutputType> _out)
+    :
+    m_plugPath(std::move(plugPath)),
+    m_type(type), m_name(std::move(_name)), in(_in),out(_out)
 {
     m_caption=m_name;
-   // this->setObj(Manage::creatObj(this,caption()));
-
+   m_plug.reset(new QPluginLoader(m_plugPath,this));
 }
 unsigned int BaseModel::nPorts(PortType const portType) const
 {

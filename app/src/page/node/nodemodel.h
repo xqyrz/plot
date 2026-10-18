@@ -5,15 +5,15 @@
 #ifndef NODEMODEL_H
 #define NODEMODEL_H
 
-#include <QtCore/QObject>
-#include <QtCore/QList>
 #include <QtNodes/NodeDelegateModel>
 
 #include <QPushButton>
 #include <memory>
 #include <utility>
+#include <QPluginLoader>
 #include "nodedata.h"
 #include "obj/signalobj.h"
+class InterfaceBase;
 using QtNodes::NodeData;
 using QtNodes::NodeDataType;
 using QtNodes::NodeDelegateModel;
@@ -34,22 +34,29 @@ public:
  //   Q_ENUM(NodeTye);
 
   //BaseModel():NodeDelegateModel(),m_type(DEFAULT_TYPE){};
-  BaseModel(const NodeTye type
+  BaseModel(
+      QString plugPath
+      ,const NodeTye type
       ,const QString _name
       ,const QList<PLUG::InputType> _in
       ,const QList<PLUG::OutputType> _out);
 
     virtual ~BaseModel() override
     {
-        if (m_widget)m_widget->deleteLater();
     }
-    BaseModel(const BaseModel &other):m_type(other.m_type),m_name(other.m_name),m_caption(other.m_caption),in(other.in),out(other.out){
+    BaseModel(const BaseModel &other):BaseModel(other.m_plugPath,other.m_type,other.m_name,other.in,other.out){};
 
-    }
-    BaseModel( BaseModel &&other):m_type(other.m_type),m_name(other.m_name),m_caption(other.m_caption),in(other.in),out(other.out){
-
-    }
-    BaseModel& operator=(BaseModel&& other)
+    BaseModel( BaseModel &&other)noexcept:
+    m_plugPath(std::move(other.m_plugPath)),
+    m_type(other.m_type),
+    m_name(other.m_name),
+    m_caption(other.m_caption),
+    in(other.in),
+    out(other.out),
+    m_plug (other.m_plug.take())
+    {
+    };
+    BaseModel& operator=(BaseModel&& other)noexcept
     {
         if (this != &other)
         {
@@ -58,6 +65,7 @@ public:
             m_caption = std::move(other.m_caption);
             in = std::move(other.in);
             out = std::move(other.out);
+            m_plug.reset(other.m_plug.take());
         }
         return *this;
     }
@@ -66,10 +74,11 @@ public:
         if (this != &other)
         {
             m_type = other.m_type;
-            m_name = std::move(other.m_name);
-            m_caption = std::move(other.m_caption);
-            in = std::move(other.in);
-            out = std::move(other.out);
+            m_name = other.m_name;
+            m_caption = other.m_caption;
+            in = other.in;
+            out = other.out;
+            m_plug.reset(new QPluginLoader(m_plugPath,this));
         }
         return *this;
     }
@@ -88,10 +97,7 @@ public:
     }
 
 public:
-    static QMap<PLUG::Type,NodeTye> plugTypeMap;
-    static QMap<PLUG::InputType,QtNodes::NodeDataTypeEnum::InputType> inputTypeMap;
-    static QMap<PLUG::OutputType,QtNodes::NodeDataTypeEnum::OutputType> outputTypeMap;
-    static QMap<PLUG::InputType,PLUG::OutputType> inputTOoutput;
+
     QString caption() const override { return m_caption; }
 
     QString name() const override { return m_name; }
@@ -107,18 +113,25 @@ public:
 
     bool resizable() const override { return true; }
     QWidget *embeddedWidget() override{return nullptr;}
+    QObject *obj()override{return m_plug->instance();};
 private:
-    void setObj(QObject* _obj){obj =_obj;};
+    //void setObj(InterfaceBase* _obj){m_obj =_obj;};
+public:
+    static QMap<PLUG::Type,NodeTye> plugTypeMap;
+    static QMap<PLUG::InputType,QtNodes::NodeDataTypeEnum::InputType> inputTypeMap;
+    static QMap<PLUG::OutputType,QtNodes::NodeDataTypeEnum::OutputType> outputTypeMap;
+    static QMap<PLUG::InputType,PLUG::OutputType> inputTOoutput;
+
 protected:
+    QString m_plugPath;
     NodeTye m_type=DEFAULT_TYPE;
     QString m_name;
     QString m_caption;
     QList<PLUG::InputType> in;
     QList<PLUG::OutputType> out;
-protected:
-
     QWidget* m_widget=nullptr;
-    QObject* obj;
+    QScopedPointer<QPluginLoader> m_plug;
+
 };
 
 

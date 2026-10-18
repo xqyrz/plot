@@ -4,9 +4,6 @@
 
 #ifndef INTERFACEBASE_H
 #define INTERFACEBASE_H
-#include <QVariant>
-#include <QObject>
-#include <QMap>
 #include <QDebug>
 #include "interfacecommon.h"
 //#include "../../../lib/mdb/mdb.h"
@@ -30,11 +27,9 @@ public:
     }
     InterfaceBase(QObject* parent=nullptr):QObject(parent)
     {
-       // MDB::instance()->add(keyStr(IOOBJS),reinterpret_cast<uintptr_t>(this));
     };
     virtual ~InterfaceBase()
     {
-       // qDebug() << "~InterfaceBase()";
     }
     const char* getSignal(PLUG::InputType index) const;
     const char* getSlot(PLUG::OutputType index) const;
@@ -60,18 +55,18 @@ public:
         IOInterfaceEnum,
     };
 signals:
-void signals_OUT_IO_TX(const PLUG::Frame&);
-void signals_OUT_IO_RX(const PLUG::Frame&);
-void signals_OUT_APP_TX(const PLUG::Frame&);
-void signals_OUT_APP_RX(const PLUG::Frame&);
-void signals_OUT_APP_SIGNAL(const QList<PLUG::_SIGNALS>&);
+    void signals_OUT_IO_TX(const PLUG::Frame&);
+    void signals_OUT_IO_RX(const PLUG::Frame&);
+    void signals_OUT_APP_TX(const PLUG::Frame&);
+    void signals_OUT_APP_RX(const PLUG::Frame&);
+    void signals_OUT_APP_SIGNAL(const QList<PLUG::_SIGNALS>&);
 public slots:
-void slots_IN_VIRTUAL_TX(const PLUG::Frame&);
-void slots_IN_IO_TX(const PLUG::Frame&);
-void slots_IN_IO_RX(const PLUG::Frame&);
-void slots_IN_APP_TX(const PLUG::Frame&);
-void slots_IN_APP_RX(const PLUG::Frame&);
-void slots_IN_APP_SIGNAL(const QList<PLUG::_SIGNALS>&);
+    void slots_IN_VIRTUAL_TX(const PLUG::Frame&);
+    void slots_IN_IO_TX(const PLUG::Frame&);
+    void slots_IN_IO_RX(const PLUG::Frame&);
+    void slots_IN_APP_TX(const PLUG::Frame&);
+    void slots_IN_APP_RX(const PLUG::Frame&);
+    void slots_IN_APP_SIGNAL(const QList<PLUG::_SIGNALS>&);
 protected:
     QMap<QString,  std::function<void(const void*)>> m_funs;
      int m_type = DefaultEnum;

@@ -12,6 +12,7 @@
 #include "../../../common/plug/io/iointerface.h"
 #include "../../../common/plug/ioapp/ioappinterface.h"
 #include "../../../common/plug/page/pagebase.h"
+#include "node/signalinterface.h"
 #include "interface/manageinterface.h"
 #include "node/nodemodel.h"
 #include "plotview.h"
@@ -20,6 +21,7 @@ std::shared_ptr<NodeDelegateModelRegistry> NodeEditPage::_registerDataModels()
     auto ret = std::make_shared<NodeDelegateModelRegistry>();
 
     for (auto var:BaseModel::inputTypeMap){
+        SignalInterface signalInterface(BaseModel::inputTypeMap.key(var));
         auto inPort = INNodeData(var);
         QList<PLUG::InputType> in;
         for (int i = 0; i < 5; ++i)
@@ -32,7 +34,7 @@ std::shared_ptr<NodeDelegateModelRegistry> NodeEditPage::_registerDataModels()
         out.append(BaseModel::inputTOoutput.value(key));
         ret->registerModel<BaseModel>(
         [name = inPort.type().name, in =in, out = out, nodeType=BaseModel::SIGNAL_TYPE]() {
-            return std::make_unique<BaseModel>(nodeType, name, in, out);
+            return std::make_unique<BaseModel>("",nodeType, name, in, out);
         },
        PLUG::TypeStr(PLUG::Type::SIGNAL)
     );
@@ -43,8 +45,8 @@ std::shared_ptr<NodeDelegateModelRegistry> NodeEditPage::_registerDataModels()
         // 用插件信息区分注册名，避免互相覆盖
 
         ret->registerModel<BaseModel>(
-            [name = var.name, in = var.in, out = var.out, nodeType]() {
-                return std::make_unique<BaseModel>(nodeType, name, in, out);
+            [plugPath=var.fileName, name = var.name, in = var.in, out = var.out, nodeType]() {
+                return std::make_unique<BaseModel>(plugPath,nodeType, name, in, out);
             },
            PLUG::TypeStr(var.type)
         );
@@ -97,21 +99,17 @@ void NodeEditPage::_sceneLoaded()
     QList<connectClass> connectList;
     for (auto& var : allNodeIds)
     {
-        auto type = model.nodeData(var, NodeRole::Type).toString();
-    }
-    for (auto& var : allNodeIds)
-    {
         auto cIds = model.allConnectionIds(var);
 
         for (auto& cid : cIds)
         {
             try
             {
-                QObject* in_obj = ManageInterface::instance()->getObj(cid.inNodeId);
-                QObject* out_obj = ManageInterface::instance()->getObj(cid.outNodeId);
-               // qDebug() << "in:" << cid.inNodeId << in_obj << "out:" << cid.outNodeId << out_obj;
+                InterfaceBase* in_obj =(InterfaceBase* )(qvariant_cast<QObject*>(model.nodeData(cid.inNodeId,NodeRole::PlugPtr)));
+                InterfaceBase* out_obj =(InterfaceBase* )( qvariant_cast<QObject*>(model.nodeData(cid.outNodeId,NodeRole::PlugPtr)));
+               qDebug() << "in:" << cid.inNodeId << in_obj << "out:" << cid.outNodeId << out_obj;
 
-                if (!in_obj || !out_obj)
+                 if (!in_obj || !out_obj)
                 {
                     throw std::runtime_error(QString("connection skipped because obj is null; inNodeId=%1 outNodeId=%2")
                                                  .arg(in_obj?in_obj->metaObject()->className():model.nodeData(cid.inNodeId,NodeRole::Type).toString())
@@ -447,9 +445,7 @@ NodeEditPage::NodeEditPage(QWidget* parent)
              showConfigDialog(ManageInterface::instance()->getObj(index),index);
         }
     });
-    // SignalObj d(SIGNALDATA::IO_RX);
-    // SelfIOAPP b(nullptr);
-    // connect(&b,&SelfIOAPP::hasSignal,&d,&SignalObj::hasSignal);
+
     ConnectionStyle::setConnectionStyle(
     R"(
   {
@@ -460,22 +456,23 @@ NodeEditPage::NodeEditPage(QWidget* parent)
   )");
   this->setScene(scene);
 
-    connect(scene,&DataFlowGraphicsScene::sceneLoaded, this,&NodeEditPage::_sceneLoaded);
-        try
-        {
-            this->scene->load(this->scene->getDefaultConfigPath());
-            auto indexes = _allIndexes();
-            for (int index : indexes) {
-                auto cfg = _loadConfig(index);
-                //auto obj = Manage::getInterfaceBase(index);
-                //if (obj)
-                //{
-                //    obj->setConfig(cfg);
-                //}
-            }
-        }
-        catch (const std::logic_error& e) {
-            QMessageBox::warning(this,"警告","节点配置文件加载失败："+QString(e.what()));
-           qWarning() << e.what();
-        }
+  connect(scene,&DataFlowGraphicsScene::sceneLoaded, this,&NodeEditPage::_sceneLoaded);
+
+   try
+   {
+       this->scene->load(this->scene->getDefaultConfigPath());
+       auto indexes = _allIndexes();
+       for (int index : indexes) {
+           auto cfg = _loadConfig(index);
+           //auto obj = Manage::getInterfaceBase(index);
+           //if (obj)
+           //{
+           //    obj->setConfig(cfg);
+           //}
+       }
+   }
+   catch (const std::logic_error& e) {
+       QMessageBox::warning(this,"警告","节点配置文件加载失败："+QString(e.what()));
+      qWarning() << e.what();
+   }
 }
