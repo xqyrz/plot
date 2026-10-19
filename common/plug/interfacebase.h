@@ -31,10 +31,10 @@ public:
     virtual ~InterfaceBase()
     {
     }
-    const char* getSignal(PLUG::InputType index) const;
-    const char* getSlot(PLUG::OutputType index) const;
-    const char* getSignal(int index) const{return getSignal(m_inputPorts.at(index));};
-    const char* getSlot(int index) const{return getSlot(m_outputPorts.at(index));};
+    const char* getSignal(PLUG::OutputType index) const;
+    const char* getSlot(PLUG::InputType index) const;
+    const char* getSignal(int index) const{return getSignal(m_outputPorts.at(index));};
+    const char* getSlot(int index) const{return getSlot(m_inputPorts.at(index));};
     QList<PLUG::InputType> inputPorts()const{return m_inputPorts;}
     QList<PLUG::OutputType> outputPorts()const{return m_outputPorts;}
     virtual QList<std::tuple<QVariant::Type,QString,QVariant>> getConfig(){return {};};
@@ -55,19 +55,19 @@ public:
         IOInterfaceEnum,
     };
 signals:
-    void signals_IN_VIRTUAL_TX(const PLUG::Frame&);
-    void signals_IN_IO_TX(const PLUG::Frame&);
-    void signals_IN_IO_RX(const PLUG::Frame&);
-    void signals_IN_APP_TX(const PLUG::Frame&);
-    void signals_IN_APP_RX(const PLUG::Frame&);
-    void signals_IN_APP_SIGNAL(const QList<PLUG::_SIGNALS>&);
 
+    void signals_OUT_IO_TX(const PLUG::Frame&);
+    void signals_OUT_IO_RX(const PLUG::Frame&);
+    void signals_OUT_APP_TX(const PLUG::Frame&);
+    void signals_OUT_APP_RX(const PLUG::Frame&);
+    void signals_OUT_APP_SIGNAL(const QList<PLUG::_SIGNALS>&);
 public slots:
-    void slots_OUT_IO_TX(const PLUG::Frame&);
-    void slots_OUT_IO_RX(const PLUG::Frame&);
-    void slots_OUT_APP_TX(const PLUG::Frame&);
-    void slots_OUT_APP_RX(const PLUG::Frame&);
-    void slots_OUT_APP_SIGNAL(const QList<PLUG::_SIGNALS>&);
+    void slots_IN_VIRTUAL_TX(const PLUG::Frame&);
+    void slots_IN_IO_TX(const PLUG::Frame&);
+    void slots_IN_IO_RX(const PLUG::Frame&);
+    void slots_IN_APP_TX(const PLUG::Frame&);
+    void slots_IN_APP_RX(const PLUG::Frame&);
+    void slots_IN_APP_SIGNAL(const QList<PLUG::_SIGNALS>&);
 protected:
     QMap<QString,  std::function<void(const void*)>> m_funs;
      int m_type = DefaultEnum;

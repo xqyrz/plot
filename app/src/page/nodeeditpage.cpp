@@ -107,7 +107,7 @@ void NodeEditPage::_sceneLoaded()
             {
                 auto in_obj =(InterfaceBase*)(qvariant_cast<QObject*>(model.nodeData(cid.inNodeId,NodeRole::PlugPtr)));
                 auto out_obj =(InterfaceBase*)(qvariant_cast<QObject*>(model.nodeData(cid.outNodeId,NodeRole::PlugPtr)));
-                qDebug() << "in:" << cid.inNodeId << in_obj << "out:" << cid.outNodeId << out_obj;
+                //qDebug() << "in:" << cid.inNodeId << in_obj << "out:" << cid.outNodeId << out_obj;
 
                  if (!in_obj || !out_obj)
                 {
@@ -131,7 +131,7 @@ void NodeEditPage::_sceneLoaded()
 
                 const char* in_slot = in_base->getSlot(cid.inPortIndex);
                 const char* out_signal = out_base->getSignal(cid.outPortIndex);
-                qDebug() << "out_signal:" << out_signal << "in_slot:" << in_slot;
+               // qDebug() << "out_signal:" << out_signal << "in_slot:" << in_slot;
                 if (!in_slot || !out_signal)
                 {
                     throw std::runtime_error(
