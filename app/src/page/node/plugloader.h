@@ -6,10 +6,16 @@
 #define PLOT_PLUGLOADER_H
 
 #include <QPluginLoader>
+class InterfaceBase;
 class PlugLoader:public QPluginLoader
 {
     public:
         PlugLoader(const QString &fileName, QObject *parent = nullptr);
+    ~PlugLoader();
+    QObject* P_interface();
+    bool P_load();
+    private:
+    InterfaceBase* m_interface{};
 };
 
 

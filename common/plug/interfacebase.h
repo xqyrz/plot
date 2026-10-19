@@ -55,18 +55,19 @@ public:
         IOInterfaceEnum,
     };
 signals:
-    void signals_OUT_IO_TX(const PLUG::Frame&);
-    void signals_OUT_IO_RX(const PLUG::Frame&);
-    void signals_OUT_APP_TX(const PLUG::Frame&);
-    void signals_OUT_APP_RX(const PLUG::Frame&);
-    void signals_OUT_APP_SIGNAL(const QList<PLUG::_SIGNALS>&);
+    void signals_IN_VIRTUAL_TX(const PLUG::Frame&);
+    void signals_IN_IO_TX(const PLUG::Frame&);
+    void signals_IN_IO_RX(const PLUG::Frame&);
+    void signals_IN_APP_TX(const PLUG::Frame&);
+    void signals_IN_APP_RX(const PLUG::Frame&);
+    void signals_IN_APP_SIGNAL(const QList<PLUG::_SIGNALS>&);
+
 public slots:
-    void slots_IN_VIRTUAL_TX(const PLUG::Frame&);
-    void slots_IN_IO_TX(const PLUG::Frame&);
-    void slots_IN_IO_RX(const PLUG::Frame&);
-    void slots_IN_APP_TX(const PLUG::Frame&);
-    void slots_IN_APP_RX(const PLUG::Frame&);
-    void slots_IN_APP_SIGNAL(const QList<PLUG::_SIGNALS>&);
+    void slots_OUT_IO_TX(const PLUG::Frame&);
+    void slots_OUT_IO_RX(const PLUG::Frame&);
+    void slots_OUT_APP_TX(const PLUG::Frame&);
+    void slots_OUT_APP_RX(const PLUG::Frame&);
+    void slots_OUT_APP_SIGNAL(const QList<PLUG::_SIGNALS>&);
 protected:
     QMap<QString,  std::function<void(const void*)>> m_funs;
      int m_type = DefaultEnum;

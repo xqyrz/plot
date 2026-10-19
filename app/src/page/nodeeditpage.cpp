@@ -34,7 +34,7 @@ std::shared_ptr<NodeDelegateModelRegistry> NodeEditPage::_registerDataModels()
         out.append(BaseModel::inputTOoutput.value(key));
         ret->registerModel<BaseModel>(
         [name = inPort.type().name, in =in, out = out, nodeType=BaseModel::SIGNAL_TYPE]() {
-            return std::make_unique<BaseModel>("",nodeType, name, in, out);
+            return std::make_unique<BaseModel>(name,nodeType, name, in, out);
         },
        PLUG::TypeStr(PLUG::Type::SIGNAL)
     );
@@ -105,9 +105,9 @@ void NodeEditPage::_sceneLoaded()
         {
             try
             {
-                InterfaceBase* in_obj =(InterfaceBase* )(qvariant_cast<QObject*>(model.nodeData(cid.inNodeId,NodeRole::PlugPtr)));
-                InterfaceBase* out_obj =(InterfaceBase* )( qvariant_cast<QObject*>(model.nodeData(cid.outNodeId,NodeRole::PlugPtr)));
-               qDebug() << "in:" << cid.inNodeId << in_obj << "out:" << cid.outNodeId << out_obj;
+                auto in_obj =(InterfaceBase*)(qvariant_cast<QObject*>(model.nodeData(cid.inNodeId,NodeRole::PlugPtr)));
+                auto out_obj =(InterfaceBase*)(qvariant_cast<QObject*>(model.nodeData(cid.outNodeId,NodeRole::PlugPtr)));
+                qDebug() << "in:" << cid.inNodeId << in_obj << "out:" << cid.outNodeId << out_obj;
 
                  if (!in_obj || !out_obj)
                 {
@@ -131,6 +131,7 @@ void NodeEditPage::_sceneLoaded()
 
                 const char* in_slot = in_base->getSlot(cid.inPortIndex);
                 const char* out_signal = out_base->getSignal(cid.outPortIndex);
+                qDebug() << "out_signal:" << out_signal << "in_slot:" << in_slot;
                 if (!in_slot || !out_signal)
                 {
                     throw std::runtime_error(

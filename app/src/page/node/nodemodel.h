@@ -10,7 +10,7 @@
 #include <QPushButton>
 #include <memory>
 #include <utility>
-#include <QPluginLoader>
+#include "plugloader.h"
 #include "nodedata.h"
 #include "obj/signalobj.h"
 class InterfaceBase;
@@ -78,7 +78,7 @@ public:
             m_caption = other.m_caption;
             in = other.in;
             out = other.out;
-            m_plug.reset(new QPluginLoader(m_plugPath,this));
+            m_plug.reset(new PlugLoader(m_plugPath,this));
         }
         return *this;
     }
@@ -90,6 +90,10 @@ public:
     static QtNodes::NodeDataTypeEnum::InputType InputPLUG_TO_NODE_InputTYPE(const PLUG::InputType& inputType)
     {
         return inputTypeMap.value(inputType);
+    }
+    static PLUG::InputType NODE_InputTYPE_TO_InputPLUG(const QtNodes::NodeDataTypeEnum::InputType& inputType)
+    {
+        return inputTypeMap.key(inputType);
     }
     static QtNodes::NodeDataTypeEnum::OutputType OutputPLUG_TO_NODE_OutputTYPE(const PLUG::OutputType& inputType)
     {
@@ -113,7 +117,7 @@ public:
 
     bool resizable() const override { return true; }
     QWidget *embeddedWidget() override{return nullptr;}
-    QObject *obj()override{return m_plug->instance();};
+    QObject *obj()override{return (m_plug->P_interface());};
 private:
     //void setObj(InterfaceBase* _obj){m_obj =_obj;};
 public:
@@ -130,7 +134,7 @@ protected:
     QList<PLUG::InputType> in;
     QList<PLUG::OutputType> out;
     QWidget* m_widget=nullptr;
-    QScopedPointer<QPluginLoader> m_plug;
+    QScopedPointer<PlugLoader> m_plug;
 
 };
 

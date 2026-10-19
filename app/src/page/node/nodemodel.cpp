@@ -46,7 +46,7 @@ BaseModel::BaseModel(QString plugPath
     m_type(type), m_name(std::move(_name)), in(_in),out(_out)
 {
     m_caption=m_name;
-   m_plug.reset(new QPluginLoader(m_plugPath,this));
+   m_plug.reset(new PlugLoader(m_plugPath,this));
 }
 unsigned int BaseModel::nPorts(PortType const portType) const
 {
