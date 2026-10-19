@@ -183,10 +183,9 @@ void NodeEditPage::_sceneLoaded()
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
-void NodeEditPage::showConfigDialog(QObject* _obj, int index)
+void NodeEditPage::showConfigDialog(BaseModel* node)
 {
-    auto obj = qobject_cast<IOInterface*>(_obj);
-    auto io_obj = (IOInterface*)(_obj);
+    auto obj = (InterfaceBase*)node->obj();
     QDialog d(this);
     auto config = obj->getConfig();
 
@@ -232,7 +231,7 @@ void NodeEditPage::showConfigDialog(QObject* _obj, int index)
                 std::get<2>(config[i]) = propertys.at(i)->value();
         }
         obj->setConfig(config);
-        _saveConfig(index,config);
+        _saveConfig(0,config);
     };
     QHBoxLayout  vb;
     if (auto io= static_cast<IOInterface*>(obj))
@@ -256,13 +255,13 @@ void NodeEditPage::showConfigDialog(QObject* _obj, int index)
         });
     }
     d.adjustSize();
-    connect(io_obj,&IOInterface::statusChanged,this,[&]()
-    {
-        if ( io_obj->status() == PLUG::OPEN_STATUS )
-        {
-            d.close();
-        }
-    });
+   // connect(obj,&IOInterface::statusChanged,this,[&]()
+   // {
+   //     if ( obj->status() == PLUG::OPEN_STATUS )
+   //     {
+   //         d.close();
+   //     }
+   // });
     d.exec();
     fun();
 }
@@ -430,21 +429,9 @@ NodeEditPage::NodeEditPage(QWidget* parent)
     //        return std::make_unique<BaseModel>(BaseModel::IO_TYPE, "IO", in, out);
     //    },
     //    "IO");
-    connect(dataFlowGraphModel,&DataFlowGraphModel::configClicked,this,[this](int index)
+    connect(dataFlowGraphModel,&DataFlowGraphModel::configClicked,this,[this](NodeDelegateModel* node)
     {
-            //TODO
-        if (auto obj =qobject_cast<IOInterface*>(ManageInterface::instance()->getObj(index)))
-        {
-            qInfo()<<"configClicked "<<index<<obj;
-            auto config =obj->getConfig();
-
-            showConfigDialog(ManageInterface::instance()->getObj(index),index);
-        }
-        else  if (auto obj =qobject_cast<IOAPPInterface*>(ManageInterface::instance()->getObj(index)))
-        {
-            qInfo()<<"IOAPPInterface configClicked "<<index<<obj;
-             showConfigDialog(ManageInterface::instance()->getObj(index),index);
-        }
+        showConfigDialog((BaseModel*)node);
     });
 
     ConnectionStyle::setConnectionStyle(

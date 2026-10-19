@@ -97,7 +97,7 @@ public:
 
 Q_SIGNALS:
     void inPortDataWasSet(NodeId const, PortType const, PortIndex const);
-    void configClicked(int index);
+    void configClicked(NodeDelegateModel*);
 private:
     NodeId newNodeId() override { return _nextNodeId++; }
 

@@ -94,18 +94,9 @@ NodeId DataFlowGraphModel::addNode(QString const nodeType)
                 &DataFlowGraphModel::portsInserted);
 
         connect(model.get(),&NodeDelegateModel::configClicked,
-                this,[this](QPoint /*point*/)
+                this,[this](NodeDelegateModel* node)
                 {
-                    auto obj = sender();
-                    for (auto &var:_models)
-                    {
-                        if (var.second.get() == obj)
-                        {
-                            Q_EMIT configClicked(var.first);
-                           return;
-                        }
-                    }
-                    qWarning()<<"not find "<<obj;
+                    Q_EMIT configClicked(node);
                 }
                 );
         _models[newId] = std::move(model);
@@ -539,16 +530,9 @@ void DataFlowGraphModel::loadNode(QJsonObject const &nodeJson)
                 this,
                 &DataFlowGraphModel::portsInserted);
         connect(model.get(),&NodeDelegateModel::configClicked,
-            this,[this](QPoint /*point*/)
+            this,[this](NodeDelegateModel* node)
             {
-                auto obj = sender();
-                for (auto &var:_models)
-                {
-                    if (var.second.get() == obj)
-                    {
-                        Q_EMIT configClicked(var.first);
-                    }
-                }
+                Q_EMIT configClicked(node);
             }
             );
         _models[restoredNodeId] = std::move(model);

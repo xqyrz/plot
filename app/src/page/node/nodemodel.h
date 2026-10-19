@@ -116,7 +116,7 @@ public:
     void setInData(std::shared_ptr<NodeData>, PortIndex const) override{};
 
     bool resizable() const override { return true; }
-    QWidget *embeddedWidget() override{return nullptr;}
+    QWidget *embeddedWidget() override{return m_widget.get();}
     QObject *obj()override{return (m_plug->P_interface());};
 private:
     //void setObj(InterfaceBase* _obj){m_obj =_obj;};
@@ -133,7 +133,7 @@ protected:
     QString m_caption;
     QList<PLUG::InputType> in;
     QList<PLUG::OutputType> out;
-    QWidget* m_widget=nullptr;
+    QScopedPointer<QWidget> m_widget;
     QScopedPointer<PlugLoader> m_plug;
 
 };

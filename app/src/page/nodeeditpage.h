@@ -14,6 +14,7 @@
 #include <QtNodes/NodeData>
 #include <QtNodes/NodeDelegateModelRegistry>
 class InterfaceBase;
+class BaseModel;
 using namespace QtNodes;
 class NodeEditPage : public GraphicsView
 {
@@ -24,8 +25,9 @@ public:
     void d(int);
 private:
     static std::shared_ptr<NodeDelegateModelRegistry> _registerDataModels();
+    void showConfigDialog(BaseModel* node);
     void _sceneLoaded();
-    void showConfigDialog(QObject* obj,int index);
+
     void _saveConfig(const int index,const QList<std::tuple<QVariant::Type,QString,QVariant>>& config);
     QList<int> _allIndexes() const;
     QList<std::tuple<QVariant::Type, QString, QVariant>> _loadConfig(int index);

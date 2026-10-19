@@ -47,12 +47,21 @@ BaseModel::BaseModel(QString plugPath
 {
     m_caption=m_name;
    m_plug.reset(new PlugLoader(m_plugPath,this));
+
+    m_widget.reset( new QPushButton("配置"));
+    if (QFile qss(QStringLiteral(":/configbtn.qss"));
+    qss.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        m_widget->setStyleSheet(qss.readAll());
+    }
+    QObject::connect(qobject_cast<QPushButton*>(m_widget.get()),&QPushButton::clicked,this,[this]()
+    {emit configClicked(this);});
 }
 unsigned int BaseModel::nPorts(PortType const portType) const
 {
     unsigned int result = 1;
 
-    switch (portType) {
+    switch (portType)
+    {
     case PortType::In:
         result = in.size();
         break;
