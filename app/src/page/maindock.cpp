@@ -3,13 +3,7 @@
 //
 
 #include "maindock.h"
-#include <QComboBox>
-#include <QInputDialog>
-#include <QLabel>
-#include <QTabWidget>
-#include <QTableWidget>
-#include <QVBoxLayout>
-#include <QWidgetAction>
+
 #include "DockAreaWidget.h"
 #include "DockManager.h"
 #include "DockWidget.h"
@@ -17,7 +11,7 @@
 
 
 #include "nodeeditpage.h"
-#include "interface/viewmanage.h"
+#include "interface/manageinterface.h"
 using namespace  ads;
  MainDock::MainDock(QWidget *parent):
 QWidget(parent)
@@ -64,9 +58,10 @@ void MainDock::createPerspectiveUi()
 
 void MainDock::_InitPage()
 {
-     QWidget* w = new NodeEditPage(this);
-    auto pre =  _addDock(w,"node");
+    nodePage = new NodeEditPage(this);
+    auto pre =  _addDock(nodePage,"node");
     pre->setCurrentDockWidget(pre->dockWidget(0));
+//     auto nodeModel =nodePage->model();
 }
 ads::CDockAreaWidget* MainDock::_addDock(QWidget* widget, QString name,ads::CDockAreaWidget* parent)
  {

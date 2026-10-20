@@ -54,6 +54,7 @@ std::shared_ptr<NodeDelegateModelRegistry> NodeEditPage::_registerDataModels()
 
     return ret;
 }
+
 void dumpMeta(const QObject* obj)
 {
     const QMetaObject* mo = obj->metaObject();
@@ -411,27 +412,14 @@ QList<std::tuple<QVariant::Type, QString, QVariant>> NodeEditPage::_loadConfig(i
 }
 NodeEditPage::NodeEditPage(QWidget* parent)
     :GraphicsView(parent)
-    ,registry( _registerDataModels())
-    ,dataFlowGraphModel(new DataFlowGraphModel(registry))
-    ,scene(new DataFlowGraphicsScene(*dataFlowGraphModel))
+    ,scene(new DataFlowGraphicsScene(*ManageInterface::instance()->model()))
     ,configPath(QStandardPaths::writableLocation(
                     QStandardPaths::AppConfigLocation
                 )+"/config.json")
 {
-    //foreach(auto &var:ManageInterface::instance())
-    //{
-//
-    //}
-    //QList<QtNodes::NodeDataTypeEnum::InputType> in = {QtNodes::NodeDataTypeEnum::IN_IO_TX};
-    //QList<QtNodes::NodeDataTypeEnum::OutputType> out = {QtNodes::NodeDataTypeEnum::OUT_IO_TX};
-    //registry->registerModel<BaseModel>(
-    //    [in, out]() {
-    //        return std::make_unique<BaseModel>(BaseModel::IO_TYPE, "IO", in, out);
-    //    },
-    //    "IO");
-    connect(dataFlowGraphModel,&DataFlowGraphModel::configClicked,this,[this](NodeDelegateModel* node)
+    connect(ManageInterface::instance(),&ManageInterface::configClicked,this,[this](BaseModel* node)
     {
-        showConfigDialog((BaseModel*)node);
+        showConfigDialog(node);
     });
 
     ConnectionStyle::setConnectionStyle(

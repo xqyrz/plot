@@ -32,8 +32,6 @@ private:
     QList<int> _allIndexes() const;
     QList<std::tuple<QVariant::Type, QString, QVariant>> _loadConfig(int index);
 private:
-    std::shared_ptr<NodeDelegateModelRegistry> registry;
-    DataFlowGraphModel* dataFlowGraphModel=nullptr;
     DataFlowGraphicsScene* scene=nullptr;
     const QString configPath;
 };

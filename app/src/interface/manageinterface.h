@@ -8,6 +8,13 @@
 #include <QObject>
 #include "page/node/nodemodel.h"
 class QPluginLoader;
+
+ namespace QtNodes
+{
+    class NodeDelegateModelRegistry;
+     class DataFlowGraphModel;
+
+}
 class PlugData{
 public:
     QString fileName;
@@ -36,6 +43,7 @@ public:
 };
 class ManageInterface:public QObject
 {
+    Q_OBJECT
 public:
 
    static ManageInterface* instance(QObject* parent=nullptr);
@@ -43,10 +51,16 @@ public:
     void addPlug( QPluginLoader* plug);
     QObject* getObj(const int  index)const {return nullptr;}
     const QList<PlugData>& getPlugs()const {return plugs;}
+    QtNodes::DataFlowGraphModel* model()const{return dataFlowGraphModel;};
+signals:
+    void configClicked(BaseModel* node);
 private:
     ManageInterface(QObject* parent);
+    std::shared_ptr<QtNodes::NodeDelegateModelRegistry> _registerDataModels();
 private:
     QList<PlugData> plugs;
+    std::shared_ptr<QtNodes::NodeDelegateModelRegistry> m_registry;
+    QtNodes::DataFlowGraphModel* dataFlowGraphModel;
 };
 
 

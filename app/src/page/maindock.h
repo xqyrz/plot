@@ -9,6 +9,7 @@
 class QWidgetAction;
 class QComboBox;
 class IOView;
+class NodeEditPage;
 namespace ads {
     class CDockManager;
     class CDockAreaWidget;
@@ -36,6 +37,7 @@ private:
     ads::CDockManager* DockManager;
     ads::CDockAreaWidget* StatusDockArea{};
     ads::CDockWidget* TimelineDockWidget{};
+    NodeEditPage* nodePage{};
 };
 
 
