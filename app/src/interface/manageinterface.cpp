@@ -62,8 +62,22 @@ static PlugData dealPlug( QPluginLoader* pluginLoader)
 }
 
 
+QList<QWidget*> ManageInterface::wigets() const
+{
+    QList<QWidget*> widges;
+    auto ids =dataFlowGraphModel->allNodeIds();
 
-
+    for (auto id:ids)
+    {
+        auto node_plug_obj =(qvariant_cast<QObject*>(dataFlowGraphModel->nodeData(id,NodeRole::PlugPtr)));
+        if (auto page = qobject_cast<PageBase*>(node_plug_obj))
+        {
+            qDebug()<<page;
+            widges.append(page->ui());
+        }
+    }
+    return widges;
+}
 ManageInterface::ManageInterface(QObject* parent):
 QObject(parent)
 

@@ -8,13 +8,12 @@
 #include <QJsonObject>
 #include <QWidget>
 #include <functional>
-#include "../../../common/plug/io/iocommon.h"
-#include "../pagebase.h"
+#include "page/pagebase.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class IOWPage; }
 QT_END_NAMESPACE
 class IOInterface;
-class IOWPage : public QWidget,public PageBase {
+class IOWPage : public PageBase {
 Q_OBJECT
     Q_INTERFACES(PageBase)
     Q_PLUGIN_METADATA(IID PageBase_Id FILE "iowpage.json")
@@ -25,13 +24,12 @@ public:
 private slots:
     void on_devOpen_clicked();
 public slots:
-    void  slot_rx(const PLUG::Frame&);
+   void slots_IN_IO_TX(const PLUG::Frame&) override;
     void setIOobjs(const QList<IOInterface*>&);
 public:
-    const char* getSignal(int index) const override ;
-    const char* getSlot(int index) const override ;
+
 private:
-    Ui::IOWPage *ui;
+    Ui::IOWPage *m_ui;
     std::function<void(QJsonObject&)> fun;
     QList<IOInterface*> ioObjs;
 };

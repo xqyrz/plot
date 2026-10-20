@@ -1,7 +1,6 @@
 ﻿#include "IoFrameModel.h"
 #include <QColor>
 #include <QDebug>
-using namespace IO;
 IoFrameModel::~IoFrameModel()
 {
     m_timer.stop();
@@ -47,8 +46,8 @@ QVariant IoFrameModel::data(const QModelIndex &index, int role) const
     if (!index.isValid() || index.row() >= m_frames.size())
         return QVariant();
 
-    const Frame &frame = m_frames[index.row()];
-    const Config &cfg = frame.info;
+    const PLUG::Frame &frame = m_frames[index.row()];
+    const PLUG::Config &cfg = frame.info;
 
     // 显示角色
     if (role == Qt::DisplayRole) {
@@ -57,7 +56,7 @@ QVariant IoFrameModel::data(const QModelIndex &index, int role) const
         case COL_CH:       return cfg.ch;
         case COL_OWN_DEV:  return cfg.own_dev;
         case COL_OWN_CH:   return cfg.own_ch;
-        case COL_TR:       return frame.RT == IO::RT::RX?"RX":"TX";
+        case COL_TR:       return frame.RT == PLUG::RT::RX?"RX":"TX";
         case COL_TIME:     return frame.time.toString("HH:mm:ss.zzz");
         case COL_LEN:      return frame.data.size();
         case COL_DATA:     return QString::fromLocal8Bit(frame.data.toHex(' ')).toUpper();; // 十六进制显示数据
@@ -68,7 +67,7 @@ QVariant IoFrameModel::data(const QModelIndex &index, int role) const
     else if (role == Qt::BackgroundRole)
     {
         // 示例1：根据【设备IP】设置不同背景色
-        if (frame.RT == IO::RT::RX) {
+        if (frame.RT == PLUG::RT::RX) {
             // 淡蓝色
             return QColor(240, 240, 240);
         }
@@ -117,7 +116,7 @@ QVariant IoFrameModel::headerData(int section, Qt::Orientation orientation, int 
 }
 
 // ==================== 数据插入：自动维护所有索引 ====================
-void IoFrameModel::appendFrame(const Frame &frame)
+void IoFrameModel::appendFrame(const PLUG::Frame &frame)
 {
     frames[cnt] = frame;
     cnt++;
@@ -139,15 +138,15 @@ void IoFrameModel::clearAll()
 }
 
 // ==================== 获取指定行数据 ====================
-Frame IoFrameModel::getFrame(int row) const
+PLUG::Frame IoFrameModel::getFrame(int row) const
 {
     if (row >= 0 && row < m_frames.size())
         return m_frames[row];
-    return Frame();
+    return PLUG::Frame();
 }
 
 // ==================== 按条件查找：返回所有匹配的行号 ====================
-const std::list<uint>* IoFrameModel::findRowsByConfig(const Config &cfg) const
+const std::list<uint>* IoFrameModel::findRowsByConfig(const PLUG::Config &cfg) const
 {
     auto  devIndex= _indexOf(devs,cfg.dev);
     auto chIndex = _indexOf(chs,cfg.ch);

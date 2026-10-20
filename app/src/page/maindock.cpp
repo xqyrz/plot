@@ -61,7 +61,11 @@ void MainDock::_InitPage()
     nodePage = new NodeEditPage(this);
     auto pre =  _addDock(nodePage,"node");
     pre->setCurrentDockWidget(pre->dockWidget(0));
-//     auto nodeModel =nodePage->model();
+     auto pageWigets =ManageInterface::instance()->wigets();
+     for (size_t  i = 0;i<pageWigets.size();i++)
+     {
+          pre =  _addDock(pageWigets.at(i),pageWigets.at(i)->objectName(),pre);
+     }
 }
 ads::CDockAreaWidget* MainDock::_addDock(QWidget* widget, QString name,ads::CDockAreaWidget* parent)
  {

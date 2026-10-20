@@ -52,6 +52,7 @@ public:
     QObject* getObj(const int  index)const {return nullptr;}
     const QList<PlugData>& getPlugs()const {return plugs;}
     QtNodes::DataFlowGraphModel* model()const{return dataFlowGraphModel;};
+    QList<QWidget*> wigets()const ;
 signals:
     void configClicked(BaseModel* node);
 private:

@@ -14,8 +14,8 @@ int main(int argc, char *argv[]) {
 
     QApplication a(argc, argv);
 IOWPage w;
-    w.resize(800,600);
-    w.show();
+    w.ui()->resize(800,600);
+    w.ui()->show();
 
     return a.exec();
 }

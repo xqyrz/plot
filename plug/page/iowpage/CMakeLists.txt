@@ -55,18 +55,22 @@ install(TARGETS ${PROJECT_NAME}
 
 
 
-add_executable(${PROJECT_NAME}test
-        ${SRC_FILES}
-        main.cpp
-)
-target_include_directories(${PROJECT_NAME}test
-        PRIVATE
-        ${IO_PATH}
-        ${CMAKE_CURRENT_SOURCE_DIR}
-)
-target_link_libraries(${PROJECT_NAME}test
-        Qt${QT_VERSION_MAJOR}::Core
-        Qt${QT_VERSION_MAJOR}::Widgets
-        protobuf::libprotobuf
-
-)
+#add_executable(${PROJECT_NAME}test
+#        ${SRC_FILES}
+#        #${PlugBase_SRC_FILES_H}
+#        #${IO_SRC_FILES_H}
+#        #${IOAPP_SRC_FILES_H}
+#        #${PAGE_SRC_FILES_H}
+#        main.cpp
+#)
+#target_include_directories(${PROJECT_NAME}test
+#        PRIVATE
+#        ${IO_PATH}
+#        ${CMAKE_CURRENT_SOURCE_DIR}
+#)
+#target_link_libraries(${PROJECT_NAME}test
+#        Qt${QT_VERSION_MAJOR}::Core
+#        Qt${QT_VERSION_MAJOR}::Widgets
+#        protobuf::libprotobuf
+#
+#)

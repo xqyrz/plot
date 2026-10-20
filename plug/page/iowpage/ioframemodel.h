@@ -10,7 +10,7 @@
 #include <list>
 #include <map>
 #include <vector>
-#include "../../../common/plug/io/iocommon.h"
+#include "interfacecommon.h"
 // 自定义哈希函数（用于map的key）
 inline uint qHash(const PLUG::Config &key, uint seed = 0)
 {

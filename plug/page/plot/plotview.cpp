@@ -18,7 +18,10 @@ PlotView::PlotView(QWidget* parent) :
     _xSpinBox(new QSpinBox(ui())), _xCheckBox(new QCheckBox(ui())), _model(new PlotModel(ui()))
 {
     ui()->setParent(parent);
+    ui()->setObjectName("Plot");
+
     m_inputPorts << PLUG::InputType::IN_APP_SIGNAL;
+
     QSettings settings(PLOT::PLOT_COMPANY, PLOT::PLOT_PRODUCT);
     plotType = (PLOT::PlotType)settings.value("Plot/plotType", PLOT::TYPE_oneXoneY).toInt();
     initUI();
