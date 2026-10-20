@@ -24,7 +24,7 @@ public:
 private slots:
     void on_devOpen_clicked();
 public slots:
-   void slots_IN_IO_TX(const PLUG::Frame&) override;
+   void slots_IN_IO_RX(const PLUG::Frame&) override;
     void setIOobjs(const QList<IOInterface*>&);
 public:
 

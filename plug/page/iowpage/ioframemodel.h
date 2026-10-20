@@ -152,7 +152,7 @@ private:
         COL_ASCII
      };
     QTimer m_timer;
-    PLUG::Frame frames[999];
+    PLUG::Frame buffer[999];
     int cnt = 0;
 };
 

@@ -10,15 +10,16 @@ IoFrameModel::IoFrameModel(QObject *parent)
 {
     // 初始化：预分配9999个空间，提升性能
     m_frames.reserve(9999);
-    connect(&m_timer,&QTimer::timeout,this,[=]()
+    connect(&m_timer,&QTimer::timeout,this,[this]()
     {
+        if (!this->cnt)return;
         // 1. 获取即将插入的行号
         int newRow = static_cast<int>(m_frames.size());
         // 2. 通知Model开始插入行
-        beginInsertRows(QModelIndex(), newRow, newRow+cnt-1);
+        beginInsertRows(QModelIndex(), newRow, newRow+this->cnt-1);
         for (int i =0;i<cnt;i++)
         {
-            _addFrame(frames[i]);
+            _addFrame(buffer[i]);
         }
         endInsertRows();
         cnt = 0;
@@ -118,8 +119,8 @@ QVariant IoFrameModel::headerData(int section, Qt::Orientation orientation, int 
 // ==================== 数据插入：自动维护所有索引 ====================
 void IoFrameModel::appendFrame(const PLUG::Frame &frame)
 {
-    frames[cnt] = frame;
-    cnt++;
+    buffer[cnt] = frame;
+    ++cnt;
     if (!m_timer.isActive()) m_timer.start(50);
 
 }

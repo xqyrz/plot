@@ -33,8 +33,18 @@ public:
     }
     const char* getSignal(PLUG::OutputType index) const;
     const char* getSlot(PLUG::InputType index) const;
-    const char* getSignal(int index) const{return getSignal(m_outputPorts.at(index));};
-    const char* getSlot(int index) const{return getSlot(m_inputPorts.at(index));};
+    const char* getSignal(int index) const
+    {
+        if ( m_outputPorts.size()> index)
+        return getSignal(m_outputPorts.at(index));
+        else return nullptr;;
+    };
+    const char* getSlot(int index) const
+    {
+        if ( m_inputPorts.size()> index)
+        return getSlot(m_inputPorts.at(index));
+        else return nullptr;;
+    };
     QList<PLUG::InputType> inputPorts()const{return m_inputPorts;}
     QList<PLUG::OutputType> outputPorts()const{return m_outputPorts;}
     virtual QList<std::tuple<QVariant::Type,QString,QVariant>> getConfig(){return {};};

@@ -80,11 +80,14 @@ NodeDataType BaseModel::dataType(PortType const portType, PortIndex const portIn
     switch (portType) {
     case PortType::In:
     {
+        if (in.size()>portIndex)
         return INNodeData(InputPLUG_TO_NODE_InputTYPE(in.at(portIndex))).type();
+        else return NodeDataType();
     }
     case PortType::Out:
+        if (out.size()>portIndex)
         return OUTNodeData(OutputPLUG_TO_NODE_OutputTYPE(out.at(portIndex))).type();
-
+        else return NodeDataType();
     case PortType::None:
         break;
     }

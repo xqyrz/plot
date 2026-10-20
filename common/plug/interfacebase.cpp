@@ -38,19 +38,20 @@ const char* InterfaceBase::getSlot(PLUG::InputType index) const
 void InterfaceBase::slots_IN_VIRTUAL_TX(const PLUG::Frame&) {}
 void InterfaceBase::slots_IN_IO_TX(const PLUG::Frame& frame)
 {
-    emit signals_OUT_IO_RX(frame);
+    emit signals_OUT_IO_TX(frame);
 }
 void InterfaceBase::slots_IN_IO_RX(const PLUG::Frame& frame)
 {
-    emit signals_OUT_IO_TX(frame);
+
+    emit signals_OUT_IO_RX(frame);
 }
 void InterfaceBase::slots_IN_APP_TX(const PLUG::Frame& frame)
 {
-    emit signals_OUT_APP_RX(frame);
+    emit signals_OUT_APP_TX(frame);
 }
 void InterfaceBase::slots_IN_APP_RX(const PLUG::Frame& frame)
 {
-    emit signals_OUT_APP_TX(frame);
+    emit signals_OUT_APP_RX(frame);
 }
 void InterfaceBase::slots_IN_APP_SIGNAL(const QList<PLUG::_SIGNALS>& _signals)
 {

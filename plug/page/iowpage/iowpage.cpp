@@ -15,8 +15,8 @@ IOWPage::IOWPage(QWidget *parent) :
     PageBase(parent), m_ui(new Ui::IOWPage) {
 
     QFile file(":/iowpage/rec/defalut.qss");
-    m_inputPorts << PLUG::InputType::IN_IO_TX;
-    m_outputPorts << PLUG::OutputType::OUT_IO_RX;
+    m_inputPorts << PLUG::InputType::IN_IO_RX;
+    m_outputPorts << PLUG::OutputType::OUT_IO_TX;
     // 以只读方式打开文件（资源文件/本地文件都支持）
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
     }
@@ -60,8 +60,9 @@ void IOWPage::on_devOpen_clicked()
         qWarning() << "not set callback";
     }
 }
-void IOWPage::slots_IN_IO_TX(const PLUG::Frame& frame)
+void IOWPage::slots_IN_IO_RX(const PLUG::Frame& frame)
 {
+    qDebug()<<"rx_frame"<<frame.data;
     m_ui->tableIO->addRow(frame);
     //TODO:timer 定时 优化性能
     m_ui->textBrowser->insertPlainText(frame.data);

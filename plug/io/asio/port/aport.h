@@ -26,8 +26,6 @@ public:
     int write(const QList<PLUG::Frame>&) override;
     QList<std::tuple<QVariant::Type,QString,QVariant>> getConfig() override;
     void setConfig(const QList<std::tuple<QVariant::Type,QString,QVariant>> &) override;
-    signals:
-            void rx_frame(const PLUG::Frame&);
 public   slots:
     void tx_frame(const PLUG::Frame& frame){write(frame);};
 private:

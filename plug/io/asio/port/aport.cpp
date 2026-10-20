@@ -30,7 +30,8 @@ APort::APort(QObject* parent, PLUG::Config config)
     })";
     addCallback(0,[this](const PLUG::Frame& frame)
     {
-        emit rx_frame(frame);
+
+        emit signals_OUT_IO_RX(frame);
     });
 
 }
