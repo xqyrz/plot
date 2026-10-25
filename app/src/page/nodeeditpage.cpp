@@ -166,7 +166,7 @@ void NodeEditPage::_sceneLoaded()
                 else
                 {
                     connectList.append({out_obj, out_signal, in_obj, in_slot});
-                    qInfo()<<out_obj<<out_signal<<" <===connect==> "<<in_obj<<in_slot;
+                   // qInfo()<<out_obj<<out_signal<<" <===connect==> "<<in_obj<<in_slot;
                 }
             }
             catch (const std::exception& e)

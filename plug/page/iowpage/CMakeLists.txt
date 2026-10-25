@@ -1,5 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.16)
 project(iowpage VERSION 0.1 LANGUAGES CXX)
+
 file(GLOB_RECURSE SRC_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/*.h"

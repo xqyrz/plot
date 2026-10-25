@@ -1,4 +1,4 @@
-
+set(CMAKE_FOLDER "${CMAKE_FOLDER}/page")
 #add_subdirectory(iopage)
 add_subdirectory(iowpage)
 add_subdirectory(plot)

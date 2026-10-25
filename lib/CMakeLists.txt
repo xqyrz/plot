@@ -1,4 +1,5 @@
-﻿add_subdirectory(nodes)
+﻿set(CMAKE_FOLDER "LIB")
+add_subdirectory(nodes)
 add_subdirectory(qwindowkit)
 add_subdirectory(ads)
 add_subdirectory(QtPropertyBrowser)

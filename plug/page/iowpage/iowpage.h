@@ -8,6 +8,7 @@
 #include <QJsonObject>
 #include <QWidget>
 #include <functional>
+#include <QQueue>
 #include "page/pagebase.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class IOWPage; }
@@ -20,7 +21,8 @@ Q_OBJECT
 public:
     explicit IOWPage(QWidget *parent = nullptr);
     ~IOWPage() override;
-
+private:
+      void timerEvent(QTimerEvent *event) override;
 private slots:
     void on_devOpen_clicked();
 public slots:
@@ -32,6 +34,8 @@ private:
     Ui::IOWPage *m_ui;
     std::function<void(QJsonObject&)> fun;
     QList<IOInterface*> ioObjs;
+    QQueue<PLUG::Frame> m_rFrames;
+    int m_rTimer{0};
 };
 
 

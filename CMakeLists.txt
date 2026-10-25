@@ -7,6 +7,7 @@ add_compile_options(
 )
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -75,6 +76,26 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(LIB_SUFF d)
 endif()
 
+
+
+
+
+# ========== 封装函数：给目标附加VS调试环境（重点！） ==========
+function(target_set_qt_debug_env target_name)
+    set(QT_BIN        "${QT_ROOT}/bin")
+    set(QT_PLATFORMS  "${QT_ROOT}/plugins/platforms")
+    # VS_DEBUGGER_ENVIRONMENT 换行用 \n；变量用 %PATH% 这种windows风格
+    set(debug_env
+"PATH=${QT_BIN};%PATH%
+QT_QPA_PLATFORM_PLUGIN_PATH=${QT_PLATFORMS}"
+    )
+    set_target_properties(${target_name} PROPERTIES
+        VS_DEBUGGER_ENVIRONMENT "${debug_env}"
+    )
+endfunction()
+
+
+
 message("CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}")
 set(Protobuf_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/common/bus/protoc")
 find_package(Protobuf REQUIRED)
@@ -131,6 +152,21 @@ file(GLOB PAGE_SRC_FILES
 )
 
 set(PLUG_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/common/plug)
+
+
+
+
+set(OpenCV_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/lib/opencv")
+# find_package 需要指向lib目录
+set(OpenCV_DIR "${OpenCV_ROOT}/x64/vc16/lib")
+message("${OpenCV_DIR}")
+find_package(OpenCV REQUIRED)
+
+
+
+
+
+
 add_subdirectory(lib)
 # 添加子目录
 add_subdirectory(plug)

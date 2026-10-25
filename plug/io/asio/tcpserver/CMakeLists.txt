@@ -15,6 +15,7 @@ add_library(${ATCPSERVER_LIB} SHARED
         ${BUS_PATH}/bus.h
         ${BUS_PATH}/bus.cpp
 )
+
 MESSAGE("ATCPSERVER_LIB ${ATCPSERVER_LIB}")
 target_include_directories(${ATCPSERVER_LIB}
         PUBLIC

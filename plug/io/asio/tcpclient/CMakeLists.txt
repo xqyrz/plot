@@ -15,6 +15,7 @@ add_library(${ATCLIENT_LIB} SHARED
         ${BUS_PATH}/bus.h
         ${BUS_PATH}/bus.cpp
 )
+
 MESSAGE("ATCLIENT_LIB ${ATCLIENT_LIB}")
 target_include_directories(${ATCLIENT_LIB}
         PUBLIC

@@ -2,7 +2,13 @@
 # 添加子目录
 #add_subdirectory(io)
 project(Plug)
-
+set(CMAKE_FOLDER "PLUG")
+if(BUILD_DEBUG_POSTFIX_D)
+    set(CMAKE_DEBUG_POSTFIX "d")
+    set(CMAKE_RELEASE_POSTFIX "")
+    set(CMAKE_RELWITHDEBINFO_POSTFIX "rd")
+    set(CMAKE_MINSIZEREL_POSTFIX "s")
+endif()
 
 
 set(IO_PATH ${CMAKE_CURRENT_SOURCE_DIR}/io)

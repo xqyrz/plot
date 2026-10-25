@@ -13,7 +13,7 @@
 #include "ui_iowpage.h"
 IOWPage::IOWPage(QWidget *parent) :
     PageBase(parent), m_ui(new Ui::IOWPage) {
-
+     m_rTimer = startTimer(50);
     QFile file(":/iowpage/rec/defalut.qss");
     m_inputPorts << PLUG::InputType::IN_IO_RX;
     m_outputPorts << PLUG::OutputType::OUT_IO_TX;
@@ -33,7 +33,8 @@ IOWPage::IOWPage(QWidget *parent) :
 
     // 可选：显示水平滚动条（不换行后内容超长会需要横向滚动）
     m_ui->textBrowser->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-
+    m_ui->textBrowser->setLineWrapMode(QTextEdit::WidgetWidth);
+    m_ui->textBrowser->setWordWrapMode(QTextOption::WrapAnywhere);
     m_funs.insert(keyStr(IOOBJS),[this](const void*  data)
     {
         auto _d =static_cast<const QList<IOInterface*>*>(data);
@@ -43,6 +44,26 @@ IOWPage::IOWPage(QWidget *parent) :
 
 IOWPage::~IOWPage() {
     delete m_ui;
+}
+void IOWPage::timerEvent(QTimerEvent* event) {
+    if (m_rTimer == event->timerId())
+    {
+        auto size = m_rFrames.size();
+        QString s;
+        for (int i = 0; i < size; ++i)
+        {
+            m_ui->tableIO->addRow(m_rFrames.at(i));
+           
+            //s.append(m_rFrames.at(i).data);
+        }
+       // m_ui->textBrowser->insertPlainText(s);//TODO：性能不行
+        //if (m_ui->tableIO->updateFlag())
+        //{
+        //    QScrollBar *scrollBar = m_ui->textBrowser->verticalScrollBar();
+        //    scrollBar->setValue(scrollBar->maximum());
+        //}
+        m_rFrames.clear();
+    }
 }
 
 void IOWPage::on_devOpen_clicked()
@@ -62,15 +83,8 @@ void IOWPage::on_devOpen_clicked()
 }
 void IOWPage::slots_IN_IO_RX(const PLUG::Frame& frame)
 {
-    qDebug()<<"rx_frame"<<frame.data;
-    m_ui->tableIO->addRow(frame);
-    //TODO:timer 定时 优化性能
-    m_ui->textBrowser->insertPlainText(frame.data);
-    if (m_ui->tableIO->updateFlag())
-    {
-        QScrollBar *scrollBar = m_ui->textBrowser->verticalScrollBar();
-        scrollBar->setValue(scrollBar->maximum());
-    }
+    m_rFrames.enqueue(frame);
+
 }
 
 void IOWPage::setIOobjs(const QList<IOInterface*>& _objs){
