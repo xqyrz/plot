@@ -59,7 +59,7 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout" stretch="1,5,5,99,5">
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -513,30 +513,6 @@ color:white;
           <property name="spacing">
            <number>18</number>
           </property>
-          <item row="0" column="0">
-           <widget class="QPushButton" name="autoReplay">
-            <property name="maximumSize">
-             <size>
-              <width>60</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QPushButton{
-border:none;
-color:#000000;
-text-decoration: underline;
-background:transparent;
-}
-QPushButton:hover{
-color:red;
-}</string>
-            </property>
-            <property name="text">
-             <string>自动应答</string>
-            </property>
-           </widget>
-          </item>
           <item row="3" column="1">
            <widget class="QPushButton" name="theme">
             <property name="maximumSize">
@@ -558,30 +534,6 @@ color:red;
             </property>
             <property name="text">
              <string>界面主题</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QPushButton" name="sendAll">
-            <property name="maximumSize">
-             <size>
-              <width>60</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QPushButton{
-border:none;
-color:#000000;
-text-decoration: underline;
-background:transparent;
-}
-QPushButton:hover{
-color:red;
-}</string>
-            </property>
-            <property name="text">
-             <string>批量发送</string>
             </property>
            </widget>
           </item>
@@ -609,6 +561,30 @@ color:red;
             </property>
            </widget>
           </item>
+          <item row="2" column="0">
+           <widget class="QPushButton" name="sendAll">
+            <property name="maximumSize">
+             <size>
+              <width>60</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton{
+border:none;
+color:#000000;
+text-decoration: underline;
+background:transparent;
+}
+QPushButton:hover{
+color:red;
+}</string>
+            </property>
+            <property name="text">
+             <string>批量发送</string>
+            </property>
+           </widget>
+          </item>
           <item row="3" column="0">
            <widget class="QPushButton" name="plot">
             <property name="maximumSize">
@@ -630,6 +606,54 @@ color:red;
             </property>
             <property name="text">
              <string>数据波形</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QPushButton" name="asciiTable">
+            <property name="maximumSize">
+             <size>
+              <width>60</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton{
+border:none;
+color:#000000;
+text-decoration: underline;
+background:transparent;
+}
+QPushButton:hover{
+color:red;
+}</string>
+            </property>
+            <property name="text">
+             <string>ASCII表</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QPushButton" name="autoReplay">
+            <property name="maximumSize">
+             <size>
+              <width>60</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton{
+border:none;
+color:#000000;
+text-decoration: underline;
+background:transparent;
+}
+QPushButton:hover{
+color:red;
+}</string>
+            </property>
+            <property name="text">
+             <string>自动应答</string>
             </property>
            </widget>
           </item>
@@ -693,30 +717,6 @@ color:red;
              </size>
             </property>
            </spacer>
-          </item>
-          <item row="4" column="0">
-           <widget class="QPushButton" name="asciiTable">
-            <property name="maximumSize">
-             <size>
-              <width>60</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QPushButton{
-border:none;
-color:#000000;
-text-decoration: underline;
-background:transparent;
-}
-QPushButton:hover{
-color:red;
-}</string>
-            </property>
-            <property name="text">
-             <string>ASCII表</string>
-            </property>
-           </widget>
           </item>
          </layout>
         </widget>
