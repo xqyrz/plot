@@ -4,7 +4,7 @@
 #include "opencvcal.h"
 #include <iostream>
 
-int main()
+int test()
 {
     // 字符串版本
     std::cout << "CV_VERSION: " << CV_VERSION << "\n";
@@ -32,4 +32,22 @@ int main()
 
     cv::waitKey(0);
     return 0;
+}
+
+
+#include <QtWidgets/QApplication>
+#include "visionapp.h"
+int main(int argc, char *argv[])
+{
+    QCoreApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
+    // 1. 全局缩放使能
+    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    // 2. 适配非整数倍缩放
+    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+    QApplication a(argc, argv);
+    VisionApp w;
+    w.show();
+    w.resize(800,600);
+    return a.exec();
 }

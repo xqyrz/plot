@@ -26,7 +26,8 @@ bool OpencvCal::Affine_Transformation(const cv::Mat& src, const cv::Mat& M,  cv:
     try
     {
         // 输出尺寸默认与原图一致
-        cv::warpAffine(src, out, M2x3, src.size(),
+        //cv::warpAffine
+        cv::warpPerspective(src, out, M, src.size(),
                        cv::INTER_LINEAR,        // 双线性插值
                        cv::BORDER_CONSTANT,     // 边界常量填充
                        cv::Scalar(0, 0, 0));    // 填充黑色

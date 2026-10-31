@@ -8,6 +8,9 @@
 
 #include <stdexcept>
 
+#include "qtpropertymanager.h"
+#include "qtvariantproperty.h"
+#include "qttreepropertybrowser.h"
 
 #include "../../../common/plug/io/iointerface.h"
 #include "../../../common/plug/ioapp/ioappinterface.h"
@@ -93,6 +96,61 @@ public:
         return in_obj == other.in_obj && in_slot == other.in_slot && out_obj == other.out_obj && out_signal == other.out_signal;
     }
 };
+
+
+
+NodeEditPage::NodeEditPage(QWidget* parent)
+    :GraphicsView(parent)
+    ,scene(new DataFlowGraphicsScene(*ManageInterface::instance()->model()))
+    ,configPath(QStandardPaths::writableLocation(
+                    QStandardPaths::AppConfigLocation
+                )+"/config.json")
+{
+    connect(ManageInterface::instance(),&ManageInterface::configClicked,this,[this](BaseModel* node)
+    {
+        showConfigDialog(node);
+    });
+
+    ConnectionStyle::setConnectionStyle(
+    R"(
+  {
+    "ConnectionStyle": {
+      "UseDataDefinedColors": true
+    }
+  }
+  )");
+    this->setScene(scene);
+
+    connect(scene,&DataFlowGraphicsScene::sceneLoaded, this,&NodeEditPage::_sceneLoaded);
+
+    try
+    {
+        this->scene->load(this->scene->getDefaultConfigPath());
+        auto indexes = _allIndexes();
+        for (int index : indexes) {
+            auto cfg = _loadConfig(index);
+            //auto obj = Manage::getInterfaceBase(index);
+            //if (obj)
+            //{
+            //    obj->setConfig(cfg);
+            //}
+        }
+    }
+    catch (const std::logic_error& e) {
+        QMessageBox::warning(this,"警告","节点配置文件加载失败："+QString(e.what()));
+        qWarning() << e.what();
+    }
+}
+
+
+
+
+
+
+
+
+
+
 void NodeEditPage::_sceneLoaded()
 {
     auto& model = scene->getGraphModel();
@@ -181,9 +239,7 @@ void NodeEditPage::_sceneLoaded()
  * 显示IO config
  *
  */
-#include "qtpropertymanager.h"
-#include "qtvariantproperty.h"
-#include "qttreepropertybrowser.h"
+
 void NodeEditPage::showConfigDialog(BaseModel* node)
 {
     auto obj = (InterfaceBase*)node->obj();
@@ -409,46 +465,4 @@ QList<std::tuple<QVariant::Type, QString, QVariant>> NodeEditPage::_loadConfig(i
     }
 
     return result;
-}
-NodeEditPage::NodeEditPage(QWidget* parent)
-    :GraphicsView(parent)
-    ,scene(new DataFlowGraphicsScene(*ManageInterface::instance()->model()))
-    ,configPath(QStandardPaths::writableLocation(
-                    QStandardPaths::AppConfigLocation
-                )+"/config.json")
-{
-    connect(ManageInterface::instance(),&ManageInterface::configClicked,this,[this](BaseModel* node)
-    {
-        showConfigDialog(node);
-    });
-
-    ConnectionStyle::setConnectionStyle(
-    R"(
-  {
-    "ConnectionStyle": {
-      "UseDataDefinedColors": true
-    }
-  }
-  )");
-  this->setScene(scene);
-
-  connect(scene,&DataFlowGraphicsScene::sceneLoaded, this,&NodeEditPage::_sceneLoaded);
-
-   try
-   {
-       this->scene->load(this->scene->getDefaultConfigPath());
-       auto indexes = _allIndexes();
-       for (int index : indexes) {
-           auto cfg = _loadConfig(index);
-           //auto obj = Manage::getInterfaceBase(index);
-           //if (obj)
-           //{
-           //    obj->setConfig(cfg);
-           //}
-       }
-   }
-   catch (const std::logic_error& e) {
-       QMessageBox::warning(this,"警告","节点配置文件加载失败："+QString(e.what()));
-      qWarning() << e.what();
-   }
 }

@@ -72,7 +72,7 @@ public:
      * we'll gonna have a dangling pointer.
      */
     virtual QWidget *embeddedWidget() = 0;
-    virtual QObject *obj() = 0;
+    virtual QObject *obj() {return nullptr;};
     virtual bool resizable() const { return false; }
 
 public Q_SLOTS:

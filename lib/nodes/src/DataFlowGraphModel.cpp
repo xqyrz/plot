@@ -265,8 +265,8 @@ QVariant DataFlowGraphModel::nodeData(NodeId nodeId, NodeRole role) const
     } break;
     case NodeRole::PlugPtr:
     {
-        auto o = model->obj();
-        result =  QVariant::fromValue(o);
+      //  auto o = model->obj();
+        result =  QVariant::fromValue(model.get());
     }
             break;
     }
