@@ -19,22 +19,21 @@ VisionApp::VisionApp(QWidget* parent) : QWidget(parent), ui(new Ui::VisionApp)
         ui->imageTab->clear();
     for(auto image:images)
     {
-                // 1. 创建 QLabel
-                QLabel *label = new QLabel(this);
+         // 1. 创建 QLabel
+         auto *label = new ImageView(this);
 
-                // 2. 将 QImage 转换为 QPixmap
-                QPixmap pixmap = QPixmap::fromImage(image.second);
+         // 2. 将 QImage 转换为 QPixmap
+         QPixmap pixmap = QPixmap::fromImage(image.second);
+         image.second.save("temp.bmp","BMP");
+         // 3. 设置给 QLabel 显示
+         label->openFile("temp.bmp");
 
-                // 3. 设置给 QLabel 显示
-                label->setPixmap(pixmap);
-
-                // 可选：让图片适应 Label 大小
-                label->setScaledContents(true);
-                ui->imageTab->addTab(label,image.first);
+         // 可选：让图片适应 Label 大小
+        // label->setScaledContents(true);
+         ui->imageTab->addTab(( QWidget*)label,image.first);
     }
         });
-    ui->imageTab->clear();
-    ui->imageTab->addTab(new ImageView() ,"");
+
 }
 
 VisionApp::~VisionApp() { delete ui; }
