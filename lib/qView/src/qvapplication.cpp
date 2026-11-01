@@ -252,6 +252,7 @@ void QVApp::openOptionsDialog(QWidget *parent)
 
 void QVApp::openWelcomeDialog(QWidget *parent)
 {
+    //return;
 #ifdef Q_OS_MACOS
     // On macOS, the dialog should not be dependent on any window
     parent = nullptr;

@@ -84,6 +84,7 @@ public:
     explicit QVImageCore(QObject *parent = nullptr);
 
     void loadFile(const QString &fileName, bool isReloading = false);
+    void loadImage(const QImage &image, const QString &fileName = QString());
     ReadData readFile(const QString &fileName, const QColorSpace &targetColorSpace);
     void loadPixmap(const ReadData &readData);
     void closeImage();

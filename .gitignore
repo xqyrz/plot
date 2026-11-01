@@ -13,3 +13,4 @@ common/bus/protoc/
 *.pdb
 *.dll
 *.exe
+cmake-build-*

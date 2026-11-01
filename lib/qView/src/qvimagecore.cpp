@@ -109,6 +109,46 @@ void QVImageCore::loadFile(const QString &fileName, bool isReloading)
     }
 }
 
+void QVImageCore::loadImage(const QImage &image, const QString &fileName)
+{
+    if (waitingOnLoad) {
+        return;
+    }
+
+    QImage img = image;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+    img.convertTo(QImage::Format::Format_ARGB32_Premultiplied);
+#else
+    img = img.convertToFormat(QImage::Format::Format_ARGB32_Premultiplied);
+#endif
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+    if (!img.colorSpace().isValid())
+        img.setColorSpace(QColorSpace::SRgb);
+#endif
+
+    QColorSpace targetColorSpace = getTargetColorSpace();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+    if (targetColorSpace.isValid() && img.colorSpace() != targetColorSpace)
+        img.convertToColorSpace(targetColorSpace);
+#endif
+
+    // Pause playing movie because it feels better that way
+    setPaused(true);
+
+    currentFileDetails.isLoadRequested = true;
+    waitingOnLoad = true;
+
+    ReadData readData = { img,        fileName,
+                          QFileInfo(fileName).size(),  img.size(),
+                          targetColorSpace, {} };
+
+    if (img.isNull()) {
+        readData.errorData = { true, 0, QStringLiteral("QImage is null") };
+    }
+
+    loadPixmap(readData);
+}
+
 QVImageCore::ReadData QVImageCore::readFile(const QString &fileName,
                                             const QColorSpace &targetColorSpace)
 {

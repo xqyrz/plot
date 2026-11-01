@@ -130,6 +130,8 @@ public:
 public slots:
     void openFile(const QString &fileName);
 
+    void loadImage(const QImage &image, const QString &fileName = QString());
+
     void toggleSlideshow();
 
     void slideshowAction();

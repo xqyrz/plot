@@ -338,6 +338,10 @@ void QVGraphicsView::loadFile(const QString &fileName)
 {
     imageCore.loadFile(fileName);
 }
+void QVGraphicsView::loadImage(const QImage &image, const QString &fileName)
+{
+    imageCore.loadImage(image,fileName);
+}
 
 void QVGraphicsView::reloadFile()
 {

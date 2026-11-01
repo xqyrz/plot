@@ -161,11 +161,11 @@ QWidget(parent)
     restoreGeometry(settings.value("geometry").toByteArray());
 
     // Show welcome dialog on first launch
-    if (!settings.value("firstlaunch", false).toBool()) {
-        settings.setValue("firstlaunch", true);
-        settings.setValue("configversion", VERSION);
-        qvApp->openWelcomeDialog(this);
-    }
+    //if (!settings.value("firstlaunch", false).toBool()) {
+    //    settings.setValue("firstlaunch", true);
+    //    settings.setValue("configversion", VERSION);
+    //    qvApp->openWelcomeDialog(this);
+    //}
 }
 
 ImageView::~ImageView()
@@ -335,6 +335,11 @@ void ImageView::fullscreenChanged()
 void ImageView::openFile(const QString &fileName)
 {
     graphicsView->loadFile(fileName);
+    cancelSlideshow();
+}
+void ImageView::loadImage(const QImage &image, const QString &fileName)
+{
+    graphicsView->loadImage(image,fileName);
     cancelSlideshow();
 }
 
