@@ -19,7 +19,7 @@ public:
     {
         return {"id","iamge"};
     }
-    void setImagePath(const QString &path)
+    void setImagePath(QString const &path)
     {
         m_imagePath = path;
     }
@@ -27,8 +27,19 @@ public:
     {
         return m_imagePath;
     }
+    QList<std::pair<QString, QImage>> images()
+    {
+        QList<std::pair<QString, QImage>> images;
+        if(m_imagePath.isEmpty())
+            return images;
+        if(!QFile::exists(m_imagePath))
+            return images;
+        m_image.load(m_imagePath);
+        images.append(std::make_pair(m_imagePath, m_image));
+        return images;
+    }
 private:
-    QVector<uint8_t> m_imageu8;
+    QImage m_image;
     QString m_imagePath;
 };
 

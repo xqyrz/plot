@@ -105,8 +105,8 @@ find_package(Protobuf REQUIRED)
 #    message(STATUS "Protobuf library: ${Protobuf_LIBRARIES}")
 #    message(STATUS "Protoc path: ${Protobuf_PROTOC_EXECUTABLE}")
 #endif()
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets PrintSupport OpenGL Quick QuickWidgets Sql)
-find_package(Qt${QT_VERSION_MAJOR}  REQUIRED COMPONENTS Core Gui Widgets PrintSupport OpenGL Quick QuickWidgets Sql)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets PrintSupport OpenGL Quick QuickWidgets Sql Concurrent Svg Network)
+find_package(Qt${QT_VERSION_MAJOR}  REQUIRED COMPONENTS Core Gui Widgets PrintSupport OpenGL Quick QuickWidgets Sql Concurrent Svg Network)
 #message(STATUS "OpenGL include dir: ${OPENGL_INCLUDE_DIR}")
 #message(STATUS "OpenGL libraries : ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY}")
 # 添加子目录
@@ -119,6 +119,8 @@ include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}/plug/io
         lib/QtPropertyBrowser
 )
+
+
 file(GLOB PlugBase_SRC_FILES_H
         "${CMAKE_CURRENT_SOURCE_DIR}/common/plug/*.h"
 )

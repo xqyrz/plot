@@ -19,7 +19,7 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="VisionCalPage" name="widget" native="true"/>
+     <widget class="VisionCalPage" name="nodeEdit" native="true"/>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
@@ -36,7 +36,7 @@
         </attribute>
        </widget>
       </widget>
-      <widget class="QTabWidget" name="tabWidget_2">
+      <widget class="QTabWidget" name="infoTab">
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
          <string>Tab 1</string>

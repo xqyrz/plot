@@ -100,16 +100,20 @@ QWidget *NodeImage::embeddedWidget()
        //     menu.addAction("选择图片路径", [this]{ m_imageItem->copy(); });
             menu.exec(m_imageItem->mapToGlobal(pos)); // 局部坐标 → 屏幕坐标
         });
-        connect(m_imageItem,&ImageLabel::textChanged,[this]()
+        connect(m_imageItem,&ImageLabel::textChanged,[this](QString const & _t1)
         {
             Q_EMIT dataUpdated(0);
-
+            m_imageData->setImagePath(_t1);
        //} else {
        //    Q_EMIT dataInvalidated(0);
        //}
         });
     }
     return m_imageItem;
+}
+QList<std::pair<QString, QImage>> NodeImage::images()
+{
+    return m_imageData->images();
 }
 
 

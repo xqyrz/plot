@@ -18,6 +18,8 @@ class VisionCalPage : public GraphicsView
     Q_OBJECT
 public:
     VisionCalPage(QWidget *parent = Q_NULLPTR);
+signals:
+    void updateImage(QList<std::pair<QString, QImage>>);
 private:
     DataFlowGraphModel* m_model{nullptr};
     DataFlowGraphicsScene* m_scene{nullptr};

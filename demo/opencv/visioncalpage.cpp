@@ -29,6 +29,7 @@ VisionCalPage::VisionCalPage(QWidget* parent)
     connect(m_scene,&DataFlowGraphicsScene::nodeClicked,this,[this](NodeId const id)
     {
         auto model =m_model->nodeData(id,NodeRole::PlugPtr).value<NodeImage*>();
+        emit updateImage(model->images());
         qDebug()<<model;
     });
 }

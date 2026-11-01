@@ -53,6 +53,7 @@ public:
     void setInData(std::shared_ptr<NodeData>, PortIndex) override {}
 
     QWidget *embeddedWidget() override;
+    QList<std::pair<QString,QImage>> images();
 public:
 
 
