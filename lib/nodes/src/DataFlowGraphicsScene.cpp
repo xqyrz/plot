@@ -45,7 +45,9 @@ DataFlowGraphicsScene::DataFlowGraphicsScene(DataFlowGraphModel &graphModel, QOb
     connect(&_graphModel,
             &DataFlowGraphModel::inPortDataWasSet,
             [this](NodeId const nodeId, PortType const, PortIndex const) { onNodeUpdated(nodeId); });
-
+    connect(&_graphModel,
+            &DataFlowGraphModel::configClicked,
+            [this]() {Q_EMIT nodeClicked(0);});
 }
 
 // TODO constructor for an empyt scene?
@@ -187,7 +189,7 @@ bool DataFlowGraphicsScene::load(QString fileName)
 }
 bool DataFlowGraphicsScene::_save() const
 {
-    QFile file(defaultConfigPath);
+    QFile file(configName());
     QFileInfo fileInfo(file);
     if (!QDir(fileInfo.path()).exists())
     {

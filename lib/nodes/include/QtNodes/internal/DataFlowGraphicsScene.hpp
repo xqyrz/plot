@@ -18,7 +18,8 @@ class NODE_EDITOR_PUBLIC DataFlowGraphicsScene : public BasicGraphicsScene
 public:
     DataFlowGraphicsScene(DataFlowGraphModel &graphModel, QObject *parent = nullptr);
     ~DataFlowGraphicsScene() = default;
-
+    QString configName()const{return defaultConfigPath+"/"+m_configName+".flow";};
+    void setConfigName(QString name){m_configName = name;};
 public:
     std::vector<NodeId> selectedNodes() const;
     QMenu *createSceneMenu(QPointF const scenePos) override;
@@ -41,7 +42,8 @@ private:
     QAction* loadAction;
     const QString defaultConfigPath =  QStandardPaths::writableLocation(
                 QStandardPaths::AppConfigLocation
-            )+"/default.flow";
+            );
+    QString m_configName = "default";
 };
 
 } // namespace QtNodes

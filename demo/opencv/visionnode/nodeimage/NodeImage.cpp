@@ -17,6 +17,10 @@ NodeImage::NodeImage()
     , m_imageData(new ImageNodeData())
 {}
 
+void NodeImage::showConfigPage()
+{
+  qobject_cast<ImageLabel*>(embeddedWidget())->slecetImagePath(m_imageData->getImagePath());
+}
 QJsonObject NodeImage::save() const
 {
     QJsonObject modelJson = NodeDelegateModel::save();
@@ -102,8 +106,8 @@ QWidget *NodeImage::embeddedWidget()
         });
         connect(m_imageItem,&ImageLabel::textChanged,[this](QString const & _t1)
         {
-            Q_EMIT dataUpdated(0);
             m_imageData->setImagePath(_t1);
+            Q_EMIT configClicked(this);
        //} else {
        //    Q_EMIT dataInvalidated(0);
        //}

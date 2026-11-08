@@ -94,11 +94,12 @@ NodeId DataFlowGraphModel::addNode(QString const nodeType)
                 &DataFlowGraphModel::portsInserted);
 
         connect(model.get(),&NodeDelegateModel::configClicked,
-                this,[this](NodeDelegateModel* node)
+                this,[newId,this](NodeDelegateModel* node)
                 {
-                    Q_EMIT configClicked(node);
+                    Q_EMIT configClicked(newId);
                 }
                 );
+        
         _models[newId] = std::move(model);
 
         Q_EMIT nodeCreated(newId);
@@ -530,9 +531,9 @@ void DataFlowGraphModel::loadNode(QJsonObject const &nodeJson)
                 this,
                 &DataFlowGraphModel::portsInserted);
         connect(model.get(),&NodeDelegateModel::configClicked,
-            this,[this](NodeDelegateModel* node)
+            this,[restoredNodeId, this]()
             {
-                Q_EMIT configClicked(node);
+                Q_EMIT configClicked(restoredNodeId);
             }
             );
         _models[restoredNodeId] = std::move(model);

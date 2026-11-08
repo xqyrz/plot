@@ -118,9 +118,9 @@ QObject(parent)
 
     m_registry =  _registerDataModels();
     dataFlowGraphModel = (new DataFlowGraphModel(m_registry));
-    connect(dataFlowGraphModel,&DataFlowGraphModel::configClicked,this,[this](NodeDelegateModel* node)
+    connect(dataFlowGraphModel,&DataFlowGraphModel::configClicked,this,[this](NodeId const id)
     {
-       emit configClicked((BaseModel*)node);
+       emit configClicked(dataFlowGraphModel->nodeData(id,NodeRole::PlugPtr).value<BaseModel*>());
     });
 }
 

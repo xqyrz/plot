@@ -362,7 +362,6 @@ void NodeGraphicsObject::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 void NodeGraphicsObject::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem::mouseDoubleClickEvent(event);
-
     Q_EMIT nodeScene()->nodeDoubleClicked(_nodeId);
 }
 

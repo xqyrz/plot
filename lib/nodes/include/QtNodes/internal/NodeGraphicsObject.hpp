@@ -80,6 +80,6 @@ private:
     NodeState _nodeState;
 
     // either nullptr or owned by parent QGraphicsItem
-    QGraphicsProxyWidget *_proxyWidget;
+    QGraphicsProxyWidget *_proxyWidget{nullptr};
 };
 } // namespace QtNodes

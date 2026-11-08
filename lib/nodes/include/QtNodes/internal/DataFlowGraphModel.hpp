@@ -97,7 +97,7 @@ public:
 
 Q_SIGNALS:
     void inPortDataWasSet(NodeId const, PortType const, PortIndex const);
-    void configClicked(NodeDelegateModel*);
+    void configClicked(NodeId const);
 private:
     NodeId newNodeId() override { return _nextNodeId++; }
 
@@ -120,7 +120,8 @@ private Q_SLOTS:
 
     /// Function is called after detaching a connection.
     void propagateEmptyDataTo(NodeId const nodeId, PortIndex const portIndex);
-
+protected:
+    auto& models(){return _models;};
 private:
     std::shared_ptr<NodeDelegateModelRegistry> _registry;
 

@@ -3,14 +3,19 @@
 //
 
 #include "visioncalpage.h"
+
+#include <QTimer>
 #include <QtNodes/ConnectionStyle>
 #include <QtNodes/DataFlowGraphModel>
-#include <QtNodes/DataFlowGraphicsScene>
+
 #include <QtNodes/GraphicsView>
 #include <QtNodes/NodeData>
 #include <QtNodes/NodeDelegateModelRegistry>
 
-#include "nodeimage.hpp"
+#include "visionnode/nodeimage/NodeImage.hpp"
+#include "visionnode/visionflowgraphicsscene.h"
+#include "visionnode/visionflowgraphmodel.h"
+
 static std::shared_ptr<NodeDelegateModelRegistry> registerDataModels()
 {
     auto ret = std::make_shared<NodeDelegateModelRegistry>();
@@ -21,15 +26,24 @@ static std::shared_ptr<NodeDelegateModelRegistry> registerDataModels()
 
 VisionCalPage::VisionCalPage(QWidget* parent)
     :GraphicsView(parent)
-    ,m_model(new DataFlowGraphModel(registerDataModels()))
-    ,m_scene(new DataFlowGraphicsScene(*m_model))
+    ,m_model(new VisionFlowGraphModel(registerDataModels()))
+    ,m_scene(new VisionFlowGraphicsScene(*m_model))
 {
+    m_scene->setConfigName("vision");
 
     this->setScene(m_scene);
-    connect(m_scene,&DataFlowGraphicsScene::nodeClicked,this,[this](NodeId const id)
+    auto _updata = [this](NodeId const id)
     {
         auto model =m_model->nodeData(id,NodeRole::PlugPtr).value<NodeImage*>();
         emit updateImage(model->images());
-        qDebug()<<model;
+    };
+
+    connect(m_model,&DataFlowGraphModel::configClicked,this,_updata);
+    connect(m_scene,&DataFlowGraphicsScene::nodeSelected,this,_updata);
+
+   // connect(m_scene,&DataFlowGraphicsScene::up,this,_updata);
+    QTimer::singleShot(1,this,[this]()
+    {
+        m_scene->load(m_scene->configName());
     });
 }

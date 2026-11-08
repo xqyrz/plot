@@ -3,26 +3,11 @@
 //
 #pragma once
 
-#include <QtNodes/NodeDelegateModel>
-
-#include <QtCore/QObject>
-
-#include <iostream>
-#include "imagenodedata.h"
-class DecimalData;
-
-using QtNodes::NodeData;
-using QtNodes::NodeDataType;
-using QtNodes::NodeDelegateModel;
-using QtNodes::PortIndex;
-using QtNodes::PortType;
+#include "../nodevisionbase.h"
 
 class ImageLabel;
 
-
-/// The model dictates the number of inputs and outputs for the Node.
-/// In this example it has no logic.
-class NodeImage : public NodeDelegateModel
+class NodeImage : public NodeVisionBase
 {
     Q_OBJECT
 
@@ -39,6 +24,9 @@ public:
     QString name() const override { return QStringLiteral("Image"); }
 
 public:
+    void showConfigPage() override;
+
+
     QJsonObject save() const override;
 
     void load(QJsonObject const &p) override;

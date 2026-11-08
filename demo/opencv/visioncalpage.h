@@ -9,8 +9,8 @@
 
  namespace QtNodes
 {
-    class DataFlowGraphicsScene;
-    class DataFlowGraphModel;
+    class VisionFlowGraphicsScene;
+    class VisionFlowGraphModel;
 };
 using namespace QtNodes;
 class VisionCalPage : public GraphicsView
@@ -18,11 +18,13 @@ class VisionCalPage : public GraphicsView
     Q_OBJECT
 public:
     VisionCalPage(QWidget *parent = Q_NULLPTR);
+private:
+
 signals:
     void updateImage(QList<std::pair<QString, QImage>>);
 private:
-    DataFlowGraphModel* m_model{nullptr};
-    DataFlowGraphicsScene* m_scene{nullptr};
+    VisionFlowGraphModel* m_model{nullptr};
+    VisionFlowGraphicsScene* m_scene{nullptr};
 
 
 };
