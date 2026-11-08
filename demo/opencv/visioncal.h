@@ -24,7 +24,7 @@ public:
     virtual bool Affine_Transformation(const cv::Mat& M,  cv::Mat& out){return false;};
     static cv::Mat composeMat( cv::Mat& M,const cv::Mat& T);
     static cv::Mat move( double x, double y,cv::Size& imgSize,cv::Mat M={});
-    static cv::Mat rotate( double angle, cv::Size& imgSize,cv::Mat M={});
+    static cv::Mat rotate( double angle, cv::Size imgSize,cv::Mat M={});
     static cv::Mat scale( double sx, double sy, cv::Size& imgSize,cv::Mat M={});
 
 };

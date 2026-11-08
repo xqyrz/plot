@@ -5,7 +5,7 @@
 #ifndef PLOT_OPENCVCAL_H
 #define PLOT_OPENCVCAL_H
 
-#include "visioncal.h"
+#include "../visioncal.h"
 class OpencvCal:public VisionCal
 {
 public:

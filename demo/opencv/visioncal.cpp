@@ -16,7 +16,7 @@ cv::Mat VisionCal::move( double x, double y, cv::Size& imgSize,cv::Mat M)
     return composeMat(M, T);
 }
 
-cv::Mat VisionCal::rotate( double angle, cv::Size& imgSize,cv::Mat M)
+cv::Mat VisionCal::rotate( double angle, cv::Size imgSize,cv::Mat M)
 {
     if (M.empty())
         M = cv::Mat::eye(3, 3, CV_64F);
