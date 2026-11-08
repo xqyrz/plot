@@ -11,7 +11,7 @@ class nodeAffineTransformation:public NodeVisionBase
     Q_OBJECT
 public:
     nodeAffineTransformation();
-
+    void setInData(std::shared_ptr<NodeData> nodeData, PortIndex const portIndex) override;
 };
 
 

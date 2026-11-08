@@ -55,6 +55,7 @@ public :
 protected:
     QList<NodeDataType> m_inPorts;
     QList<NodeDataType> m_outPorts;
+    std::shared_ptr<ImageNodeData> m_inData;
     std::shared_ptr<ImageNodeData> m_imageData;
     ImageLabel *m_imageItem{nullptr};
     VisionConfigPage* configPage();

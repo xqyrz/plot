@@ -11,6 +11,7 @@
 NodeVisionBase::NodeVisionBase()
     : NodeDelegateModel()
     , m_imageData(new ImageNodeData())
+    ,m_inData(new ImageNodeData())
 {
     m_inPorts.append(NodeDataType{"image","i"});
     m_outPorts.append(NodeDataType{"image","o"});

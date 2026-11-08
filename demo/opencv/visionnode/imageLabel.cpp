@@ -22,5 +22,4 @@ void ImageLabel::setImagePath(const QString &path) {
     QFileInfo fileInfo(path);
     m_imagePath = path;
     setText(fileInfo.fileName());
-    emit textChanged(path);
 }

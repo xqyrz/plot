@@ -31,7 +31,7 @@ NodeImage::NodeImage()
     });
     connect(m_imageItem,&ImageLabel::textChanged,[this](QString const & _t1)
     {
-        m_imageData->setImagePath(_t1);
+       _setImagePath(_t1);
         Q_EMIT configClicked(this);
     });
 }
@@ -52,14 +52,13 @@ void NodeImage::load(QJsonObject const &p)
 
     if (!v.isUndefined()) {
         QString strNum = v.toString();
-            if (m_imageItem)
-                m_imageItem->setImagePath(v.toString());
-        m_imageData->setImagePath(v.toString());
+           _setImagePath(v.toString());
+
     }
 }
 void NodeImage::_updateConfig()
 {
-     m_imageItem->setImagePath( selectImage->filePath());
+      _setImagePath( selectImage->filePath());
 }
 void NodeImage::_configInt()
 {
@@ -94,22 +93,13 @@ void NodeImage::_configOpen()
 {
     selectImage->setFilePath(m_imageData->getImagePath());
 }
-
-
-void NodeImage::onTextEdited(QString const &str)
+void NodeImage::_setImagePath(QString const& path)
 {
-    bool ok = false;
-
-    double number = str.toDouble(&ok);
-
-    if (ok) {
-       // _number = number;
-
-        Q_EMIT dataUpdated(0);
-
-    } else {
-        Q_EMIT dataInvalidated(0);
-    }
+    if (m_imageItem) m_imageItem->setImagePath(path);
+    if (path !=m_imageData->getImagePath())
+    m_imageData->setImagePath(path);
+    Q_EMIT dataUpdated(0);
 }
+
 
 

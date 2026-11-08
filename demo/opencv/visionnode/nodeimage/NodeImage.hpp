@@ -18,20 +18,18 @@ public:
 
 
 public:
-
     QJsonObject save() const override;
 
     void load(QJsonObject const &p) override;
-
-
 private:
 
 private slots:
     void _updateConfig() override;
     void _configInt() override;
     void _configOpen() override;
+    void _setImagePath(QString const& path);
 private Q_SLOTS:
-    void onTextEdited(QString const &string);
+
 
 private:
     SelectImage* selectImage{nullptr};
