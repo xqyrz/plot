@@ -2,8 +2,8 @@
 // Created by 25137 on 2026/10/31.
 //
 
-#include "iamgelabel.h"
 #include <QFileDialog>
+#include "imageLabel.h"
 
 void ImageLabel::slecetImagePath(const QString &path) {
     // 打开单个文件
@@ -20,6 +20,7 @@ void ImageLabel::slecetImagePath(const QString &path) {
 
 void ImageLabel::setImagePath(const QString &path) {
     QFileInfo fileInfo(path);
+    m_imagePath = path;
     setText(fileInfo.fileName());
     emit textChanged(path);
 }

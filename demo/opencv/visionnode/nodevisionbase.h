@@ -12,6 +12,8 @@
 #include <iostream>
 #include "imagenodedata.h"
 class DecimalData;
+class ImageLabel;
+class VisionConfigPage;
 
 using QtNodes::NodeData;
 using QtNodes::NodeDataType;
@@ -23,14 +25,43 @@ class NodeVisionBase: public NodeDelegateModel
 {
     Q_OBJECT
 public:
-QList<QImage> images();
+    NodeVisionBase();
+     ~NodeVisionBase();
+    QList<std::pair<QString,QImage>> images();
+
+    unsigned int nPorts(PortType portType) const override;
+    NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
+    std::shared_ptr<NodeData> outData(PortIndex port) override;
+
+    QString caption() const override { return QString::fromLatin1(metaObject()->className()); }
+    bool captionVisible() const override { return true; }
+    QString name() const override { return QString::fromLatin1(metaObject()->className()); }
+
+
+    QWidget *embeddedWidget() override;
+
+    void setInData(std::shared_ptr<NodeData>, PortIndex) override {};
+private slots:
+    virtual void _updateConfig(){};
+    virtual void _configInt(){};
+    virtual void _configOpen(){};
 private:
     void _setImage(QImage&);
+
 public :
     void setImage(QImage& image){_setImage(image);};
-    virtual void showConfigPage(){};
+     void showConfigPage();
+
+protected:
+    QList<NodeDataType> m_inPorts;
+    QList<NodeDataType> m_outPorts;
+    std::shared_ptr<ImageNodeData> m_imageData;
+    ImageLabel *m_imageItem{nullptr};
+    VisionConfigPage* configPage();
 private:
-    QImage m_image;
+   // QImage m_image;
+    VisionConfigPage* m_configPage{nullptr};
+
 };
 
 

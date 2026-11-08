@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/opencv">
+        <file>image/image.svg</file>
+    </qresource>
+</RCC>

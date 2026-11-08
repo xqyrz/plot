@@ -12,15 +12,17 @@
 #include <QtNodes/NodeData>
 #include <QtNodes/NodeDelegateModelRegistry>
 
-#include "visionnode/nodeimage/NodeImage.hpp"
+
 #include "visionnode/visionflowgraphicsscene.h"
 #include "visionnode/visionflowgraphmodel.h"
 
+#include "visionnode/nodeimage/NodeImage.hpp"
+#include "visionnode/nodeAffineTransformation/nodeaffinetransformation.h"
 static std::shared_ptr<NodeDelegateModelRegistry> registerDataModels()
 {
     auto ret = std::make_shared<NodeDelegateModelRegistry>();
     ret->registerModel<NodeImage>("Sources");
-
+    ret->registerModel<nodeAffineTransformation>("CAL");
     return ret;
 }
 
@@ -34,7 +36,7 @@ VisionCalPage::VisionCalPage(QWidget* parent)
     this->setScene(m_scene);
     auto _updata = [this](NodeId const id)
     {
-        auto model =m_model->nodeData(id,NodeRole::PlugPtr).value<NodeImage*>();
+        auto model =m_model->nodeData(id,NodeRole::PlugPtr).value<NodeVisionBase*>();
         emit updateImage(model->images());
     };
 
