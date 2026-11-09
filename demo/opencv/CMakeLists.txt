@@ -13,7 +13,7 @@ file(GLOB_RECURSE SRC_FILES
 add_executable(${PROJECT_NAME}
         ${SRC_FILES}
 )
-find_package(qView REQUIRED)
+#find_package(qView REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Gui
@@ -21,7 +21,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt${QT_VERSION_MAJOR}::Network
         ${OpenCV_LIBS}
         QtNodes
-        qView::qView
+        qView
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE

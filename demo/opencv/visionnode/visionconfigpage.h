@@ -29,7 +29,7 @@ public:
     void setHelp(QString help);
 
     void setConfigPropertyItem(QWidget* w);
-    void showImage(QList<std::pair<QString,QImage>>&);
+    void showImage(const QList<std::pair<QString,QImage>>&);
 signals:
     void okClicked();
 public slots:

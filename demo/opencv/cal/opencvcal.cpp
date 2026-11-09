@@ -7,6 +7,7 @@
 #include <opencv2/imgproc.hpp>    // warpAffine 还在这
 cv::Mat* OpencvCal::currImage()
 {
+    cv::utils::logging::setLogLevel(cv::utils::logging::LOG_LEVEL_WARNING);
     std::string path = "rec/image/chess.bmp";
     m_currImage = cv::imread(path, cv::IMREAD_COLOR);
     return &m_currImage;

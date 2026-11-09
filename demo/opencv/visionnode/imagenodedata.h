@@ -30,7 +30,7 @@ public:
         m_images.append(std::make_pair(m_imagePath, m_image));
     }
     void clear(){m_images.clear();}
-    void setImage(QString& name,QImage& image)
+    void setImage(const QString& name,QImage& image)
     {
         for (auto&var:m_images)
         {

@@ -40,7 +40,7 @@ void VisionConfigPage::setConfigPropertyItem(QWidget* w)
     w->setParent(ui->attribute);
     ui->attribute->layout()->addWidget(w);
 }
-void VisionConfigPage::showImage(QList<std::pair<QString, QImage>>& images)
+void VisionConfigPage::showImage(const QList<std::pair<QString, QImage>>& images)
 {
     for (auto&var:images)
     {
