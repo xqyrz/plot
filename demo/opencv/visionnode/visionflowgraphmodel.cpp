@@ -10,7 +10,6 @@ namespace QtNodes
     {
         auto& _models = models();
         auto node =static_cast<NodeVisionBase*>(_models.at(nodeId).get());
-        qDebug()<<node;
         node->showConfigPage();
     }
 }

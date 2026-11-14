@@ -19,13 +19,12 @@ class AffineTransformationItem : public QWidget
     Q_OBJECT
     // 第一步：定义枚举，值必须是 2 的幂
     enum ATFlag {
-
-            MoveX  = 1 << 0,   //
-            MoveY  = 1 << 1,   //
-            ScaleX = 1 << 2,    //
-            ScaleY = 1 << 3,
-            Angle  = 1 << 5
-        };
+          MoveX  = 1 << 0,   //
+          MoveY  = 1 << 1,   //
+          ScaleX = 1 << 2,    //
+          ScaleY = 1 << 3,
+          Angle  = 1 << 5
+    };
     Q_DECLARE_FLAGS(ATFlags, ATFlag)
 public:
     explicit AffineTransformationItem(QWidget* parent = nullptr);
@@ -33,26 +32,32 @@ public:
     void setMat(QString& dir,QSize);
      std::array<double,9> M()const{return m_M;};
     void setM(std::array<double,9> M);
-    signals:
+signals:
     void mChanged();
 private slots:
     void on_moveX_valueChanged(double value);
-
     void on_moveXSlider_valueChanged(int value);
-
     void on_moveY_valueChanged(double value);
-
     void on_moveYSlider_valueChanged(int value);
-
     void on_scale_valueChanged(double value);
-
     void on_scaleSlider_valueChanged(int value);
-
     void on_angle_valueChanged(double value);
-
     void on_angleSlider_valueChanged(int value);
+
+    void on_d11_valueChanged(double value);
+    void on_d12_valueChanged(double value);
+    void on_d13_valueChanged(double value);
+    void on_d21_valueChanged(double value);
+    void on_d22_valueChanged(double value);
+    void on_d23_valueChanged(double value);
+    void on_d31_valueChanged(double value);
+    void on_d32_valueChanged(double value);
+    void on_d33_valueChanged(double value);
+
 protected slots:
     void timerEvent(QTimerEvent* event) override;
+private:
+    void _updateMUI();
 private:
     Ui::AffineTransformationItem* ui;
     std::array<double,9> m_M;

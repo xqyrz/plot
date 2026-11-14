@@ -3,7 +3,7 @@
 //
 #include <iostream>
 #include "cal/opencvcal.h"
-
+#include <QLoggingCategory>
 int test()
 {
     // 字符串版本
@@ -34,7 +34,54 @@ int test()
     return 0;
 }
 
+void intlog()
+{
+    qSetMessagePattern(
+    // 基础信息
+    "%{time process} "
+    "[%{threadid}] "
 
+#ifdef QT_DEBUG
+    // Debug：绿色
+    "%{if-debug}\033[32m%{endif}"
+
+    // Info：白色
+    "%{if-info}\033[37m%{endif}"
+
+    // Warning：黄色
+    "%{if-warning}\033[33m%{endif}"
+
+    // Critical：红色
+    "%{if-critical}\033[31m%{endif}"
+
+    // Fatal：红色背景加粗
+    "%{if-fatal}\033[41;1m%{endif}"
+#endif
+
+    // 日志级别
+    "%{if-debug}D%{endif}"
+    "%{if-info}I%{endif}"
+    "%{if-warning}W%{endif}"
+    "%{if-critical}E%{endif}"
+    "%{if-fatal}F%{endif}"
+
+    // 日志分类
+    "%{if-category} [%{category}]%{endif}"
+
+#ifdef QT_DEBUG
+    // 文件、行号、函数
+    " [%{function}:%{line}]"
+#endif
+
+    // 日志内容
+    " %{message}"
+
+#ifdef QT_DEBUG
+    // 颜色重置
+    "\033[0m"
+#endif
+);
+}
 #include <QtWidgets/QApplication>
 #include "visionapp.h"
 int main(int argc, char *argv[])
@@ -46,6 +93,7 @@ int main(int argc, char *argv[])
     // 2. 适配非整数倍缩放
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
     QApplication a(argc, argv);
+    intlog();
     VisionApp w;
     w.show();
     w.resize(800,600);

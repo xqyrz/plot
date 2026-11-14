@@ -75,7 +75,8 @@ void AffineTransformationItem::setM(std::array<double, 9> M)
     if (M != m_M)
     {
         m_M = M;
-        emit mChanged();
+        _updateMUI();
+
     }
 }
 void AffineTransformationItem::on_moveX_valueChanged(double value)
@@ -145,6 +146,42 @@ void AffineTransformationItem::on_angleSlider_valueChanged(int value)
         //updateM_Flag = true;
     }
 }
+
+void AffineTransformationItem::on_d11_valueChanged(double value) {
+    m_M[0*3+0]=value;emit mChanged();
+}
+void AffineTransformationItem::on_d12_valueChanged(double value) {
+    m_M[0*3+1]=value;emit mChanged();
+}
+void AffineTransformationItem::on_d13_valueChanged(double value) {
+    m_M[0*3+2]=value;
+    emit mChanged();
+}
+void AffineTransformationItem::on_d21_valueChanged(double value) {
+    m_M[1*3+0]=value;
+    emit mChanged();
+}
+void AffineTransformationItem::on_d22_valueChanged(double value) {
+    m_M[1*3+1]=value;
+    emit mChanged();
+}
+void AffineTransformationItem::on_d23_valueChanged(double value) {
+    m_M[1*3+2]=value;
+    emit mChanged();
+}
+void AffineTransformationItem::on_d31_valueChanged(double value) {
+    m_M[2*3+0]=value;
+    emit mChanged();
+}
+void AffineTransformationItem::on_d32_valueChanged(double value) {
+    m_M[2*3+1]=value;
+    emit mChanged();
+}
+void AffineTransformationItem::on_d33_valueChanged(double value) {
+    m_M[2*3+2]=value;
+    emit mChanged();
+}
+
 void AffineTransformationItem::timerEvent(QTimerEvent* event)
 {
     if (event->timerId() == timer50_id)
@@ -174,6 +211,19 @@ void AffineTransformationItem::timerEvent(QTimerEvent* event)
         }
     }
     QWidget::timerEvent(event);
+}
+void AffineTransformationItem::_updateMUI()
+{
+    ui->d11->setValue(m_M.at(0*3+0));
+    ui->d12->setValue(m_M.at(0*3+1));
+    ui->d13->setValue(m_M.at(0*3+2));
+    ui->d21->setValue(m_M.at(1*3+0));
+    ui->d22->setValue(m_M.at(1*3+1));
+    ui->d23->setValue(m_M.at(1*3+2));
+    ui->d31->setValue(m_M.at(2*3+0));
+    ui->d32->setValue(m_M.at(2*3+1));
+    ui->d33->setValue(m_M.at(2*3+2));
+    emit mChanged();
 }
 
 

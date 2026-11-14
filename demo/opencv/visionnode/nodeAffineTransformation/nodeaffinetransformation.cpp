@@ -3,9 +3,10 @@
 //
 
 #include "nodeaffinetransformation.h"
-#include "affinetransformationitem.h"
 #include "../visionconfigpage.h"
+#include "affinetransformationitem.h"
 #include "cal/opencvQT.h"
+#include "visionnode/imageLabel.h"
 
 nodeAffineTransformation::nodeAffineTransformation()
 {
@@ -46,7 +47,9 @@ void nodeAffineTransformation::setInData(std::shared_ptr<NodeData> nodeData, Por
         auto outImage = cvMatToQImage(out);
         m_imageData->setImage(name,outImage);
     }
-
+    m_imageItem->setText(
+        QTime::currentTime().toString()
+        );
 }
 void nodeAffineTransformation::setM(std::array<double, 9> _M)
 {
