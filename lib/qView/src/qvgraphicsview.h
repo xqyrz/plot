@@ -64,6 +64,7 @@ signals:
 
     void updatedLoadedPixmapItem();
 
+    void updatePixItem(int x,int y,QColor color);
 protected:
     void wheelEvent(QWheelEvent *event) override;
 
@@ -108,6 +109,8 @@ private slots:
     void updateLoadedPixmapItem();
 
 private:
+    void _setPixmap(const QPixmap & pixmap);
+    void _updatePixItem(int x,int y,QColor& color);
     void updateFilteringMode();
 
     QGraphicsPixmapItem *loadedPixmapItem;
@@ -136,5 +139,10 @@ private:
     Qt::MouseButton mousePressButton;
     Qt::KeyboardModifiers mousePressModifiers;
     QPoint mousePressPosition;
+    QImage m_image;
+    QTimer m_timerPos;
+    int x,y;
+    QColor color;
+    QPointF scenePos;
 };
 #endif // QVGRAPHICSVIEW_H

@@ -16,6 +16,8 @@
 
 QVGraphicsView::QVGraphicsView(QWidget *parent) : QGraphicsView(parent)
 {
+    setMouseTracking(true);
+    viewport()->setMouseTracking(true);
     // GraphicsView setup
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -63,6 +65,21 @@ QVGraphicsView::QVGraphicsView(QWidget *parent) : QGraphicsView(parent)
     //connect(&qvApp->getSettingsManager(), &SettingsManager::settingsUpdated, this,
     //        &QVGraphicsView::settingsUpdated);
     //settingsUpdated();
+    m_timerPos.setSingleShot(true);
+    connect(&m_timerPos,&QTimer::timeout,this,[this]() {
+        QGraphicsItem *it = this->scene()->itemAt(scenePos, transform());
+         auto *pixItem = qgraphicsitem_cast<QGraphicsPixmapItem*>(it);
+         if (!pixItem) return;
+
+         QPointF localPt = pixItem->mapFromScene(scenePos);
+         int x = qRound(localPt.x());
+         int y = qRound(localPt.y());
+         if (x >=0 && x < m_image.width() && y >=0 && y < m_image.height())
+         {
+             QColor c = m_image.pixelColor(x,y);
+             _updatePixItem(x,y,c);
+         }
+    });
 }
 
 // Events
@@ -170,6 +187,8 @@ void QVGraphicsView::mousePressEvent(QMouseEvent *event)
 
 void QVGraphicsView::mouseMoveEvent(QMouseEvent *event)
 {
+    scenePos = mapToScene(event->pos());
+    if (!m_timerPos.isActive())m_timerPos.start(100);
     if (mousePressButton == Qt::LeftButton) {
         if (mousePressModifiers.testFlag(Qt::ControlModifier)
             && !event->modifiers().testFlag(Qt::ControlModifier)) {
@@ -183,7 +202,6 @@ void QVGraphicsView::mouseMoveEvent(QMouseEvent *event)
         window()->move(window()->pos() + delta);
         return;
     }
-
     QGraphicsView::mouseMoveEvent(event);
 }
 
@@ -442,7 +460,7 @@ void QVGraphicsView::scaleExpensively()
         scale(1, -1);
 
     // Set image to scaled version
-    loadedPixmapItem->setPixmap(imageCore.scaleExpensively(mappedPixmapSize));
+    _setPixmap(imageCore.scaleExpensively(mappedPixmapSize));
 
     // Reset transformation
     setTransform(
@@ -473,9 +491,9 @@ void QVGraphicsView::makeUnscaled()
 
     // Return to original size
     if (getCurrentFileDetails().isMovieLoaded)
-        loadedPixmapItem->setPixmap(getLoadedMovie().currentPixmap());
+        _setPixmap(getLoadedMovie().currentPixmap());
     else
-        loadedPixmapItem->setPixmap(getLoadedPixmap());
+        _setPixmap(getLoadedPixmap());
 
     setTransform(absoluteTransform);
 
@@ -507,19 +525,34 @@ void QVGraphicsView::animatedFrameChanged(QRect rect)
     if (qvGetSettingBool(ScalingEnabled)) {
         scaleExpensively();
     } else {
-        loadedPixmapItem->setPixmap(getLoadedMovie().currentPixmap());
+        _setPixmap(getLoadedMovie().currentPixmap());
     }
 }
 
 void QVGraphicsView::updateLoadedPixmapItem()
 {
     // set pixmap and offset
-    loadedPixmapItem->setPixmap(getLoadedPixmap());
+    _setPixmap(getLoadedPixmap());
     scaledSize = loadedPixmapItem->boundingRect().size().toSize();
 
     resetScale();
 
     emit updatedLoadedPixmapItem();
+}
+void QVGraphicsView::_setPixmap(const QPixmap &pixmap)
+{
+
+    m_image = pixmap.toImage();
+    loadedPixmapItem->setPixmap(pixmap);
+}
+void QVGraphicsView::_updatePixItem(int _x, int _y, QColor &_color)
+{
+    if (x != _x || _y !=y || _color != color) {
+        x = _x;
+        y = _y;
+        color = _color;
+        emit updatePixItem(x,y,color);
+    }
 }
 
 void QVGraphicsView::resetScale()

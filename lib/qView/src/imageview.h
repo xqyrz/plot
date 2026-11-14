@@ -10,6 +10,7 @@
 #include <QShortcut>
 #include <QNetworkAccessManager>
 #include <QStack>
+#include <QLabel>
 #include <qmenubar.h>
 class QMenu;
 namespace Ui {
@@ -192,6 +193,7 @@ private:
     QFutureWatcher<QList<OpenWith::OpenWithItem>> openWithFutureWatcher;
 
     QMenuBar* menuBar;
+    QLabel* m_info;
 };
 
 #endif // MAINWINDOW_H

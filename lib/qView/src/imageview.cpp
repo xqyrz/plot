@@ -37,6 +37,7 @@ ImageView::ImageView(QWidget *parent) :
 QWidget(parent)
 , ui(new Ui::ImageView)
 ,menuBar(new QMenuBar(this))
+,m_info(new QLabel(this))
 {
     ui->setupUi(this);
 
@@ -57,7 +58,8 @@ QWidget(parent)
     // Initialize graphicsviewkDefaultBufferAlignment
     graphicsView = new QVGraphicsView(this);
     layout()->addWidget(graphicsView);
-
+    layout()->addWidget(m_info);
+    m_info->setStyleSheet("color:white");
     // Hide fullscreen label by default
     ui->fullscreenLabel->hide();
 
@@ -66,7 +68,9 @@ QWidget(parent)
     connect(graphicsView, &QVGraphicsView::updatedLoadedPixmapItem, this,
             &ImageView::setWindowSize);
     connect(graphicsView, &QVGraphicsView::cancelSlideshow, this, &ImageView::cancelSlideshow);
-
+    connect(graphicsView, &QVGraphicsView::updatePixItem, this, [this](int x,int y,QColor color) {
+        m_info->setText(QString("(%1,%2) %3").arg(x).arg(y).arg(color.name()));
+    });
     // Initialize escape shortcut
     escShortcut = new QShortcut(Qt::Key_Escape, this);
     connect(escShortcut, &QShortcut::activated, this, [this]() {
@@ -124,16 +128,18 @@ QWidget(parent)
 
     // Add all actions to this window so keyboard shortcuts are always triggered
     // using virtual menu to hold them so i can connect to the triggered signal
+#if 0
     virtualMenu = new QMenu(this);
     const auto &actionKeys = actionManager->getActionLibrary().keys();
     for (const QString &key : actionKeys) {
         actionManager->addCloneOfAction(virtualMenu, key);
     }
+
     addActions(virtualMenu->actions());
     connect(virtualMenu, &QMenu::triggered, this, [this](QAction *triggeredAction) {
         ActionManager::actionTriggered(triggeredAction, this);
     });
-
+#endif
     // Enable actions related to having a window
     disableActions();
 
@@ -166,6 +172,16 @@ QWidget(parent)
     //    settings.setValue("configversion", VERSION);
     //    qvApp->openWelcomeDialog(this);
     //}
+
+
+    const auto children = findChildren<QWidget *>();
+
+    QList<QAction *> actions = findChildren<QAction *>();
+
+    for (QAction *action : actions)
+    {
+        action->setShortcut(QKeySequence());
+    }
 }
 
 ImageView::~ImageView()
