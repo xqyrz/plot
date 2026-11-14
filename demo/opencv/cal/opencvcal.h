@@ -13,7 +13,10 @@ public:
      cv::Mat* currImage() override;
 
     static  bool gammaLut(const int maxValue,const double gamma,std::vector<uint16_t>& table);
+    static  bool gammaLut(const cv::Mat& src,const double gamma,std::vector<uint16_t>& table);
     static  bool Gamma_Cal(const cv::Mat& src,const double gamma,  cv::Mat& out);
+    static int maxValue(const cv::Mat& src);
+    static bool Lut_Cal(const cv::Mat& src,const std::vector<uint16_t>& lut,  cv::Mat& out);
   //  static  bool Gamma_Cal(const cv::Mat& src,const std::vector<uint16_t>& lut,  cv::Mat& out);
     static  bool Affine_Transformation(const cv::Mat& src,const cv::Mat& M,  cv::Mat& out);
     bool Affine_Transformation(const cv::Mat& M,  cv::Mat& out) override;

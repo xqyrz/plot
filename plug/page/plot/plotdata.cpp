@@ -47,3 +47,13 @@ bool PlotData::operator==(const PlotData &other) {
     }
     return other.getData() == this->getData();
 }
+void PlotData::clear()
+{
+    // 注意：QSharedPointer::clear() 只是把 _data 置空，并不会清空容器里的点。
+    // 这里要清的是 QCPDataContainer 的内容，指针必须保留，否则：
+    //   1) 曲线（QCPGraph 持有同一个容器的 shared_ptr）上的旧数据还在，删不干净；
+    //   2) 之后 getData()->add(...) / getData()->isEmpty() 会空指针崩溃。
+    if (_data) {
+        _data->clear();
+    }
+}

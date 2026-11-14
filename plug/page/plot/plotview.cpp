@@ -48,8 +48,12 @@ PlotView::~PlotView()
 void PlotView::expandAll() const {
 	_treeView->expandAll();
 }
+void PlotView::clear()
+{
+    _graphView->clear();
+}
 
-//TODO:严重性能问题，但是这个实现动态信号显示，静态可以优化
+// TODO:严重性能问题，但是这个实现动态信号显示，静态可以优化
 
 
 void PlotView::initUI()
@@ -129,19 +133,41 @@ void PlotView::addSignalData(const PLUG::_SIGNALS& _signal)
         this->add_plotData(_signal.id,d, QString::fromStdString(_signal.name));
         this->add_plotData(_signal.id|2,d2, QString::fromStdString(_signal.name)+"_feq",1);
         node = _model->getNode(_signal.id);
+
         if (!node) {
             qCritical() << "add_plotData failed:" << QString::fromStdString(_signal.name);
             return;
         }
+        auto fre_node = _model->getNode(_signal.id|2);
+        fre_node->plotData->setVisible(false);
+        node->plotData->setVisible(true);
     }
     node->plotData->getData()->add(QCPGraphData((_signal.time-zero)/1000.0, _signal.value));
-    _model->getNode(_signal.id|2)->plotData->getData()->add(
+    auto fre_node = _model->getNode(_signal.id|2);
+    fre_node->plotData->getData()->add(
         QCPGraphData((
             _signal.time-zero)/1000.0
             ,node->plotData->getFreq()
             )
         );
+
 }
+void PlotView::onlyPlot(bool show)
+{
+    if (show)
+    {
+        _xCheckBox->setChecked(false);
+        _treeView->setVisible(false);
+        _toolBar->setVisible(false);
+    }
+    else
+    {
+        _xCheckBox->setChecked(true);
+        _treeView->setVisible(true);
+        _toolBar->setVisible(true);
+    }
+}
+
 void PlotView::_addSignalData(const QList<PLUG::_SIGNALS>& _signals)
 {
     //qInfo() << QThread::currentThread();

@@ -30,6 +30,13 @@ void PlotCustom::resetUI(PlotModel* model)
     }
     _resetUITimer->start(1);
 }
+void PlotCustom::clear()
+{
+
+    if (_model) {
+        _model->clear();
+    }
+}
 
 void PlotCustom::setPlotType(int type)
 {
@@ -373,10 +380,6 @@ void PlotCustom::_initAxis(QCPAxisRect* axisRect, QCPAxis* _xAxis, QCPAxis* _yAx
     _yAxis->grid()->setVisible(true);
     _yAxis->grid()->setSubGridVisible(false);
     //_yAxis->setTickLabelSide(QCPAxis::lsInside);
-
-
-
-
 
     axisRect->setAutoMargins(QCP::MarginSide::msLeft | QCP::MarginSide::msRight);
     axisRect->setRangeDrag(Qt::Horizontal | Qt::Vertical); //水平方向拖动

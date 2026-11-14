@@ -253,5 +253,13 @@ const TreeNode* PlotModel::getPlot(  QSharedPointer<QCPGraphDataContainer> ptr)
     }
     return plot;
 }
+ void PlotModel::clear()
+{
+    for (auto const& group : *m_rootNode) {
+        for (auto const& p : *group) {
+            p->plotData->clear();
+        }
+    }
+}
 
 

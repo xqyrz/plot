@@ -22,15 +22,8 @@ nodeAffineTransformation::~nodeAffineTransformation()
 }
 void nodeAffineTransformation::setInData(std::shared_ptr<NodeData> nodeData, PortIndex const portIndex)
 {
-    auto data =static_cast<ImageNodeData*>(nodeData.get());
+    NodeVisionBase::setInData(nodeData, portIndex);
 
-    m_inData->clear();
-    auto images = data->images();
-    //TODO:每一个节点是否要备份一份传入数据
-    for (auto& image: images)
-    {
-        m_inData->setImage(image.first,image.second);
-    }
     auto inImages = m_inData->images();
     for (auto& image: inImages)
     {

@@ -16,6 +16,9 @@ add_library(${PLOT_LIB} SHARED
         ${SRC_FILES}
         )
 
+# 让本 DLL 导出 PlotView 等类（供 opencvTest 等目标直接链接使用）
+target_compile_definitions(${PLOT_LIB} PRIVATE PLOTPAGE_LIBRARY INTERFACEBASE_EXPORTS)
+
 target_include_directories(${PLOT_LIB}
         PUBLIC
         .   # 头文件所在目录

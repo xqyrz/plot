@@ -40,7 +40,7 @@ public:
 
     QWidget *embeddedWidget() override;
 
-    void setInData(std::shared_ptr<NodeData>, PortIndex) override {};
+    void setInData(std::shared_ptr<NodeData>, PortIndex) override ;
 private slots:
     virtual void _updateConfig(){};
     virtual void _configInt(){};

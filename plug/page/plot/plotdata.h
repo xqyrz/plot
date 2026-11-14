@@ -26,6 +26,7 @@ public:
     void setVisible(bool visible) ;
 
     bool operator==(const PlotData& other);
+    void clear();
 signals:
     void visibaleChanged(bool visible);
 private:

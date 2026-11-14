@@ -64,6 +64,7 @@ public:
      TreeNode*  root() const { return m_rootNode; }
     const TreeNode* getPlot(  QSharedPointer<QCPGraphDataContainer>);
      TreeNode* getNode(uint64_t id) const;
+    void clear();
 private:
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;

@@ -13,6 +13,7 @@ class PlotCustom:public QCustomPlot{
 public:
     explicit PlotCustom(QWidget *parent = nullptr);
     void resetUI( PlotModel* model=nullptr);
+    void clear();
     int getPlotType()const{ return plotType; }
 signals:
     void pressedPlot( int type,const QCPLayerable * item);

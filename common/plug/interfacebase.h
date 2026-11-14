@@ -8,8 +8,19 @@
 #include "interfacecommon.h"
 //#include "../../../lib/mdb/mdb.h"
 
+// InterfaceBase 被多个插件 DLL 各自编译，因此导出必须“按目标”显式开启：
+//   INTERFACEBASE_EXPORTS   -> 由导出它的 DLL(plotpage) 定义，声明为 dllexport
+//   INTERFACEBASE_DLL_IMPORT-> 由链接该 DLL 的消费方(如 opencvTest) 定义，声明为 dllimport
+//   两者都未定义时保持原状（内部符号），避免其他插件库编译报错
+#if defined(INTERFACEBASE_EXPORTS)
+#  define INTERFACEBASE_EXPORT Q_DECL_EXPORT
+#elif defined(INTERFACEBASE_DLL_IMPORT)
+#  define INTERFACEBASE_EXPORT Q_DECL_IMPORT
+#else
+#  define INTERFACEBASE_EXPORT
+#endif
 
-class InterfaceBase:public QObject {
+class INTERFACEBASE_EXPORT InterfaceBase : public QObject {
     Q_OBJECT
 public:
     typedef enum

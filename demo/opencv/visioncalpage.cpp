@@ -18,11 +18,13 @@
 
 #include "visionnode/nodeimage/NodeImage.hpp"
 #include "visionnode/nodeAffineTransformation/nodeaffinetransformation.h"
+#include "visionnode/nodegamma/nodegamma.h"
 static std::shared_ptr<NodeDelegateModelRegistry> registerDataModels()
 {
     auto ret = std::make_shared<NodeDelegateModelRegistry>();
     ret->registerModel<NodeImage>("Sources");
     ret->registerModel<nodeAffineTransformation>("CAL");
+    ret->registerModel<NodeGamma>("CAL");
     return ret;
 }
 

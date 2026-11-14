@@ -2,8 +2,6 @@
 // Created by 25137 on 2026/11/8.
 //
 
-// You may need to build the project (run Qt uic code generator) to get "ui_VisionConfigPage.h" resolved
-
 #include "visionconfigpage.h"
 #include "ui_VisionConfigPage.h"
 

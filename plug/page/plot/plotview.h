@@ -20,7 +20,14 @@ class PlotTree;
 class PlotCustom;
 class PlotModel;
 class TreeNode;
-class  PlotView  : public PageBase
+
+#if defined(PLOTPAGE_LIBRARY)
+#  define PLOTPAGE_EXPORT Q_DECL_EXPORT
+#else
+#  define PLOTPAGE_EXPORT Q_DECL_IMPORT
+#endif
+
+class PLOTPAGE_EXPORT PlotView : public PageBase
 {
     Q_OBJECT
     Q_INTERFACES(PageBase)
@@ -29,9 +36,10 @@ public:
     explicit PlotView(QWidget *parent=nullptr);
     ~PlotView() override;
     void expandAll()const;
+    void clear();
     int getPlotType() const{return plotType;}
      void addSignalData(const PLUG::_SIGNALS& _signal);
-
+    void onlyPlot(bool show);
      const char* getSignal(int index) const;
      const char* getSlot(int index) const;
 private:

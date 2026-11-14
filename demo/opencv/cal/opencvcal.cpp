@@ -29,6 +29,10 @@ bool OpencvCal::gammaLut(const int maxValue, const double gamma,std::vector<uint
     }
     return true;
 }
+bool OpencvCal::gammaLut(const cv::Mat& src, const double gamma, std::vector<uint16_t>& table)
+{
+    return gammaLut(maxValue(src),gamma,table);
+}
 
 bool OpencvCal::Gamma_Cal(const cv::Mat& src,
                           const double gamma,
@@ -126,6 +130,58 @@ bool OpencvCal::Gamma_Cal(const cv::Mat& src,
     }
 
     return false;
+}
+int OpencvCal::maxValue(const cv::Mat& src)
+{
+    if (src.empty() )
+    {
+        return 0;
+    }
+
+    const int depth = src.depth();
+    const int channels = src.channels();
+
+    // 8-bit 和 16-bit 整数图像使用 LUT
+   // if (depth == CV_8U || depth == CV_16U)
+    {
+        return depth == CV_8U ? 255 : 65535;
+    }
+}
+bool OpencvCal::Lut_Cal(const cv::Mat& src, const std::vector<uint16_t>& lut, cv::Mat& out)
+{
+   if (maxValue(src) != lut.size())return false;
+    const int depth = src.depth();
+    const int channels = src.channels();
+
+    // 8-bit 和 16-bit 整数图像使用 LUT
+    //if (depth == CV_8U || depth == CV_16U)
+    {
+
+        out.create(src.size(), src.type());
+
+        const size_t total =
+            src.total() * channels;
+
+        if (depth == CV_8U)
+        {
+            const uchar* input = src.ptr<uchar>();
+            uchar* output = out.ptr<uchar>();
+
+            for (size_t i = 0; i < total; ++i)
+                output[i] = static_cast<uchar>(lut[input[i]]);
+        }
+        else
+        {
+            const uint16_t* input = src.ptr<uint16_t>();
+            uint16_t* output = out.ptr<uint16_t>();
+
+            for (size_t i = 0; i < total; ++i)
+                output[i] = lut[input[i]];
+        }
+        return true;
+    }
+    // 32-bit 和 64-bit 浮点图像
+    return true;
 }
 OpencvCal::OpencvCal()
 {
