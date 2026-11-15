@@ -30,6 +30,14 @@ void GammaItem::setLut(std::vector<uint16_t>* _lut)
     lut = _lut;
     _updatePlot();
 }
+void GammaItem::setText(QString str)
+{
+    ui->text->setText(str);
+}
+void GammaItem::on_createBtn_clicked()
+{
+    emit lutCreate(ui->doubleSpinBox->value());
+}
 void GammaItem::_updatePlot()
 {
     m_plotView->clear();
@@ -44,4 +52,5 @@ void GammaItem::_updatePlot()
         datas.append(d);
     }
     m_plotView->_addSignalData(datas);
+    emit updatePlot();
 }

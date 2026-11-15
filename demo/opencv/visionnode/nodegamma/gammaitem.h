@@ -24,6 +24,12 @@ public:
     ~GammaItem() override;
     void clear();
     void setLut(std::vector<uint16_t>*);
+    void setText(QString);
+signals:
+    void lutCreate(double);
+    void updatePlot();
+private slots:
+    void on_createBtn_clicked();
 private:
     void _updatePlot();
 private:

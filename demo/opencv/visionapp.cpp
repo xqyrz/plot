@@ -14,10 +14,10 @@
 VisionApp::VisionApp(QWidget* parent) : QWidget(parent), ui(new Ui::VisionApp)
 {
     ui->setupUi(this);
-    connect(ui->nodeEdit,&VisionCalPage::updateImage,this,[this](QList<std::pair<QString, QImage>> images)
+    connect(ui->nodeEdit,&VisionCalPage::updateImage,this,[this](const QList<std::pair<QString, QImage>>& images)
     {
 
-    for(auto image:images)
+    for(auto& image:images)
     {
         ui->imageView->loadImage(image.second,image.first);
     }

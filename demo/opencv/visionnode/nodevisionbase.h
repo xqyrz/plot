@@ -27,7 +27,7 @@ class NodeVisionBase: public NodeDelegateModel
 public:
     NodeVisionBase();
      ~NodeVisionBase();
-    QList<std::pair<QString,QImage>> images();
+    const QList<std::pair<QString,QImage>>& images();
 
     unsigned int nPorts(PortType portType) const override;
     NodeDataType dataType(PortType portType, PortIndex portIndex) const override;

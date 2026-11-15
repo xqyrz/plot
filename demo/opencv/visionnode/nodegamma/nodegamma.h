@@ -20,6 +20,7 @@ private slots:
 private:
     GammaItem* m_item{nullptr};
     std::vector<uint16_t> _lut;
+    double gammaVlaue = 2.2;
 };
 
 

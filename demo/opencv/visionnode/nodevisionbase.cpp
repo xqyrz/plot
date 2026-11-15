@@ -29,7 +29,7 @@ NodeVisionBase::~NodeVisionBase()
     }
 }
 
-QList<std::pair<QString, QImage>> NodeVisionBase::images()
+const QList<std::pair<QString, QImage>>& NodeVisionBase::images()
 {
     return m_imageData->images();
 }

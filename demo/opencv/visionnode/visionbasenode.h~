@@ -1,0 +1,30 @@
+﻿//
+// Created by 25137 on 2026/11/8.
+//
+
+#ifndef PLOT_VISIONBASENODE_H
+#define PLOT_VISIONBASENODE_H
+
+#include <QtNodes/NodeDelegateModel>
+#include <QImage>
+using QtNodes::NodeData;
+using QtNodes::NodeDataType;
+using QtNodes::NodeDelegateModel;
+using QtNodes::PortIndex;
+using QtNodes::PortType;
+
+class VisionBaseNode: public NodeData
+{
+
+public:
+QList<QImage> images();
+private:
+    void _setImage(QImage&);
+public slots:
+    void setImage(QImage& image){_setImage(image);};
+private:
+    QImage m_image;
+};
+
+
+#endif // PLOT_VISIONBASENODE_H

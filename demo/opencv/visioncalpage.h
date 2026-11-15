@@ -21,7 +21,7 @@ public:
 private:
 
 signals:
-    void updateImage(QList<std::pair<QString, QImage>>);
+    void updateImage(const QList<std::pair<QString, QImage>>&);
 private:
     VisionFlowGraphModel* m_model{nullptr};
     VisionFlowGraphicsScene* m_scene{nullptr};

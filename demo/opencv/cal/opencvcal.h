@@ -11,7 +11,7 @@ class OpencvCal:public VisionCal
 public:
     OpencvCal();
      cv::Mat* currImage() override;
-
+    static ImageLuminance getLuminance(const cv::Mat& src);
     static  bool gammaLut(const int maxValue,const double gamma,std::vector<uint16_t>& table);
     static  bool gammaLut(const cv::Mat& src,const double gamma,std::vector<uint16_t>& table);
     static  bool Gamma_Cal(const cv::Mat& src,const double gamma,  cv::Mat& out);

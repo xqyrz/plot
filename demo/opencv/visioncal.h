@@ -10,7 +10,12 @@ class VisionCal
 {
 public:
     virtual cv::Mat* currImage()=0;
-
+    struct ImageLuminance
+    {
+        double y601 = 0.0;  // BT.601，范围 0~100
+        double y709 = 0.0;  // BT.709，范围 0~100
+        double lStar = 0.0; // CIE L*，范围 0~100
+    };
 
 
 

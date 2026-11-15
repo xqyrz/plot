@@ -12,6 +12,89 @@ cv::Mat* OpencvCal::currImage()
     m_currImage = cv::imread(path, cv::IMREAD_COLOR);
     return &m_currImage;
 }
+VisionCal::ImageLuminance OpencvCal::getLuminance(const cv::Mat& src)
+{
+    VisionCal::ImageLuminance result{};
+    if (src.empty())
+        return result;
+
+    const int depth = src.depth();
+    const int ch = src.channels();
+
+    CV_Assert(depth == CV_8U || depth == CV_16U || depth == CV_32F || depth == CV_64F);
+    CV_Assert(ch == 1 || ch == 3 || ch == 4);
+
+    double scale = 1.0;
+    switch (depth)
+    {
+    case CV_8U:
+        scale = 1.0 / 255.0;
+        break;
+    case CV_16U:
+        scale = 1.0 / 65535.0;
+        break;
+    case CV_32F:
+    case CV_64F:
+        scale = 1.0;
+        break;
+    default:
+        return result;
+    }
+
+    cv::Mat f32;
+    // 统一转到 CV_32F，不再用昂贵的 CV_64F
+    src.convertTo(f32, CV_32F, static_cast<float>(scale));
+
+    cv::Mat rgbFloat;
+    if (ch == 1)
+    {
+        // 灰度：luma = 灰度本身
+        rgbFloat = f32;
+    }
+    else if (ch == 4)
+    {
+        cv::cvtColor(f32, rgbFloat, cv::COLOR_BGRA2BGR);
+    }
+    else
+    {
+        rgbFloat = f32;
+    }
+
+    double y601Norm = 0.0;
+    double y709Norm = 0.0;
+
+    if (rgbFloat.channels() == 1)
+    {
+        // 灰度图：y601 == y709
+        cv::Scalar m = cv::mean(rgbFloat);
+        y601Norm = m[0];
+        y709Norm = m[0];
+    }
+    else
+    {
+        // BGR -> luma，用 transform，单趟 SIMD
+        static const cv::Mat_<float> k601 = (cv::Mat_<float>(1, 3) << 0.114f, 0.587f, 0.299f);
+        static const cv::Mat_<float> k709 = (cv::Mat_<float>(1, 3) << 0.0722f, 0.7152f, 0.2126f);
+
+        cv::Mat y601Mat, y709Mat;
+        cv::transform(rgbFloat, y601Mat, k601);
+        cv::transform(rgbFloat, y709Mat, k709);
+
+        y601Norm = cv::mean(y601Mat)[0];
+        y709Norm = cv::mean(y709Mat)[0];
+    }
+
+    // [0,1] → [0,100]，修复原来覆盖 bug
+    result.y601 = y601Norm * 100.0;
+    result.y709 = y709Norm * 100.0;
+
+    // 如果要 L*，正确版本附在下面，不要直接拿浮点 BGR 进 cvtColor
+    // result.lStar = calcMeanLStar(src);
+
+    return result;
+}
+
+
 bool OpencvCal::gammaLut(const int maxValue, const double gamma,std::vector<uint16_t>& lut)
 {
     lut.resize(maxValue+1);
@@ -149,7 +232,7 @@ int OpencvCal::maxValue(const cv::Mat& src)
 }
 bool OpencvCal::Lut_Cal(const cv::Mat& src, const std::vector<uint16_t>& lut, cv::Mat& out)
 {
-   if (maxValue(src) != lut.size())return false;
+   if ((maxValue(src)+1) != lut.size())return false;
     const int depth = src.depth();
     const int channels = src.channels();
 
