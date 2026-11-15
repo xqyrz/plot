@@ -83,7 +83,7 @@ void PlotView::initUI()
 	layout->addWidget(splitter);
 
 	layout->setSpacing(0);
-	layout->setContentsMargins(30, 30, 30, 30);
+	layout->setContentsMargins(0, 0, 0, 0);
 	_toolBar->setStyleSheet("QToolBar {\
 		background - color: #fbfbfb;\
 		border : 1px solid #fefefe;\

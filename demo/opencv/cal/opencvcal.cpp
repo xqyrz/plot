@@ -12,6 +12,78 @@ cv::Mat* OpencvCal::currImage()
     m_currImage = cv::imread(path, cv::IMREAD_COLOR);
     return &m_currImage;
 }
+bool OpencvCal::getHistogram(const cv::Mat& src, cv::Mat& hist, int channel, int bins, bool normalize,
+                             const cv::Mat& mask)
+{
+    hist.release();
+
+    if (src.empty() || bins <= 0)
+        return false;
+
+    if (channel < 0 || channel >= src.channels())
+        return false;
+
+    // 确定直方图范围
+    float range[] = { 0.0f, 256.0f };
+
+    switch (src.depth())
+    {
+    case CV_8U:
+        range[0] = 0.0f;
+        range[1] = 256.0f;
+        break;
+
+    case CV_16U:
+        range[0] = 0.0f;
+        range[1] = 65536.0f;
+        break;
+
+    case CV_32F:
+    case CV_64F:
+        range[0] = 0.0f;
+        range[1] = 1.0f;
+        break;
+
+    default:
+        return false;
+    }
+
+    // 检查 Mask
+    if (!mask.empty())
+    {
+        if (mask.type() != CV_8UC1 ||
+            mask.size() != src.size())
+            return false;
+    }
+
+    int channels[] = { channel };
+    int histSize[] = { bins };
+
+    const float* ranges[] = { range };
+
+    // 计算直方图
+    cv::calcHist(
+        &src,
+        1,
+        channels,
+        mask,
+        hist,
+        1,
+        histSize,
+        ranges
+    );
+
+    // 归一化
+    if (normalize)
+    {
+        double total = cv::sum(hist)[0];
+
+        if (total > 0.0)
+            hist /= total;
+    }
+
+    return true;
+}
 VisionCal::ImageLuminance OpencvCal::getLuminance(const cv::Mat& src)
 {
     VisionCal::ImageLuminance result{};

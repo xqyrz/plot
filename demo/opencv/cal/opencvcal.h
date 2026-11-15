@@ -11,6 +11,28 @@ class OpencvCal:public VisionCal
 public:
     OpencvCal();
      cv::Mat* currImage() override;
+
+
+    /**
+     * @brief 计算图像直方图
+     * @param src       输入图像
+     * @param hist      输出直方图，CV_32F
+     * @param channel   通道索引，B=0, G=1, R=2
+     * @param bins      直方图区间数量
+     * @param normalize 是否归一化到 [0,1]
+     * @param mask      可选掩码
+     * @return          是否计算成功
+     */
+    static bool getHistogram(
+        const cv::Mat& src,
+        cv::Mat& hist,
+        int channel = 0,
+        int bins = 256,
+        bool normalize = false,
+        const cv::Mat& mask = cv::Mat()
+    );
+
+
     static ImageLuminance getLuminance(const cv::Mat& src);
     static  bool gammaLut(const int maxValue,const double gamma,std::vector<uint16_t>& table);
     static  bool gammaLut(const cv::Mat& src,const double gamma,std::vector<uint16_t>& table);

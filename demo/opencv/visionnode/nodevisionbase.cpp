@@ -69,7 +69,8 @@ QWidget* NodeVisionBase::embeddedWidget()
 void NodeVisionBase::setInData(std::shared_ptr<NodeData> nodeData, PortIndex)
 {
     auto data =static_cast<ImageNodeData*>(nodeData.get());
-
+    if (data == nullptr)
+        return;
     m_inData->clear();
     auto images = data->images();
     //TODO:每一个节点是否要备份一份传入数据
