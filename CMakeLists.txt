@@ -33,6 +33,7 @@ message("CMAKE_SYSTEM_NAME ${CMAKE_SYSTEM_NAME}")
 message("CMAKE_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR}")
 message("CMAKE_CXX_COMPILER_ID ${CMAKE_CXX_COMPILER_ID}")
 message("CMAKE_SIZEOF_VOID_P ${CMAKE_SIZEOF_VOID_P}")
+#set(CMAKE_GENERATOR_TOOLSET "v14.29" CACHE STRING "MSVC toolset")
 
 if (CMAKE_SYSTEM_NAME MATCHES "Emscripten")
 elseif(CMAKE_SYSTEM_NAME MATCHES "Windows")
@@ -80,6 +81,7 @@ endif()
 
 
 
+
 # ========== 封装函数：给目标附加VS调试环境（重点！） ==========
 function(target_set_qt_debug_env target_name)
     set(QT_BIN        "${QT_ROOT}/bin")
@@ -105,8 +107,13 @@ find_package(Protobuf REQUIRED)
 #    message(STATUS "Protobuf library: ${Protobuf_LIBRARIES}")
 #    message(STATUS "Protoc path: ${Protobuf_PROTOC_EXECUTABLE}")
 #endif()
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets PrintSupport OpenGL Quick QuickWidgets Sql Concurrent Svg Network)
-find_package(Qt${QT_VERSION_MAJOR}  REQUIRED COMPONENTS Core Gui Widgets PrintSupport OpenGL Quick QuickWidgets Sql Concurrent Svg Network)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS
+        Core Gui Widgets PrintSupport OpenGL Quick QuickWidgets Sql Concurrent Svg Network )
+find_package(Qt${QT_VERSION_MAJOR}  REQUIRED COMPONENTS
+        Core Gui Widgets PrintSupport OpenGL Quick QuickWidgets Sql Concurrent Svg Network )
+if(${QT_VERSION_MAJOR}  EQUAL 6)
+    find_package(Qt${QT_VERSION_MAJOR}  REQUIRED COMPONENTS GuiPrivate)
+endif ()
 #message(STATUS "OpenGL include dir: ${OPENGL_INCLUDE_DIR}")
 #message(STATUS "OpenGL libraries : ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY}")
 # 添加子目录

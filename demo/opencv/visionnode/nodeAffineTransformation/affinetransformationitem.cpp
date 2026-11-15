@@ -204,7 +204,7 @@ void AffineTransformationItem::timerEvent(QTimerEvent* event)
             case Angle :M=VisionCal::rotate(ui->angle->value(),size,M);break;
             default:break;
             }
-            atFlags = 0;
+           // atFlags = 0;//TODO:XIONG
             std::array<double, 9> arr;
             std::copy_n(M.ptr<double>(), 9, arr.begin());
             setM(arr);

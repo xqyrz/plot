@@ -38,11 +38,13 @@ public:
     void expandAll()const;
     void clear();
     int getPlotType() const{return plotType;}
-     void addSignalData(const PLUG::_SIGNALS& _signal);
+    void addSignalData(const PLUG::_SIGNALS& _signal);
     void onlyPlot(bool show);
-     const char* getSignal(int index) const;
-     const char* getSlot(int index) const;
-private:
+    const char* getSignal(int index) const;
+    const char* getSlot(int index) const;
+    void setZero(double _zero) { zero = _zero; };
+
+ private:
 
     void initUI();
     void initConnect();

@@ -13,7 +13,7 @@
 #include "plottree.h"
 #include "plotcustom.h"
 PlotView::PlotView(QWidget* parent) :
-    PageBase(parent), zero(QDateTime::currentDateTime().toMSecsSinceEpoch()), _graphView(new PlotCustom(ui())),
+    PageBase(parent), zero(QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0), _graphView(new PlotCustom(ui())),
     _treeView(new PlotTree(ui())), _toolBar(new QToolBar(ui())), _modleComboBox(new QComboBox(ui())),
     _xSpinBox(new QSpinBox(ui())), _xCheckBox(new QCheckBox(ui())), _model(new PlotModel(ui()))
 {
@@ -83,7 +83,7 @@ void PlotView::initUI()
 	layout->addWidget(splitter);
 
 	layout->setSpacing(0);
-	layout->setContentsMargins(0, 0, 0, 0);
+	layout->setContentsMargins(30, 30, 30, 30);
 	_toolBar->setStyleSheet("QToolBar {\
 		background - color: #fbfbfb;\
 		border : 1px solid #fefefe;\
@@ -142,11 +142,10 @@ void PlotView::addSignalData(const PLUG::_SIGNALS& _signal)
         fre_node->plotData->setVisible(false);
         node->plotData->setVisible(true);
     }
-    node->plotData->getData()->add(QCPGraphData((_signal.time-zero)/1000.0, _signal.value));
+    node->plotData->getData()->add(QCPGraphData((_signal.time  - zero), _signal.value));
     auto fre_node = _model->getNode(_signal.id|2);
     fre_node->plotData->getData()->add(
-        QCPGraphData((
-            _signal.time-zero)/1000.0
+        QCPGraphData((_signal.time  - zero)
             ,node->plotData->getFreq()
             )
         );

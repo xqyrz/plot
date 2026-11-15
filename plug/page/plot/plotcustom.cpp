@@ -7,7 +7,7 @@
 #include <QTimer>
 
 #ifndef Q_OS_ANDROID
-#include <QOpenGLWidget>
+//#include <QOpenGLWidget>
 #endif
 PlotCustom::PlotCustom(QWidget* parent)
     : QCustomPlot(parent)
@@ -294,7 +294,7 @@ void PlotCustom::_initUI()
 {
     setBackground(QColor(234, 234, 234));
 
-    setOpenGl(true, 4);
+    //setOpenGl(true, 4);
     setNotAntialiasedElements(QCP::aeAll);
     setNoAntialiasingOnDrag(true);
 

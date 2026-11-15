@@ -15,6 +15,7 @@ GammaItem::GammaItem(QWidget* parent) : QWidget(parent)
     ui->setupUi(this);
     layout()->addWidget(m_plotView->ui());
     m_plotView->onlyPlot(true);
+     m_plotView->setZero(0);
 
 }
 

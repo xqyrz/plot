@@ -25,7 +25,7 @@ add_library(${PROJECT_NAME} STATIC
 if(MSVC)
 set_target_properties(${PROJECT_NAME} PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endif()
-target_link_libraries(${PROJECT_NAME} Qt5::Widgets)
+target_link_libraries(${PROJECT_NAME} Qt${QT_VERSION_MAJOR}::Widgets)
 
 ######################### Installation Stuff ###########################\
 include(GNUInstallDirs)
