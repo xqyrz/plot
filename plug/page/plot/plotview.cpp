@@ -58,7 +58,7 @@ void PlotView::clear()
 
 void PlotView::initUI()
 {
-	auto splitter = new QSplitter(ui());
+	m_splitter = new QSplitter(ui());
 	auto layout = new QVBoxLayout(ui());
 
 	_treeView->setModel(_model);
@@ -66,7 +66,7 @@ void PlotView::initUI()
 	_modleComboBox->addItems(QStringList()<<"单y轴" << "多y轴" << "多图表");
 
 	_xCheckBox->setText("采样区间");
-	_xCheckBox->setChecked(true);
+	_xCheckBox->setChecked(false);
 
 	_xSpinBox->setRange(1,99999999);
 	_xSpinBox->setValue(100);
@@ -75,12 +75,12 @@ void PlotView::initUI()
 	_toolBar->addWidget(_xCheckBox);
 	_toolBar->addWidget(_xSpinBox);
 
-	splitter->addWidget(_treeView);
-	splitter->addWidget(_graphView);
-	splitter->setSizes(QList<int>() << 200 << 1800);
+	m_splitter->addWidget(_treeView);
+	m_splitter->addWidget(_graphView);
+	m_splitter->setSizes(QList<int>() << 200 << 1800);
 
 	layout->addWidget(_toolBar);
-	layout->addWidget(splitter);
+	layout->addWidget(m_splitter);
 
 	layout->setSpacing(0);
 	layout->setContentsMargins(0, 0, 0, 0);
@@ -114,6 +114,10 @@ void PlotView::initConnect()
     connect(this, &PlotView::plotTypeChanged, _graphView, &PlotCustom::setPlotType);
     // connect(_graphView,&PlotCustom::pressedPlot,_treeView,&PlotTree::set)
     connect(_model, &QAbstractItemModel::dataChanged, this, [this]() { _graphView->resetUI(); });
+}
+TreeNode* PlotView::getPlotData(uint64_t id)
+{
+    return  _model->getNode(id);
 }
 
 void PlotView::addSignalData(const PLUG::_SIGNALS& _signal)
@@ -153,17 +157,19 @@ void PlotView::addSignalData(const PLUG::_SIGNALS& _signal)
 }
 void PlotView::onlyPlot(bool show)
 {
+    m_splitter->setStretchFactor(1,0);
+    return;
     if (show)
     {
         _xCheckBox->setChecked(false);
-        _treeView->setVisible(false);
-        _toolBar->setVisible(false);
+        m_splitter->setStretchFactor(0, 1);
+       // _toolBar->setVisible(false);
     }
     else
     {
         _xCheckBox->setChecked(true);
-        _treeView->setVisible(true);
-        _toolBar->setVisible(true);
+       // _treeView->setVisible(true);
+       // _toolBar->setVisible(true);
     }
 }
 
@@ -191,9 +197,14 @@ const char* PlotView::getSlot(int index) const
    }
 }
 
-TreeNode* PlotView::add_plotData( uint64_t id, QSharedPointer<QCPGraphDataContainer> &data, const QString plot_name,int group) {
+TreeNode* PlotView::add_plotData( uint64_t id
+    , QSharedPointer<QCPGraphDataContainer> &data
+    , const QString plot_name
+    ,int group
+    ,QString color
+    ) {
 
-	auto node =_model->add_plotData(id,data,plot_name,group);
+	auto node =_model->add_plotData(id,data,plot_name,group,color);
 	_treeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	_graphView->resetUI(_model);
 	return node;

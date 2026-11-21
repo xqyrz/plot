@@ -16,19 +16,25 @@ PlotModel::PlotModel(QObject* parent)
 }
 
 
-TreeNode* PlotModel::add_plotData(const uint64_t id,QSharedPointer<QCPGraphDataContainer>& data, const QString plot_name,int group ) {
+TreeNode* PlotModel::add_plotData(const uint64_t id
+    ,QSharedPointer<QCPGraphDataContainer>& data
+    , const QString plot_name
+    ,int group
+    ,QString color
+    ) {
     for (auto const& var : *m_rootNode) {
         for(auto const& var2 : *var) {
-            if(var2->plotData->getData() == data) {
+            if(var2->plotData->getId() == id) {
                 qWarning() << "has data:"<<var2->name<<var2->plotData->getData();
-                return nullptr;
+                return var2;
             }
         }
     }
     int newRow = m_rootNode->at(0)->childCount();
     //TODO:第一次  warn:Invalid index ( 1 , 0 ) in model PlotModel(0x19d0fc8d6c0)
    // if (newRow)beginInsertRows(QModelIndex(), newRow, newRow);
-    auto plotData = new PlotData(id,data,QColor(PLOT::color[size()%16]),plot_name,"",this);
+    if (color.isEmpty())color = PLOT::color[size()%16];
+    auto plotData = new PlotData(id,data,QColor(color),plot_name,"",this);
     auto node = new TreeNode(plotData,plot_name);
     m_rootNode->at(group)->append(node);
    // if (newRow)endInsertRows(); // 通知视图：插入结束

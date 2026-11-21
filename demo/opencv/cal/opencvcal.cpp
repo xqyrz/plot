@@ -60,17 +60,19 @@ bool OpencvCal::getHistogram(const cv::Mat& src, cv::Mat& hist, int channel, int
     int histSize[] = { bins };
 
     const float* ranges[] = { range };
-
+    //int channels[] = {0}; // 统计 B 通道
+    // channels[] = {1}; // 统计 G 通道
+    // channels[] = {2}; // 统计 R 通道
     // 计算直方图
     cv::calcHist(
-        &src,
-        1,
-        channels,
-        mask,
-        hist,
-        1,
-        histSize,
-        ranges
+        &src, //图片
+        1,//图片数量
+        channels,//通道索引
+        mask,//用来只统计 ROI 区域
+        hist,//out:输出直方图
+        1,//直方图维度（1 = 灰度一维，2=HSV 的 H-S 二维直方图）
+        histSize,//每一维 bin 数量数组
+        ranges//每一维数值范围的数组的数组
     );
 
     // 归一化
@@ -82,6 +84,101 @@ bool OpencvCal::getHistogram(const cv::Mat& src, cv::Mat& hist, int channel, int
             hist /= total;
     }
 
+    return true;
+}
+bool OpencvCal::getHistogram(const cv::Mat& src, cv::Mat& hist, int channel, int bins, bool normalize,
+                             const cv::Mat& mask, bool multiColor)
+{
+    hist.release();
+    if (src.empty() || bins <= 0)
+        return false;
+
+    // ========== 三维颜色直方图：统计BGR组合颜色出现次数 ==========
+    if (multiColor)
+    {
+        // 只支持 8UC3 BGR图
+        if (src.channels() != 3 || src.depth() != CV_8U)
+            return false;
+
+        // mask校验
+        if (!mask.empty())
+        {
+            if (mask.type() != CV_8UC1 || mask.size() != src.size())
+                return false;
+        }
+
+        int channels[] = {0, 1, 2};   // B, G, R
+        int histSize[] = {bins, bins, bins};
+        float range[] = {0.0f, 256.0f};
+        const float* ranges[] = {range, range, range};
+
+        cv::calcHist(
+            &src,
+            1,
+            channels,
+            mask,
+            hist,
+            3,          // 三维直方图
+            histSize,
+            ranges
+        );
+
+        // 归一化：次数 / 总像素，变成占比
+        if (normalize)
+        {
+            double total = cv::sum(hist)[0];
+            if (total > 1e-9)
+            {
+                hist /= total;
+            }
+        }
+        return true;
+    }
+
+    // ========== 原有逻辑：单通道一维直方图 ==========
+    if (channel < 0 || channel >= src.channels())
+        return false;
+
+    float range[] = {0.0f, 256.0f};
+    switch (src.depth())
+    {
+    case CV_8U:
+        range[0] = 0.0f;
+        range[1] = 256.0f;
+        break;
+    case CV_16U:
+        range[0] = 0.0f;
+        range[1] = 65536.0f;
+        break;
+    case CV_32F:
+    case CV_64F:
+        range[0] = 0.0f;
+        range[1] = 1.0f;
+        break;
+    default:
+        return false;
+    }
+
+    if (!mask.empty())
+    {
+        if (mask.type() != CV_8UC1 || mask.size() != src.size())
+            return false;
+    }
+
+    int channels[] = {channel};
+    int histSize[] = {bins};
+    const float* ranges[] = {range};
+
+    cv::calcHist(&src, 1, channels, mask, hist, 1, histSize, ranges);
+
+    if (normalize)
+    {
+        double total = cv::sum(hist)[0];
+        if (total > 1e-9)
+        {
+            hist /= total;
+        }
+    }
     return true;
 }
 VisionCal::ImageLuminance OpencvCal::getLuminance(const cv::Mat& src)

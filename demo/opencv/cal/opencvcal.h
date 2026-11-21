@@ -32,7 +32,8 @@ public:
         const cv::Mat& mask = cv::Mat()
     );
 
-
+    static bool getHistogram(const cv::Mat& src, cv::Mat& hist, int channel, int bins, bool normalize,
+                      const cv::Mat& mask, bool multiColor);
     static ImageLuminance getLuminance(const cv::Mat& src);
     static  bool gammaLut(const int maxValue,const double gamma,std::vector<uint16_t>& table);
     static  bool gammaLut(const cv::Mat& src,const double gamma,std::vector<uint16_t>& table);

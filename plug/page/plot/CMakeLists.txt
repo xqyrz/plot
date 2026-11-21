@@ -22,6 +22,7 @@ add_library(${PROJECT_NAME} SHARED
 target_compile_definitions(${PROJECT_NAME} PRIVATE
         PLOTPAGE_LIBRARY
         INTERFACEBASE_EXPORTS
+        QCUSTOMPLOT_COMPILE_LIBRARY# 编译本 DLL 时，QCP 类按 dllexport
 )
 
 target_include_directories(${PROJECT_NAME}

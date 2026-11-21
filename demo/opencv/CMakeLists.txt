@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
+add_compile_definitions(QCUSTOMPLOT_USE_OPENGL)
 file(GLOB_RECURSE SRC_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
@@ -55,3 +56,24 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 )
 
 
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${OPENCV_DLL}"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/"
+        # 运行时加载的 plotpage.dll 必须与导入库同版本
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "$<TARGET_FILE:plotpage>"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/"
+        # 关键：qView 也是 SHARED 库，DLL 要放到 exe 同目录
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "$<TARGET_FILE:qView>"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/"
+        # QtNodes 同样是运行时 DLL，一并带过来
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "$<TARGET_FILE:QtNodes>"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/rec"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/rec"
+)

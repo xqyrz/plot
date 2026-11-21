@@ -14,12 +14,14 @@ PlotCustom::PlotCustom(QWidget* parent)
       , _updateTimer(new QTimer(this))
       , _resetUITimer(new QTimer(this))
 {
+
     _initUI();
     _resetUITimer->setSingleShot(true);
     connect(_updateTimer, &QTimer::timeout, this, &PlotCustom::_replot);
     connect(_resetUITimer, &QTimer::timeout, this, &PlotCustom::_resetUI);
 
     _updateTimer->start(50);
+   // setupPaintBuffers();
 }
 
 void PlotCustom::resetUI(PlotModel* model)
@@ -283,7 +285,10 @@ void PlotCustom::mouseMoveEvent(QMouseEvent* event)
             if (auto tracer = qobject_cast<QCPItemTracer*>(item))
             {
                 tracer->setGraphKey(x); // 更新 tracer
-                _tracerMap.value(tracer)->setText(QString("y:%1").arg(tracer->position->value()));
+                _tracerMap.value(tracer)->setText(QString("%1,%2")
+                    .arg(tracer->position->key())
+                    .arg(tracer->position->value())
+                    );
             }
         }
     }
@@ -294,7 +299,8 @@ void PlotCustom::_initUI()
 {
     setBackground(QColor(234, 234, 234));
 
-    //setOpenGl(true, 4);
+   //setOpenGl(true, 4);
+  //  setOpenGl(false);
     setNotAntialiasedElements(QCP::aeAll);
     setNoAntialiasingOnDrag(true);
 
@@ -351,7 +357,7 @@ void PlotCustom::_initQCPGraph(QCPAxisRect* axisRect,QCPGraph * graph,QColor col
     _label->position->setParentAnchor(_tracer->position);
 
     // 初始化显示坐标
-    _label->setText(QString("y:%1").arg(_tracer->position->value()));
+    _label->setText(QString("%1,%2").arg(_tracer->position->key()).arg(_tracer->position->value()));
 
 
     _tracerMap.insert(_tracer,_label);
@@ -545,6 +551,7 @@ QCPGraph* PlotCustom::_moreXmoreY()
 
 void PlotCustom::_resetUI()
 {
+
     QCPGraph* graph = nullptr;
 
     switch (plotType)
@@ -574,6 +581,7 @@ void PlotCustom::_resetUI()
             _line->point2->setCoords(graph->data()->at(0)->key, 1);   // 方向：水平线
         }
     }
+    return;
     QTimer::singleShot(100, this, [this]()
     {
         _resizeEvent();

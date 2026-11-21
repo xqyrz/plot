@@ -49,7 +49,13 @@ public:
     void initUI();
     void initConnect();
 public slots:
-    TreeNode* add_plotData( uint64_t id, QSharedPointer<QCPGraphDataContainer>& data, const QString plot_name = "plot",int group = 0);
+    TreeNode* getPlotData( uint64_t id);
+    TreeNode* add_plotData( uint64_t id
+        , QSharedPointer<QCPGraphDataContainer>& data
+        , const QString plot_name = "plot"
+        ,int group = 0
+        ,QString color = ""
+        );
     void setCurrentPlot(int type,const QCPLayerable * item);
     void enupRang();
     void _addSignalData(const QList<PLUG::_SIGNALS>& _signals);
@@ -70,6 +76,7 @@ private:
     int plotType;
     double zero=0;
     static  PlotView* m_plotView;
+    QSplitter * m_splitter;
 private:
     Q_PROPERTY(int plotType READ getPlotType WRITE setPlotType)
 };

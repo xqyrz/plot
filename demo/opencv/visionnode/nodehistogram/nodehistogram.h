@@ -19,6 +19,9 @@ private slots:
     void _configOpen() override;
     void _updateConfig() override;
 private:
+    void color_cnt();
+    void rgb_cnt();
+private:
     PlotView* m_item{nullptr};
 };
 

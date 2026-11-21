@@ -84,9 +84,11 @@ namespace PLUG{
     struct _SIGNALS {
         union {
             struct {  // 给匿名 struct 一个名字 s
-                uint32_t id:32;
-                uint16_t type:16;
                 uint16_t res:16;
+                uint16_t type:16;
+                uint32_t id:32;
+
+
             } ID;
             uint64_t id;
         };
