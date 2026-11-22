@@ -25,6 +25,9 @@
      </item>
      <item>
       <widget class="QSpinBox" name="num">
+       <property name="minimum">
+        <number>1</number>
+       </property>
        <property name="maximum">
         <number>256</number>
        </property>
@@ -43,6 +46,21 @@
        <item>
         <property name="text">
          <string>Color</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>BT.601</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>HSV</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>HLS</string>
         </property>
        </item>
       </widget>

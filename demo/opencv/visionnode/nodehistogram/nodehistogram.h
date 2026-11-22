@@ -22,6 +22,9 @@ private slots:
 private:
     void color_cnt();
     void rgb_cnt();
+    void luminance_cnt();   // BT.601 亮度直方图
+    void hsv_cnt();         // HSV 直方图（H 0~180，S/V 0~255）
+    void hls_cnt();         // HLS 直方图（H 0~180，L/S 0~255）
 private:
     HistogramItem* m_item{nullptr};
     int binNum = 64;

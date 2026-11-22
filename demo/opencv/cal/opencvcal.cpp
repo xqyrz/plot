@@ -181,6 +181,78 @@ bool OpencvCal::getHistogram(const cv::Mat& src, cv::Mat& hist, int channel, int
     }
     return true;
 }
+bool OpencvCal::toLuminance(const cv::Mat& src, cv::Mat& gray)
+{
+    gray.release();
+    if (src.empty())
+        return false;
+
+    const int depth = src.depth();
+    const int ch = src.channels();
+
+    // 已经是单通道，直接当亮度用（灰度图 / 16 位 L 图）
+    if (ch == 1)
+    {
+        gray = src;
+        return true;
+    }
+
+    if (depth != CV_8U && depth != CV_16U && depth != CV_32F)
+        return false;
+    if (ch != 3 && ch != 4)
+        return false;
+
+    try
+    {
+        //penCV 颜色空间转换函数
+        //
+        //@NOTE: 转灰度图
+        cv::cvtColor(src, gray, ch == 4 ? cv::COLOR_BGRA2GRAY : cv::COLOR_BGR2GRAY);
+    }
+    catch (const cv::Exception& e)
+    {
+        std::cerr << "toLuminance failed: " << e.what() << std::endl;
+        gray.release();
+        return false;
+    }
+
+    return !gray.empty();
+}
+
+bool OpencvCal::getLuminanceHistogram(const cv::Mat& src, cv::Mat& hist, int bins,
+                                      bool normalize, const cv::Mat& mask)
+{
+    hist.release();
+    if (src.empty() || bins <= 0)
+        return false;
+
+    cv::Mat gray;
+    if (!toLuminance(src, gray))
+        return false;
+
+    // 浮点图统一按 [0,1] 统计；若实际是 0~255 的浮点图，自动缩放
+    if (gray.depth() == CV_32F)
+    {
+        double mn = 0.0, mx = 0.0;
+        cv::minMaxLoc(gray, &mn, &mx);
+        if (mn < 0.0 || mx > 1.0)
+        {
+            if (mn >= -1e-6 && mx <= 255.0 + 1e-6)
+            {
+                std::cerr << "getLuminanceHistogram: float image not in [0,1], scale by 1/255" << std::endl;
+                gray = gray / 255.0f;
+            }
+            else
+            {
+                return false;   // 范围未知，统计出来没意义
+            }
+        }
+    }
+
+    // 复用一维单通道直方图逻辑
+    return getHistogram(gray, hist, 0, bins, normalize, mask);
+}
+
 VisionCal::ImageLuminance OpencvCal::getLuminance(const cv::Mat& src)
 {
     VisionCal::ImageLuminance result{};

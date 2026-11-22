@@ -34,6 +34,32 @@ public:
 
     static bool getHistogram(const cv::Mat& src, cv::Mat& hist, int channel, int bins, bool normalize,
                       const cv::Mat& mask, bool multiColor);
+
+    /**
+     * @brief 转成亮度图（单通道）
+     * @param src   BGR/BGRA/灰度图，支持 CV_8U、CV_16U、CV_32F
+     * @param gray  输出单通道亮度图，与 src 同尺寸同深度
+     * @return      是否成功
+     * @note 采用 BT.601 权重 Y = 0.114B + 0.587G + 0.299R（即 cv::COLOR_BGR2GRAY）
+     */
+    static bool toLuminance(const cv::Mat& src, cv::Mat& gray);
+
+    /**
+     * @brief 亮度直方图（彩色图先转 Y 再统计，不是按 B/G/R 通道统计）
+     * @param src       输入图像（彩色自动转亮度，灰度直接用）
+     * @param hist      输出直方图，CV_32F
+     * @param bins      区间数量（8U 通常 256，16U 通常 256/1024/65536）
+     * @param normalize 是否归一化到占比
+     * @param mask      可选掩码，尺寸必须与 src 一致
+     * @return          是否成功
+     */
+    static bool getLuminanceHistogram(
+        const cv::Mat& src,
+        cv::Mat& hist,
+        int bins = 256,
+        bool normalize = false,
+        const cv::Mat& mask = cv::Mat()
+    );
     static ImageLuminance getLuminance(const cv::Mat& src);
     static  bool gammaLut(const int maxValue,const double gamma,std::vector<uint16_t>& table);
     static  bool gammaLut(const cv::Mat& src,const double gamma,std::vector<uint16_t>& table);
