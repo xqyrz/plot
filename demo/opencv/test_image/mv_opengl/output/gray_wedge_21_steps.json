@@ -1,0 +1,9 @@
+{
+  "target": "gray_wedge",
+  "size": [
+    2520,
+    400
+  ],
+  "steps": 21,
+  "srgb_defined": true
+}

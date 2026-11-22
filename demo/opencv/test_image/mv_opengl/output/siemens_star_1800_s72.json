@@ -1,0 +1,8 @@
+{
+  "target": "siemens_star",
+  "size": [
+    1800,
+    1800
+  ],
+  "spokes": 72
+}

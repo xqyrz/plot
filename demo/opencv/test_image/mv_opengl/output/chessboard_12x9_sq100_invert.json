@@ -1,0 +1,18 @@
+{
+  "target": "chessboard",
+  "size": [
+    1400,
+    1100
+  ],
+  "squares": [
+    12,
+    9
+  ],
+  "square_px": 100,
+  "margin_px": 100,
+  "inner_corners": [
+    11,
+    8
+  ],
+  "note": "內角點 = (方格數-1)；列印時整板物理尺寸 = 邊長 × 方格數。"
+}

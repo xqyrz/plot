@@ -1,0 +1,21 @@
+{
+  "width": 1440,
+  "height": 1080,
+  "bit_depth": 10,
+  "container": "uint16 little-endian",
+  "black_level": 64,
+  "white_level": 1023,
+  "cfa": "GRBG",
+  "wb_gains": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "full_well_e": 12000.0,
+  "read_noise_e": 2.0,
+  "shot_noise": true,
+  "vignetting": 0.0,
+  "seed": 3,
+  "source": "gpu:chessboard",
+  "file": "chessboard_bayerGRBG_10bits.raw"
+}

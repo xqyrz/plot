@@ -1,0 +1,14 @@
+{
+  "target": "asymmetric_circle_grid",
+  "size": [
+    800,
+    576
+  ],
+  "points": [
+    11,
+    8
+  ],
+  "spacing_px": 64.0,
+  "radius_px": 26.88,
+  "opencv_flag": "CALIB_CB_ASYMMETRIC_GRID"
+}

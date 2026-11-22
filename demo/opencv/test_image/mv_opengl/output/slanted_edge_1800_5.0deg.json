@@ -1,0 +1,10 @@
+{
+  "target": "slanted_edge",
+  "size": [
+    1800,
+    1800
+  ],
+  "angle_deg": 5.0,
+  "box_half_ratio": 0.33,
+  "standard": "ISO 12233 / MTF SFR"
+}

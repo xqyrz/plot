@@ -1,0 +1,21 @@
+{
+  "width": 2048,
+  "height": 3072,
+  "bit_depth": 12,
+  "container": "uint16 little-endian",
+  "black_level": 64,
+  "white_level": 4095,
+  "cfa": "RGGB",
+  "wb_gains": [
+    1.9,
+    1.0,
+    1.55
+  ],
+  "full_well_e": 12000.0,
+  "read_noise_e": 2.0,
+  "shot_noise": true,
+  "vignetting": 0.25,
+  "seed": 0,
+  "source": "gpu:colorchecker",
+  "file": "colorchecker_bayerRGGB_12bits.raw"
+}
