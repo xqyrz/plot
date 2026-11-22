@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>HistogramItem</class>
+ <widget class="QWidget" name="HistogramItem">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>HistogramItem</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="numLabel">
+       <property name="text">
+        <string>精度</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="num">
+       <property name="maximum">
+        <number>256</number>
+       </property>
+       <property name="value">
+        <number>64</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="type">
+       <item>
+        <property name="text">
+         <string>RGB</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Color</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="calBtn">
+       <property name="text">
+        <string>cal</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

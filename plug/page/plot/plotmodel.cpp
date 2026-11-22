@@ -268,4 +268,70 @@ const TreeNode* PlotModel::getPlot(  QSharedPointer<QCPGraphDataContainer> ptr)
     }
 }
 
+QModelIndex PlotModel::nodeToIndex(TreeNode* node, int column) const
+{
+    if (!node)return QModelIndex();
+    TreeNode* parentNode = node->parent();
+    if (!parentNode)return QModelIndex();
+
+    int row = -1;
+    const QList<TreeNode*> siblings = parentNode->getChildren();
+    for (int i = 0; i < siblings.size(); ++i) {
+        if (siblings.at(i) == node) {
+            row = i;
+            break;
+        }
+    }
+    if (row < 0)return QModelIndex();
+    return createIndex(row, column, node);
+}
+
+bool PlotModel::setCheckedById(uint64_t id, bool checked)
+{
+    TreeNode* node = getNode(id);
+    if (!node || node->type != TreeNode::PlotNode || !node->plotData) {
+        qWarning() << "setCheckedById: node not found,id=" << QString::number(id, 16);
+        return false;
+    }
+
+    node->plotData->setVisible(checked);
+
+    QModelIndex idx = nodeToIndex(node, 0);
+    if (idx.isValid()) {
+        emit dataChanged(idx, idx, {Qt::CheckStateRole});
+        // 父组节点的勾选状态是靠子节点算出来的，也需要刷新
+        QModelIndex parentIdx = idx.parent();
+        if (parentIdx.isValid())
+            emit dataChanged(parentIdx, parentIdx, {Qt::CheckStateRole});
+    }
+    return true;
+}
+
+bool PlotModel::isCheckedById(uint64_t id) const
+{
+    TreeNode* node = getNode(id);
+    if (!node || node->type != TreeNode::PlotNode || !node->plotData)
+        return false;
+    return node->plotData->isVisible();
+}
+
+int PlotModel::setAllChecked(bool checked)
+{
+    int cnt = 0;
+    for (auto const& group : *m_rootNode) {
+        for (auto const& p : *group) {
+            if (!p->plotData)continue;
+            p->plotData->setVisible(checked);
+            ++cnt;
+            QModelIndex idx = nodeToIndex(p, 0);
+            if (idx.isValid())
+                emit dataChanged(idx, idx, {Qt::CheckStateRole});
+        }
+        QModelIndex groupIdx = nodeToIndex(group, 0);
+        if (groupIdx.isValid())
+            emit dataChanged(groupIdx, groupIdx, {Qt::CheckStateRole});
+    }
+    return cnt;
+}
+
 

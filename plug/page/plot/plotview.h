@@ -43,7 +43,7 @@ public:
     const char* getSignal(int index) const;
     const char* getSlot(int index) const;
     void setZero(double _zero) { zero = _zero; };
-
+    void showPlot(uint32_t id,bool flag);
  private:
 
     void initUI();

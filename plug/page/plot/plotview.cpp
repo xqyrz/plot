@@ -56,6 +56,10 @@ void PlotView::clear()
 // TODO:严重性能问题，但是这个实现动态信号显示，静态可以优化
 
 
+void PlotView::showPlot(uint32_t id,bool flag)
+{
+    _model->setCheckedById(id,flag);
+}
 void PlotView::initUI()
 {
 	m_splitter = new QSplitter(ui());

@@ -65,7 +65,17 @@ public:
     const TreeNode* getPlot(  QSharedPointer<QCPGraphDataContainer>);
      TreeNode* getNode(uint64_t id) const;
     void clear();
+
+    // 按 id 设置某个 PlotNode 的勾选状态（选中/未选中），成功返回 true
+    bool setCheckedById(uint64_t id, bool checked);
+    // 按 id 查询某个 PlotNode 是否选中
+    bool isCheckedById(uint64_t id) const;
+    // 全部 PlotNode 统一设为选中/未选中，返回影响的节点数
+    int setAllChecked(bool checked);
+
 private:
+    // TreeNode* -> QModelIndex（column 默认 0）
+    QModelIndex nodeToIndex(TreeNode* node, int column = 0) const;
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 

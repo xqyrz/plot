@@ -3,7 +3,7 @@
 //
 
 #include "nodehistogram.h"
-#include "plotview.h"
+#include "histogramitem.h"
 #include "../visionconfigpage.h"
 #include "cal/opencvQT.h"
 NodeHistogram::NodeHistogram()
@@ -15,21 +15,30 @@ void NodeHistogram::setInData(std::shared_ptr<NodeData> nodeData, PortIndex cons
     NodeVisionBase::setInData(nodeData, portIndex);
     m_imageData = m_inData;
 }
+
 void NodeHistogram::_configInt()
 {
-    m_item = new PlotView();
-    m_item->onlyPlot(true);
-    m_item->setZero(0);
-    configPage()->setConfigPropertyItem(m_item->ui());
+    m_item = new HistogramItem();
+    connect(m_item,&HistogramItem::cal,this,[this](HistogramItem::Type t1)
+    {
+        binNum = m_item->num();
+        switch (t1)
+        {
+        case HistogramItem::RGB:
+            rgb_cnt();
+            break;
+        case HistogramItem::COLOR:
+            color_cnt();
+            break;
+        }
+    });
+    configPage()->setConfigPropertyItem(m_item);
 
 }
 void NodeHistogram::_configOpen()
 {
-    m_item->clear();
-    if (m_imageData->images().size())
-    {
-        color_cnt();
-    }
+
+    m_item->init();
     configPage()->showImage(m_imageData->images());
 }
 void NodeHistogram::_updateConfig()
@@ -41,22 +50,15 @@ void NodeHistogram::_updateConfig()
 }
 void NodeHistogram::color_cnt()
 {
-    QSharedPointer<QCPGraphDataContainer> d;
-    QCPGraphData value;
+
     auto src = QImageToCvMat(m_inData->images().at(0).second);
-    if (auto node = m_item->getPlotData(0x0005000))
-    {d =node->plotData->getData();}
-    else
-    {
-        d = QSharedPointer<QCPGraphDataContainer>::create();
-        m_item->add_plotData(0x0005000,d,"color_cnt",0,"#808088");
-    }
-    d->clear();
+
     cv::Mat colorHist;
     auto mask =cv::Mat();
-    OpencvCal::getHistogram(src, colorHist, 0, 256, false, mask, true);
+
+    OpencvCal::getHistogram(src, colorHist, 0, binNum, false, mask, true);
     std::vector<std::pair<cv::Vec3b, float>> colorCountList;
-    int binNum = 256;
+
     float binScale = 256.0f / binNum;
     typedef union
     {
@@ -70,6 +72,9 @@ void NodeHistogram::color_cnt()
         uint32_t v;
     }_C_;
     _C_ _color;
+    auto d = m_item->data(HistogramItem::COLOR_PLOT);
+    QCPGraphData value;
+    d->clear();
     for (int b = 0; b < binNum; b++)
     {
         for (int g = 0; g < binNum; g++)
@@ -96,29 +101,18 @@ void NodeHistogram::rgb_cnt()
     cv::Mat Bhist;
     QSharedPointer<QCPGraphDataContainer> d;
     QCPGraphData value;
-    if (auto node = m_item->getPlotData(0x0000000))
-    {d =node->plotData->getData();}
-    else
-    {
-        d = QSharedPointer<QCPGraphDataContainer>::create();
-        m_item->add_plotData(0x0000000,d,"B_cnt",0,"#101080");
-    }
-    OpencvCal::getHistogram(src,Bhist,0);
 
+    OpencvCal::getHistogram(src,Bhist,0);
+    d = m_item->data(HistogramItem::B_PLOT);
+    d->clear();
     for (int i = 0; i < Bhist.cols; ++i)
     {
         value.key = i;
         value.value = Bhist.at<float>(0, i);
         d->add(value);
     }
-
-    if (auto node = m_item->getPlotData(0x0001000))
-    {d =node->plotData->getData();}
-    else
-    {
-        d = QSharedPointer<QCPGraphDataContainer>::create();
-        m_item->add_plotData(0x0001000,d,"G_cnt",0,"#108010");
-    }
+    d = m_item->data(HistogramItem::G_PLOT);
+    d->clear();
     OpencvCal::getHistogram(src,Bhist,1);
 
     for (int i = 0; i < Bhist.cols; ++i)
@@ -128,13 +122,8 @@ void NodeHistogram::rgb_cnt()
         d->add(value);
     }
 
-    if (auto node = m_item->getPlotData(0x0002000))
-    {d =node->plotData->getData();}
-    else
-    {
-        d = QSharedPointer<QCPGraphDataContainer>::create();
-        m_item->add_plotData(0x0002000,d,"R_cnt",0,"#801010");
-    }
+    d = m_item->data(HistogramItem::R_PLOT);
+    d->clear();
     OpencvCal::getHistogram(src,Bhist,2);
     for (int i = 0; i < Bhist.cols; ++i)
     {

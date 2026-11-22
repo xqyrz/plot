@@ -7,13 +7,14 @@
 
 
 #include "../nodevisionbase.h"
-class PlotView;
+class HistogramItem;
 class NodeHistogram:public NodeVisionBase
 {
     Q_OBJECT
 public:
     NodeHistogram();
     void setInData(std::shared_ptr<NodeData> nodeData, PortIndex const portIndex) override;
+
 private slots:
     void _configInt() override;
     void _configOpen() override;
@@ -22,7 +23,8 @@ private:
     void color_cnt();
     void rgb_cnt();
 private:
-    PlotView* m_item{nullptr};
+    HistogramItem* m_item{nullptr};
+    int binNum = 64;
 };
 
 
